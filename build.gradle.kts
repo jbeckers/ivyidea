@@ -16,7 +16,7 @@ dependencies {
     runtimeOnly("com.jcraft", "jsch.agentproxy.jsch", "0.0.9") // optional SFTP support
     runtimeOnly("org.bouncycastle", "bcpg-jdk15on", "1.62") // optional
     runtimeOnly("org.bouncycastle", "bcprov-jdk15on", "1.62") // optional
-    testCompile("junit", "junit", "4.12")
+    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.5.1")
 }
 
 plugins {
