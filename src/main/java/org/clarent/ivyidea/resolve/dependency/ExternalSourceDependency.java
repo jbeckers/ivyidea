@@ -17,27 +17,22 @@
 package org.clarent.ivyidea.resolve.dependency;
 
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
-import java.io.File;
-
-/**
- * @author Guy Mahieu
- */
-
+/** @author Guy Mahieu */
 public class ExternalSourceDependency extends ExternalDependency {
 
-    public ExternalSourceDependency(Artifact artifact, File externalArtifact, final String configurationName) {
-        super(artifact, externalArtifact, configurationName);
-    }
+  public ExternalSourceDependency(
+      Artifact artifact, File externalArtifact, final String configurationName) {
+    super(artifact, externalArtifact, configurationName);
+  }
 
-    protected String getTypeName() {
-        return "sources";
-    }
+  protected String getTypeName() {
+    return "sources";
+  }
 
-    public OrderRootType getType() {
-        return OrderRootType.SOURCES;
-    }
+  public OrderRootType getType() {
+    return OrderRootType.SOURCES;
+  }
 }

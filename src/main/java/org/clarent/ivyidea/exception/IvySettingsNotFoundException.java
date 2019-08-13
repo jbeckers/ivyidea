@@ -21,29 +21,28 @@ package org.clarent.ivyidea.exception;
  *
  * @author Guy Mahieu
  */
-
 public class IvySettingsNotFoundException extends IvyIdeaException {
 
-    public enum ConfigLocation {
-        Project,
-        Module
-    }
+  public enum ConfigLocation {
+    Project,
+    Module
+  }
 
-    private ConfigLocation configLocation;
-    private String configName;
+  private ConfigLocation configLocation;
+  private String configName;
 
-    public IvySettingsNotFoundException(String message, ConfigLocation configLocation, String configName) {
-        super(message);
-        this.configLocation = configLocation;
-        this.configName = configName;
-    }
+  public IvySettingsNotFoundException(
+      String message, ConfigLocation configLocation, String configName) {
+    super(message);
+    this.configLocation = configLocation;
+    this.configName = configName;
+  }
 
-    public ConfigLocation getConfigLocation() {
-        return configLocation;
-    }
+  public ConfigLocation getConfigLocation() {
+    return configLocation;
+  }
 
-    public String getConfigName() {
-        return configName;
-    }
+  public String getConfigName() {
+    return configName;
+  }
 }
-

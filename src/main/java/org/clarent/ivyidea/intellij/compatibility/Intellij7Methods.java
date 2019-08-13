@@ -22,8 +22,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import java.awt.*;
+import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -32,71 +31,76 @@ import java.lang.reflect.Method;
  *
  * @author Guy Mahieu
  */
-
 class Intellij7Methods implements IntellijCompatibilityMethods {
 
-    private static final String COMPAT_ERROR_MSG = "Compatibility problem: this plugin is only meant to be used in IntelliJ version 7 and up.";
+  private static final String COMPAT_ERROR_MSG =
+      "Compatibility problem: this plugin is only meant to be used in IntelliJ version 7 and up.";
 
-    public OrderRootType[] getAllOrderRootTypes() {
-        try {
-            // OrderRootType.ALL_TYPES
-            return (OrderRootType[]) OrderRootType.class.getField("ALL_TYPES").get(null);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(COMPAT_ERROR_MSG, e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(COMPAT_ERROR_MSG, e);
-        }
+  public OrderRootType[] getAllOrderRootTypes() {
+    try {
+      // OrderRootType.ALL_TYPES
+      return (OrderRootType[]) OrderRootType.class.getField("ALL_TYPES").get(null);
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(COMPAT_ERROR_MSG, e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(COMPAT_ERROR_MSG, e);
     }
+  }
 
-    public OrderRootType getJavadocOrderRootType() {
-        try {
-            // OrderRootType.JAVADOC
-            return (OrderRootType) OrderRootType.class.getField("JAVADOC").get(null);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(COMPAT_ERROR_MSG, e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(COMPAT_ERROR_MSG, e);
-        }
+  public OrderRootType getJavadocOrderRootType() {
+    try {
+      // OrderRootType.JAVADOC
+      return (OrderRootType) OrderRootType.class.getField("JAVADOC").get(null);
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(COMPAT_ERROR_MSG, e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(COMPAT_ERROR_MSG, e);
     }
+  }
 
-    public ModuleType getJavaModuleType() {
-        try {
-            // ModuleType.JAVA
-            return (ModuleType) ModuleType.class.getField("JAVA").get(null);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(COMPAT_ERROR_MSG, e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(COMPAT_ERROR_MSG, e);
-        }
+  public ModuleType getJavaModuleType() {
+    try {
+      // ModuleType.JAVA
+      return (ModuleType) ModuleType.class.getField("JAVA").get(null);
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(COMPAT_ERROR_MSG, e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(COMPAT_ERROR_MSG, e);
     }
+  }
 
-    public boolean isTaskCancelledOnProgressIndicatorCancel() {
-        return false;
-    }
+  public boolean isTaskCancelledOnProgressIndicatorCancel() {
+    return false;
+  }
 
-    public VirtualFile[] chooseFiles(FileChooserDescriptor descriptor, Component parent, Project project, VirtualFile toSelect) {
-        if (parent == null) {
-            try {
-                Method chooseFilesMethod = FileChooser.class.getMethod("chooseFiles", Project.class, FileChooserDescriptor.class, VirtualFile.class);
-                return (VirtualFile[]) chooseFilesMethod.invoke(null, project, descriptor, toSelect);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(COMPAT_ERROR_MSG, e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(COMPAT_ERROR_MSG, e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(COMPAT_ERROR_MSG, e);
-            }
-        } else {
-            try {
-                Method chooseFilesMethod = FileChooser.class.getMethod("chooseFiles", Component.class, FileChooserDescriptor.class, VirtualFile.class);
-                return (VirtualFile[]) chooseFilesMethod.invoke(null, parent, descriptor, toSelect);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(COMPAT_ERROR_MSG, e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(COMPAT_ERROR_MSG, e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(COMPAT_ERROR_MSG, e);
-            }
-        }
+  public VirtualFile[] chooseFiles(
+      FileChooserDescriptor descriptor, Component parent, Project project, VirtualFile toSelect) {
+    if (parent == null) {
+      try {
+        Method chooseFilesMethod =
+            FileChooser.class.getMethod(
+                "chooseFiles", Project.class, FileChooserDescriptor.class, VirtualFile.class);
+        return (VirtualFile[]) chooseFilesMethod.invoke(null, project, descriptor, toSelect);
+      } catch (NoSuchMethodException e) {
+        throw new RuntimeException(COMPAT_ERROR_MSG, e);
+      } catch (InvocationTargetException e) {
+        throw new RuntimeException(COMPAT_ERROR_MSG, e);
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(COMPAT_ERROR_MSG, e);
+      }
+    } else {
+      try {
+        Method chooseFilesMethod =
+            FileChooser.class.getMethod(
+                "chooseFiles", Component.class, FileChooserDescriptor.class, VirtualFile.class);
+        return (VirtualFile[]) chooseFilesMethod.invoke(null, parent, descriptor, toSelect);
+      } catch (NoSuchMethodException e) {
+        throw new RuntimeException(COMPAT_ERROR_MSG, e);
+      } catch (InvocationTargetException e) {
+        throw new RuntimeException(COMPAT_ERROR_MSG, e);
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(COMPAT_ERROR_MSG, e);
+      }
     }
+  }
 }

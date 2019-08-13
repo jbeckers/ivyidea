@@ -17,6 +17,8 @@
 package org.clarent.ivyidea.resolve;
 
 import com.intellij.openapi.module.Module;
+import java.util.Collections;
+import java.util.List;
 import org.clarent.ivyidea.exception.IvyFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
@@ -24,45 +26,42 @@ import org.clarent.ivyidea.ivy.IvyManager;
 import org.clarent.ivyidea.resolve.dependency.ResolvedDependency;
 import org.clarent.ivyidea.resolve.problem.ResolveProblem;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Wraps the actual resolve process and manages that it is done with the
- * right locking level for IntelliJ.
+ * Wraps the actual resolve process and manages that it is done with the right locking level for
+ * IntelliJ.
  *
  * @author Guy Mahieu
  */
 public class IntellijDependencyResolver {
 
-    private Module module;
-    private List<ResolvedDependency> dependencies = Collections.emptyList();
-    private List<ResolveProblem> problems = Collections.emptyList();
+  private Module module;
+  private List<ResolvedDependency> dependencies = Collections.emptyList();
+  private List<ResolveProblem> problems = Collections.emptyList();
 
-    private IvyManager ivyManager;
+  private IvyManager ivyManager;
 
-    public IntellijDependencyResolver(IvyManager ivyManager) {
-        this.ivyManager = ivyManager;
-    }
+  public IntellijDependencyResolver(IvyManager ivyManager) {
+    this.ivyManager = ivyManager;
+  }
 
-    public Module getModule() {
-        return module;
-    }
+  public Module getModule() {
+    return module;
+  }
 
-    public List<ResolveProblem> getProblems() {
-        return problems;
-    }
+  public List<ResolveProblem> getProblems() {
+    return problems;
+  }
 
-    public List<ResolvedDependency> getDependencies() {
-        return dependencies;
-    }
+  public List<ResolvedDependency> getDependencies() {
+    return dependencies;
+  }
 
-    public void resolve(final Module module) throws IvySettingsNotFoundException, IvyFileReadException, IvySettingsFileReadException {
-        this.module = module;
-        final DependencyResolver dependencyResolver = new DependencyResolver();
-        dependencyResolver.resolve(module, ivyManager);
-        dependencies = dependencyResolver.getResolvedDependencies();
-        problems = dependencyResolver.getResolveProblems();
-    }
-
+  public void resolve(final Module module)
+      throws IvySettingsNotFoundException, IvyFileReadException, IvySettingsFileReadException {
+    this.module = module;
+    final DependencyResolver dependencyResolver = new DependencyResolver();
+    dependencyResolver.resolve(module, ivyManager);
+    dependencies = dependencyResolver.getResolvedDependencies();
+    problems = dependencyResolver.getResolveProblems();
+  }
 }

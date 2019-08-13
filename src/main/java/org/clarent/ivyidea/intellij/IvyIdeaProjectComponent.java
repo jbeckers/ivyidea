@@ -25,49 +25,41 @@ import org.clarent.ivyidea.config.model.IvyIdeaProjectSettings;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Guy Mahieu
- */
+/** @author Guy Mahieu */
+@State(name = IvyIdeaProjectComponent.COMPONENT_NAME)
+public class IvyIdeaProjectComponent
+    implements ProjectComponent, PersistentStateComponent<IvyIdeaProjectSettings> {
 
-@State(
-        name = IvyIdeaProjectComponent.COMPONENT_NAME
-)
-public class IvyIdeaProjectComponent implements ProjectComponent, PersistentStateComponent<IvyIdeaProjectSettings> {
+  public static final String COMPONENT_NAME = "IvyIDEA.ProjectSettings";
 
-    public static final String COMPONENT_NAME = "IvyIDEA.ProjectSettings";
+  private final Project project;
+  private final IvyIdeaProjectSettings internalState;
 
-    private final Project project;
-    private final IvyIdeaProjectSettings internalState;
+  public IvyIdeaProjectComponent(Project project) {
+    this.project = project;
+    this.internalState = new IvyIdeaProjectSettings();
+  }
 
-    public IvyIdeaProjectComponent(Project project) {
-        this.project = project;
-        this.internalState = new IvyIdeaProjectSettings();
-    }
+  public void projectOpened() {}
 
-    public void projectOpened() {
-    }
+  public void projectClosed() {}
 
-    public void projectClosed() {
-    }
+  @NonNls
+  @NotNull
+  public String getComponentName() {
+    return COMPONENT_NAME;
+  }
 
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
+  public void initComponent() {}
 
-    public void initComponent() {
-    }
+  public void disposeComponent() {}
 
-    public void disposeComponent() {
-    }
+  @NotNull
+  public IvyIdeaProjectSettings getState() {
+    return internalState;
+  }
 
-    @NotNull
-    public IvyIdeaProjectSettings getState() {
-        return internalState;
-    }
-
-    public void loadState(IvyIdeaProjectSettings state) {
-        XmlSerializerUtil.copyBean(state, this.getState());
-    }
+  public void loadState(IvyIdeaProjectSettings state) {
+    XmlSerializerUtil.copyBean(state, this.getState());
+  }
 }

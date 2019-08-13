@@ -20,22 +20,16 @@ import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Guy Mahieu
- */
-
+/** @author Guy Mahieu */
 public class IvyIdeaPlugin implements ApplicationComponent {
 
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "IvyIDEA.PluginApplicationComponent";
-    }
+  @NonNls
+  @NotNull
+  public String getComponentName() {
+    return "IvyIDEA.PluginApplicationComponent";
+  }
 
-    public void initComponent() {
-    }
+  public void initComponent() {}
 
-    public void disposeComponent() {
-    }
-
+  public void disposeComponent() {}
 }

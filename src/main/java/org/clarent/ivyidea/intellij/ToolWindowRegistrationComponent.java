@@ -29,62 +29,59 @@ import com.intellij.ui.content.ContentFactory;
 import org.clarent.ivyidea.intellij.ui.IvyIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Guy Mahieu
- */
-
+/** @author Guy Mahieu */
 public class ToolWindowRegistrationComponent implements ProjectComponent {
 
-    public static final String TOOLWINDOW_ID = "IvyIDEA";
-    public static final String COMPONENT_NAME = "IvyIDEA.ToolWindowRegistrationComponent";
+  public static final String TOOLWINDOW_ID = "IvyIDEA";
+  public static final String COMPONENT_NAME = "IvyIDEA.ToolWindowRegistrationComponent";
 
-    private Project project;
-    private ConsoleView console;
+  private Project project;
+  private ConsoleView console;
 
-    public ToolWindowRegistrationComponent(Project project) {
-        this.project = project;
+  public ToolWindowRegistrationComponent(Project project) {
+    this.project = project;
+  }
+
+  public void initComponent() {}
+
+  public void disposeComponent() {}
+
+  @NotNull
+  public String getComponentName() {
+    return COMPONENT_NAME;
+  }
+
+  public void projectOpened() {
+    registerToolWindow();
+  }
+
+  public void projectClosed() {
+    unregisterToolWindow();
+  }
+
+  public ConsoleView getConsole() {
+    return console;
+  }
+
+  private void unregisterToolWindow() {
+    if (console != null) {
+      console.dispose();
     }
+    console = null;
 
-    public void initComponent() {
-    }
+    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    toolWindowManager.unregisterToolWindow(TOOLWINDOW_ID);
+  }
 
-    public void disposeComponent() {
-    }
-
-    @NotNull
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
-    public void projectOpened() {
-        registerToolWindow();
-    }
-
-    public void projectClosed() {
-        unregisterToolWindow();
-    }
-
-    public ConsoleView getConsole() {
-        return console;
-    }
-
-    private void unregisterToolWindow() {
-        if (console != null) {
-            console.dispose();
-        }
-        console = null;
-
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        toolWindowManager.unregisterToolWindow(TOOLWINDOW_ID);
-    }
-
-    private void registerToolWindow() {
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        ToolWindow toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM);
-        console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
-        Content content = ServiceManager.getService(ContentFactory.class).createContent(console.getComponent(), "Console", true);
-        toolWindow.setIcon(IvyIdeaIcons.MAIN_ICON_SMALL);
-        toolWindow.getContentManager().addContent(content);
-    }
-
+  private void registerToolWindow() {
+    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    ToolWindow toolWindow =
+        toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM);
+    console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
+    Content content =
+        ServiceManager.getService(ContentFactory.class)
+            .createContent(console.getComponent(), "Console", true);
+    toolWindow.setIcon(IvyIdeaIcons.MAIN_ICON_SMALL);
+    toolWindow.getContentManager().addContent(content);
+  }
 }

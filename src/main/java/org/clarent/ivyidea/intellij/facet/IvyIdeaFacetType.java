@@ -29,91 +29,108 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiFile;
-import org.clarent.ivyidea.intellij.compatibility.IntellijCompatibilityService;
+import java.util.Collection;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.intellij.ui.IvyIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
-/**
- * @author Guy Mahieu
- */
-
+/** @author Guy Mahieu */
 public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> {
 
-    public static final FacetTypeId<IvyIdeaFacet> ID = new FacetTypeId<IvyIdeaFacet>("IvyIDEA");
+  public static final FacetTypeId<IvyIdeaFacet> ID = new FacetTypeId<IvyIdeaFacet>("IvyIDEA");
 
-    public static IvyIdeaFacetType getInstance() {
-        return findInstance(IvyIdeaFacetType.class);
-    }
+  public static IvyIdeaFacetType getInstance() {
+    return findInstance(IvyIdeaFacetType.class);
+  }
 
-    public IvyIdeaFacetType() {
-        super(ID, "IvyIDEA", "IvyIDEA");
-    }
+  public IvyIdeaFacetType() {
+    super(ID, "IvyIDEA", "IvyIDEA");
+  }
 
-    public IvyIdeaFacetConfiguration createDefaultConfiguration() {
-        return new IvyIdeaFacetConfiguration();
-    }
+  public IvyIdeaFacetConfiguration createDefaultConfiguration() {
+    return new IvyIdeaFacetConfiguration();
+  }
 
-    public IvyIdeaFacet createFacet(@NotNull Module module, String name, @NotNull IvyIdeaFacetConfiguration configuration, @Nullable Facet underlyingFacet) {
-        return new IvyIdeaFacet(this, module, name, configuration, underlyingFacet);
-    }
+  public IvyIdeaFacet createFacet(
+      @NotNull Module module,
+      String name,
+      @NotNull IvyIdeaFacetConfiguration configuration,
+      @Nullable Facet underlyingFacet) {
+    return new IvyIdeaFacet(this, module, name, configuration, underlyingFacet);
+  }
 
-    public boolean isSuitableModuleType(ModuleType moduleType) {
-        // Allow ivy facets for all module types...
-        return true;
-        // return IntellijCompatibilityService.getCompatibilityMethods().getJavaModuleType().equals(moduleType);
-    }
+  public boolean isSuitableModuleType(ModuleType moduleType) {
+    // Allow ivy facets for all module types...
+    return true;
+    // return
+    // IntellijCompatibilityService.getCompatibilityMethods().getJavaModuleType().equals(moduleType);
+  }
 
-    public javax.swing.Icon getIcon() {
-        return IvyIdeaIcons.MAIN_ICON_SMALL;
-    }
+  public javax.swing.Icon getIcon() {
+    return IvyIdeaIcons.MAIN_ICON_SMALL;
+  }
 
-    public void registerDetectors(FacetDetectorRegistry<IvyIdeaFacetConfiguration> ivyIdeaDetectorRegistry) {
-        VirtualFileFilter virtualFileFilter = new VirtualFileFilter() {
-            public boolean accept(VirtualFile file) {
-                return "ivy.xml".equals(file.getName());
-            }
+  public void registerDetectors(
+      FacetDetectorRegistry<IvyIdeaFacetConfiguration> ivyIdeaDetectorRegistry) {
+    VirtualFileFilter virtualFileFilter =
+        new VirtualFileFilter() {
+          public boolean accept(VirtualFile file) {
+            return "ivy.xml".equals(file.getName());
+          }
         };
 
-        final FileType xmlFileType = FileTypeManager.getInstance().getFileTypeByExtension("xml");
+    final FileType xmlFileType = FileTypeManager.getInstance().getFileTypeByExtension("xml");
 
-        ivyIdeaDetectorRegistry.registerUniversalDetector(xmlFileType, virtualFileFilter, new FacetDetector<VirtualFile, IvyIdeaFacetConfiguration>() {
-            public IvyIdeaFacetConfiguration detectFacet(VirtualFile source, Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
-                return configureDetectedFacet(source, existentFacetConfigurations);
-            }
+    ivyIdeaDetectorRegistry.registerUniversalDetector(
+        xmlFileType,
+        virtualFileFilter,
+        new FacetDetector<VirtualFile, IvyIdeaFacetConfiguration>() {
+          public IvyIdeaFacetConfiguration detectFacet(
+              VirtualFile source,
+              Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
+            return configureDetectedFacet(source, existentFacetConfigurations);
+          }
         });
 
-        ivyIdeaDetectorRegistry.registerOnTheFlyDetector(xmlFileType, virtualFileFilter, new Condition<PsiFile>() {
-            public boolean value(PsiFile psiFile) {
-                return true;
-            }
-        }, new FacetDetector<PsiFile, IvyIdeaFacetConfiguration>() {
-            public IvyIdeaFacetConfiguration detectFacet(PsiFile source, Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
-                return configureDetectedFacet(source.getVirtualFile(), existentFacetConfigurations);
-            }
+    ivyIdeaDetectorRegistry.registerOnTheFlyDetector(
+        xmlFileType,
+        virtualFileFilter,
+        new Condition<PsiFile>() {
+          public boolean value(PsiFile psiFile) {
+            return true;
+          }
+        },
+        new FacetDetector<PsiFile, IvyIdeaFacetConfiguration>() {
+          public IvyIdeaFacetConfiguration detectFacet(
+              PsiFile source, Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
+            return configureDetectedFacet(source.getVirtualFile(), existentFacetConfigurations);
+          }
         });
 
-        ivyIdeaDetectorRegistry.registerDetectorForWizard(xmlFileType, virtualFileFilter, new FacetDetector<VirtualFile, IvyIdeaFacetConfiguration>() {
+    ivyIdeaDetectorRegistry.registerDetectorForWizard(
+        xmlFileType,
+        virtualFileFilter,
+        new FacetDetector<VirtualFile, IvyIdeaFacetConfiguration>() {
 
-            public IvyIdeaFacetConfiguration detectFacet(VirtualFile source, Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
-                return configureDetectedFacet(source, existentFacetConfigurations);
-            }
+          public IvyIdeaFacetConfiguration detectFacet(
+              VirtualFile source,
+              Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
+            return configureDetectedFacet(source, existentFacetConfigurations);
+          }
         });
+  }
 
+  protected IvyIdeaFacetConfiguration configureDetectedFacet(
+      VirtualFile ivyFile, Collection<IvyIdeaFacetConfiguration> existingFacetConfigurations) {
+    if (existingFacetConfigurations.isEmpty()) {
+      final IvyIdeaFacetConfiguration defaultConfiguration = createDefaultConfiguration();
+      defaultConfiguration.setIvyFile(ivyFile.getPath());
+      return defaultConfiguration;
+    } else {
+      // TODO: only use file that is the closest to the iml file!
+      //              http://code.google.com/p/ivyidea/issues/detail?id=1
+      return existingFacetConfigurations.iterator().next();
     }
-
-    protected IvyIdeaFacetConfiguration configureDetectedFacet(VirtualFile ivyFile, Collection<IvyIdeaFacetConfiguration> existingFacetConfigurations) {
-        if (existingFacetConfigurations.isEmpty()) {
-            final IvyIdeaFacetConfiguration defaultConfiguration = createDefaultConfiguration();
-            defaultConfiguration.setIvyFile(ivyFile.getPath());
-            return defaultConfiguration;
-        } else {
-            // TODO: only use file that is the closest to the iml file!
-            //              http://code.google.com/p/ivyidea/issues/detail?id=1
-            return existingFacetConfigurations.iterator().next();
-        }
-    }
+  }
 }

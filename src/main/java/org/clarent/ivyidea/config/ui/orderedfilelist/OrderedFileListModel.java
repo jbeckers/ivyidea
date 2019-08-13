@@ -20,70 +20,68 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractListModel;
 
-/**
- * @author Guy Mahieu
-*/
+/** @author Guy Mahieu */
 class OrderedFileListModel extends AbstractListModel {
 
-    private List<String> items = new ArrayList<String>();
+  private List<String> items = new ArrayList<String>();
 
-    public List<String> getAllItems() {
-        return new ArrayList<String>(items);
+  public List<String> getAllItems() {
+    return new ArrayList<String>(items);
+  }
+
+  public void setItems(List<String> itemsToSet) {
+    clear();
+    add(itemsToSet);
+  }
+
+  private void add(List<String> itemsToAdd) {
+    items.addAll(itemsToAdd);
+    fireIntervalAdded(this, items.size() - itemsToAdd.size(), items.size());
+  }
+
+  void add(String item) {
+    items.add(item);
+    fireIntervalAdded(this, items.size(), items.size());
+  }
+
+  void removeItemAt(int index) {
+    if (index >= 0 && index < items.size()) {
+      items.remove(index);
+      fireIntervalRemoved(this, index, index);
     }
+  }
 
-    public void setItems(List<String> itemsToSet) {
-        clear();
-        add(itemsToSet);
+  void moveItemUp(int index) {
+    if (index > 0 && index < items.size()) {
+      final String item = items.remove(index);
+      items.add(index - 1, item);
+      fireContentsChanged(this, index - 1, index);
     }
+  }
 
-    private void add(List<String> itemsToAdd) {
-        items.addAll(itemsToAdd);
-        fireIntervalAdded(this, items.size() - itemsToAdd.size(), items.size());
+  void moveItemDown(int index) {
+    if (index >= 0 && index < items.size() - 1) {
+      final String item = items.remove(index);
+      items.add(index + 1, item);
+      fireContentsChanged(this, index, index + 1);
     }
+  }
 
-    void add(String item) {
-        items.add(item);
-        fireIntervalAdded(this, items.size(), items.size());
-    }
+  void clear() {
+    int nrOfItemsBeforeClear = items.size();
+    items.clear();
+    fireContentsChanged(this, 0, nrOfItemsBeforeClear);
+  }
 
-    void removeItemAt(int index) {
-        if (index >= 0 && index < items.size()) {
-            items.remove(index);
-            fireIntervalRemoved(this, index, index);
-        }
-    }
+  public int getSize() {
+    return items.size();
+  }
 
-    void moveItemUp(int index) {
-        if (index > 0 && index < items.size()) {
-            final String item = items.remove(index);
-            items.add(index - 1, item);
-            fireContentsChanged(this, index - 1, index);
-        }
-    }
+  String getItemAt(int index) {
+    return items.get(index);
+  }
 
-    void moveItemDown(int index) {
-        if (index >= 0 && index < items.size() - 1) {
-            final String item = items.remove(index);
-            items.add(index + 1, item);
-            fireContentsChanged(this, index, index + 1);
-        }
-    }
-
-    void clear() {
-        int nrOfItemsBeforeClear = items.size();
-        items.clear();
-        fireContentsChanged(this, 0, nrOfItemsBeforeClear);
-    }
-
-    public int getSize() {
-        return items.size();
-    }       
-
-    String getItemAt(int index) {
-        return items.get(index);
-    }
-
-    public Object getElementAt(int index) {
-        return getItemAt(index);
-    }
+  public Object getElementAt(int index) {
+    return getItemAt(index);
+  }
 }

@@ -17,41 +17,43 @@
 package org.clarent.ivyidea.intellij.compatibility;
 
 import com.intellij.openapi.application.ApplicationInfo;
-
 import java.util.logging.Logger;
 
 /**
- * Abstracts changed api's between intellij versions to allow the plugin to be used in all these versions.
+ * Abstracts changed api's between intellij versions to allow the plugin to be used in all these
+ * versions.
  *
  * @author Guy Mahieu
  */
 public class IntellijCompatibilityService {
 
-    private static Logger LOGGER = Logger.getLogger("IvyIDEA-Compatibility");
+  private static Logger LOGGER = Logger.getLogger("IvyIDEA-Compatibility");
 
-    private static IntellijCompatibilityMethods compatibilityMethods;
+  private static IntellijCompatibilityMethods compatibilityMethods;
 
-    static {
-        final String majorVersion = ApplicationInfo.getInstance().getMajorVersion();
-        LOGGER.info("Detected intellij major version " + majorVersion + "; activating the appropriate compatibility mode.");
+  static {
+    final String majorVersion = ApplicationInfo.getInstance().getMajorVersion();
+    LOGGER.info(
+        "Detected intellij major version "
+            + majorVersion
+            + "; activating the appropriate compatibility mode.");
 
-        try {
-            int numericMajorVersion = Integer.parseInt(majorVersion);
-            if (numericMajorVersion >= 12) {
-                compatibilityMethods = new Intellij12Methods();
-            } else if (numericMajorVersion >= 8) {
-                compatibilityMethods = new Intellij8Methods();
-            } else {
-                compatibilityMethods = new Intellij7Methods();
-            }
-        } catch (NumberFormatException e) {
-            LOGGER.info("Non-numeric major version encountered:" + majorVersion);
-            compatibilityMethods = new Intellij12Methods();
-        }
+    try {
+      int numericMajorVersion = Integer.parseInt(majorVersion);
+      if (numericMajorVersion >= 12) {
+        compatibilityMethods = new Intellij12Methods();
+      } else if (numericMajorVersion >= 8) {
+        compatibilityMethods = new Intellij8Methods();
+      } else {
+        compatibilityMethods = new Intellij7Methods();
+      }
+    } catch (NumberFormatException e) {
+      LOGGER.info("Non-numeric major version encountered:" + majorVersion);
+      compatibilityMethods = new Intellij12Methods();
     }
+  }
 
-    public static IntellijCompatibilityMethods getCompatibilityMethods() {
-        return compatibilityMethods;
-    }
-
+  public static IntellijCompatibilityMethods getCompatibilityMethods() {
+    return compatibilityMethods;
+  }
 }

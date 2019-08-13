@@ -16,22 +16,19 @@
 
 package org.clarent.ivyidea.config.ui.propertieseditor;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
-/**
- * @author Guy Mahieu
- */
+/** @author Guy Mahieu */
 public class PropertiesEditor {
-    private JPanel rootPanel;
-    private JButton btnAdd;
-    private JButton btnRemove;
+  private JPanel rootPanel;
+  private JButton btnAdd;
+  private JButton btnRemove;
 
-    public PropertiesEditor() {
-        
-    }
+  public PropertiesEditor() {}
 
-    public Component getRootPanel() {
-        return rootPanel;
-    }
+  public Component getRootPanel() {
+    return rootPanel;
+  }
 }

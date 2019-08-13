@@ -26,15 +26,15 @@ import com.intellij.openapi.roots.OrderRootType;
  */
 class Intellij8Methods extends Intellij7Methods {
 
-    public OrderRootType[] getAllOrderRootTypes() {
-        return OrderRootType.getAllTypes();
-    }
+  public OrderRootType[] getAllOrderRootTypes() {
+    return OrderRootType.getAllTypes();
+  }
 
-    public OrderRootType getJavadocOrderRootType() {
-        return JavadocOrderRootType.getInstance();
-    }
+  public OrderRootType getJavadocOrderRootType() {
+    return JavadocOrderRootType.getInstance();
+  }
 
-    public boolean isTaskCancelledOnProgressIndicatorCancel() {
-        return true;
-    }
+  public boolean isTaskCancelledOnProgressIndicatorCancel() {
+    return true;
+  }
 }

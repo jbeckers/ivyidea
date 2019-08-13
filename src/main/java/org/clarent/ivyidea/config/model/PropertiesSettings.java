@@ -19,25 +19,22 @@ package org.clarent.ivyidea.config.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Guy Mahieu
- */
+/** @author Guy Mahieu */
 public class PropertiesSettings {
-    
-    private List<String> propertyFiles = new ArrayList<String>();
 
-    public static PropertiesSettings copyDataFrom(PropertiesSettings propertiesSettings) {
-        PropertiesSettings result = new PropertiesSettings();
-        result.propertyFiles = new ArrayList<String>(propertiesSettings.propertyFiles);
-        return result;
-    }
+  private List<String> propertyFiles = new ArrayList<String>();
 
-    public List<String> getPropertyFiles() {
-        return propertyFiles;
-    }
+  public static PropertiesSettings copyDataFrom(PropertiesSettings propertiesSettings) {
+    PropertiesSettings result = new PropertiesSettings();
+    result.propertyFiles = new ArrayList<String>(propertiesSettings.propertyFiles);
+    return result;
+  }
 
-    public void setPropertyFiles(List<String> propertyFiles) {
-        this.propertyFiles = propertyFiles;
-    }
+  public List<String> getPropertyFiles() {
+    return propertyFiles;
+  }
 
+  public void setPropertyFiles(List<String> propertyFiles) {
+    this.propertyFiles = propertyFiles;
+  }
 }

@@ -16,151 +16,153 @@
 
 package org.clarent.ivyidea.config.model;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.util.xmlb.XmlSerializerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-
 import static java.util.Arrays.asList;
 import static org.clarent.ivyidea.config.model.ArtifactTypeSettings.DependencyCategory.Classes;
 import static org.clarent.ivyidea.config.model.ArtifactTypeSettings.DependencyCategory.Javadoc;
 import static org.clarent.ivyidea.config.model.ArtifactTypeSettings.DependencyCategory.Sources;
 
-/**
- * @author Guy Mahieu
- */
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.util.xmlb.XmlSerializerUtil;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/** @author Guy Mahieu */
 public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTypeSettings> {
 
-    public enum DependencyCategory {
-        Sources("source", "src", "sources", "srcs"),
-        Javadoc("javadoc", "doc", "docs", "apidoc", "apidocs", "documentation", "documents"),
-        Classes("jar", "mar", "sar", "war", "ear", "ejb", "bundle", "test-jar");
+  public enum DependencyCategory {
+    Sources("source", "src", "sources", "srcs"),
+    Javadoc("javadoc", "doc", "docs", "apidoc", "apidocs", "documentation", "documents"),
+    Classes("jar", "mar", "sar", "war", "ear", "ejb", "bundle", "test-jar");
 
-        private final String[] defaultTypes;
+    private final String[] defaultTypes;
 
-        DependencyCategory(String... defaultTypes) {
-            this.defaultTypes = defaultTypes;
+    DependencyCategory(String... defaultTypes) {
+      this.defaultTypes = defaultTypes;
+    }
+
+    public List<String> getDefaultTypes() {
+      return asList(defaultTypes);
+    }
+  }
+
+  private Map<DependencyCategory, Set<String>> typesPerCategory =
+      new HashMap<DependencyCategory, Set<String>>();
+
+  @Nullable
+  public DependencyCategory getCategoryForType(String type) {
+    if (type == null) {
+      return null;
+    }
+    if (isConfigurationEmpty()) {
+      fillDefaults();
+    }
+    for (DependencyCategory dependencyCategory : typesPerCategory.keySet()) {
+      final Set<String> types = typesPerCategory.get(dependencyCategory);
+      if (types != null && types.contains(type.trim().toLowerCase())) {
+        return dependencyCategory;
+      }
+    }
+    return null;
+  }
+
+  private void fillDefaults() {
+    for (DependencyCategory category : DependencyCategory.values()) {
+      setTypesForCategory(category, joinArtifactTypes(category.getDefaultTypes()));
+    }
+  }
+
+  public void setTypesForCategory(@NotNull DependencyCategory category, String types) {
+    if (types != null) {
+      typesPerCategory.put(category, splitArtifactTypes(types));
+    }
+  }
+
+  public String getTypesStringForCategory(@NotNull DependencyCategory category) {
+    if (isConfigurationEmpty()) {
+      // nothing is configured for any category --> use defaults
+      return joinArtifactTypes(category.getDefaultTypes());
+    }
+    return joinArtifactTypes(typesPerCategory.get(category));
+  }
+
+  protected boolean isConfigurationEmpty() {
+    boolean configFound = false;
+    for (DependencyCategory dependencyCategory : DependencyCategory.values()) {
+      final Set<String> types = typesPerCategory.get(dependencyCategory);
+      configFound = types != null && types.size() > 0;
+      if (configFound) {
+        break;
+      }
+    }
+    return !configFound;
+  }
+
+  private Set<String> splitArtifactTypes(String artifactTypesString) {
+    Set<String> result = new LinkedHashSet<String>();
+    if (artifactTypesString != null) {
+      final String[] types = artifactTypesString.split(",");
+      for (String type : types) {
+        final String typeToAdd = type.trim().toLowerCase();
+        if (typeToAdd.length() > 0) {
+          result.add(typeToAdd);
         }
-
-        public List<String> getDefaultTypes() {
-            return asList(defaultTypes);
-        }
+      }
     }
+    return result;
+  }
 
-    private Map<DependencyCategory, Set<String>> typesPerCategory = new HashMap<DependencyCategory, Set<String>>();
-
-    @Nullable
-    public DependencyCategory getCategoryForType(String type) {
-        if (type == null) {
-            return null;
-        }
-        if (isConfigurationEmpty()) {
-            fillDefaults();
-        }
-        for (DependencyCategory dependencyCategory : typesPerCategory.keySet()) {
-            final Set<String> types = typesPerCategory.get(dependencyCategory);
-            if (types != null && types.contains(type.trim().toLowerCase())) {
-                return dependencyCategory;
-            }
-        }
-        return null;
+  private String joinArtifactTypes(Iterable<String> artifactTypes) {
+    if (artifactTypes == null) {
+      return "";
     }
-
-    private void fillDefaults() {
-        for (DependencyCategory category : DependencyCategory.values()) {
-            setTypesForCategory(category, joinArtifactTypes(category.getDefaultTypes()));
-        }
+    StringBuilder sb = new StringBuilder();
+    String separator = "";
+    for (String artifactType : artifactTypes) {
+      sb.append(separator).append(artifactType);
+      separator = ", ";
     }
+    return sb.toString();
+  }
 
-    public void setTypesForCategory(@NotNull DependencyCategory category, String types) {
-        if (types != null) {
-            typesPerCategory.put(category, splitArtifactTypes(types));
-        }
+  public ArtifactTypeSettings getState() {
+    return this;
+  }
+
+  public void loadState(ArtifactTypeSettings state) {
+    if (state == null) {
+      state = new ArtifactTypeSettings();
     }
+    XmlSerializerUtil.copyBean(state, this);
+  }
 
-    public String getTypesStringForCategory(@NotNull DependencyCategory category) {
-        if (isConfigurationEmpty()) {
-            // nothing is configured for any category --> use defaults 
-            return joinArtifactTypes(category.getDefaultTypes());
-        }
-        return joinArtifactTypes(typesPerCategory.get(category));
-    }
+  // Getters and setters needed for intellij settings serialization
 
-    protected boolean isConfigurationEmpty() {
-        boolean configFound = false;
-        for (DependencyCategory dependencyCategory : DependencyCategory.values()) {
-            final Set<String> types = typesPerCategory.get(dependencyCategory);
-            configFound = types != null && types.size() > 0;
-            if (configFound) {
-                break;
-            }
-        }
-        return !configFound;
-    }
+  public String getSourcesTypes() {
+    return joinArtifactTypes(typesPerCategory.get(Sources));
+  }
 
-    private Set<String> splitArtifactTypes(String artifactTypesString) {
-        Set<String> result = new LinkedHashSet<String>();
-        if (artifactTypesString != null) {
-            final String[] types = artifactTypesString.split(",");
-            for (String type : types) {
-                final String typeToAdd = type.trim().toLowerCase();
-                if (typeToAdd.length() > 0) {
-                    result.add(typeToAdd);
-                }
-            }
-        }
-        return result;
-    }
+  public String getClassesTypes() {
+    return joinArtifactTypes(typesPerCategory.get(Classes));
+  }
 
-    private String joinArtifactTypes(Iterable<String> artifactTypes) {
-        if (artifactTypes == null) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        String separator = "";
-        for (String artifactType : artifactTypes) {
-            sb.append(separator).append(artifactType);
-            separator = ", ";
-        }
-        return sb.toString();
-    }
+  public String getJavadocTypes() {
+    return joinArtifactTypes(typesPerCategory.get(Javadoc));
+  }
 
-    public ArtifactTypeSettings getState() {
-        return this;
-    }
+  public void setSourcesTypes(String types) {
+    setTypesForCategory(Sources, types);
+  }
 
-    public void loadState(ArtifactTypeSettings state) {
-        if (state == null) {
-            state = new ArtifactTypeSettings();
-        }
-        XmlSerializerUtil.copyBean(state, this);
-    }
+  public void setClassesTypes(String types) {
+    setTypesForCategory(Classes, types);
+  }
 
-    // Getters and setters needed for intellij settings serialization
-
-    public String getSourcesTypes() {
-        return joinArtifactTypes(typesPerCategory.get(Sources));
-    }
-
-    public String getClassesTypes() {
-        return joinArtifactTypes(typesPerCategory.get(Classes));
-    }
-
-    public String getJavadocTypes() {
-        return joinArtifactTypes(typesPerCategory.get(Javadoc));
-    }
-
-    public void setSourcesTypes(String types) {
-        setTypesForCategory(Sources, types);
-    }
-
-    public void setClassesTypes(String types) {
-        setTypesForCategory(Classes, types);
-    }
-
-    public void setJavadocTypes(String types) {
-        setTypesForCategory(Javadoc, types);
-    }
+  public void setJavadocTypes(String types) {
+    setTypesForCategory(Javadoc, types);
+  }
 }

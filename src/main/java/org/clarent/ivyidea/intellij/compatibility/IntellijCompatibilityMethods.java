@@ -21,25 +21,24 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import java.awt.*;
+import java.awt.Component;
 
 /**
- * Interface defining methods that are impacted by API differences in supported
- * versions of Intellij IDEA
+ * Interface defining methods that are impacted by API differences in supported versions of Intellij
+ * IDEA
  *
  * @author Guy Mahieu
  */
 public interface IntellijCompatibilityMethods {
 
-    OrderRootType[] getAllOrderRootTypes();
+  OrderRootType[] getAllOrderRootTypes();
 
-    OrderRootType getJavadocOrderRootType();
+  OrderRootType getJavadocOrderRootType();
 
-    ModuleType getJavaModuleType();
+  ModuleType getJavaModuleType();
 
-    boolean isTaskCancelledOnProgressIndicatorCancel();
+  boolean isTaskCancelledOnProgressIndicatorCancel();
 
-    VirtualFile[] chooseFiles(FileChooserDescriptor descriptor, Component parent, Project project, VirtualFile toSelect);
-
+  VirtualFile[] chooseFiles(
+      FileChooserDescriptor descriptor, Component parent, Project project, VirtualFile toSelect);
 }

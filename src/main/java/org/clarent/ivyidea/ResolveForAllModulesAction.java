@@ -23,6 +23,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.clarent.ivyidea.exception.IvyFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
@@ -32,9 +34,6 @@ import org.clarent.ivyidea.ivy.IvyManager;
 import org.clarent.ivyidea.resolve.IntellijDependencyResolver;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * Action to resolve the dependencies for all modules that have an IvyIDEA facet configured.
  *
@@ -42,36 +41,41 @@ import java.util.Collection;
  */
 public class ResolveForAllModulesAction extends AbstractResolveAction {
 
-    public void actionPerformed(AnActionEvent e) {
-        FileDocumentManager.getInstance().saveAllDocuments();
+  public void actionPerformed(AnActionEvent e) {
+    FileDocumentManager.getInstance().saveAllDocuments();
 
-        final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-        ProgressManager.getInstance().run(new IvyIdeaResolveBackgroundTask(project, e) {
-            public void doResolve(final @NotNull ProgressIndicator indicator) throws IvySettingsNotFoundException, IvyFileReadException, IvySettingsFileReadException {
+    final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+    ProgressManager.getInstance()
+        .run(
+            new IvyIdeaResolveBackgroundTask(project, e) {
+              public void doResolve(final @NotNull ProgressIndicator indicator)
+                  throws IvySettingsNotFoundException, IvyFileReadException,
+                      IvySettingsFileReadException {
                 clearConsole(myProject);
 
                 final IvyManager ivyManager = new IvyManager();
 
-                Collection<IntellijDependencyResolver> resolvers = new ArrayList<IntellijDependencyResolver>();
+                Collection<IntellijDependencyResolver> resolvers =
+                    new ArrayList<IntellijDependencyResolver>();
                 for (final Module module : IntellijUtils.getAllModulesWithIvyIdeaFacet(project)) {
-                    getProgressMonitorThread().setIvy(ivyManager.getIvy(module));
-                    indicator.setText2("Resolving for module " + module.getName());
-                    final IntellijDependencyResolver resolver = new IntellijDependencyResolver(ivyManager);
-                    resolver.resolve(module);
-                    resolvers.add(resolver);
+                  getProgressMonitorThread().setIvy(ivyManager.getIvy(module));
+                  indicator.setText2("Resolving for module " + module.getName());
+                  final IntellijDependencyResolver resolver =
+                      new IntellijDependencyResolver(ivyManager);
+                  resolver.resolve(module);
+                  resolvers.add(resolver);
 
-                    if (indicator.isCanceled()) {
-                        return;
-                    }
+                  if (indicator.isCanceled()) {
+                    return;
+                  }
                 }
 
                 for (IntellijDependencyResolver resolver : resolvers) {
-                    Module module = resolver.getModule();
-                    updateIntellijModel(module, resolver.getDependencies());
-                    reportProblems(module, resolver.getProblems());
+                  Module module = resolver.getModule();
+                  updateIntellijModel(module, resolver.getDependencies());
+                  reportProblems(module, resolver.getProblems());
                 }
-            }
-        });
-    }
-
+              }
+            });
+  }
 }

@@ -26,31 +26,31 @@ import org.apache.ivy.Ivy;
  */
 public class ProgressMonitorThread extends Thread {
 
-    private ProgressIndicator indicator;
-    private Thread resolveThread;
-    private Ivy ivy;
+  private ProgressIndicator indicator;
+  private Thread resolveThread;
+  private Ivy ivy;
 
-    public ProgressMonitorThread(ProgressIndicator indicator, Thread resolveThread) {
-        super("ProgressIndicator Monitor");
-        this.indicator = indicator;
-        this.resolveThread = resolveThread;
-    }
+  public ProgressMonitorThread(ProgressIndicator indicator, Thread resolveThread) {
+    super("ProgressIndicator Monitor");
+    this.indicator = indicator;
+    this.resolveThread = resolveThread;
+  }
 
-    public void setIvy(Ivy ivy) {
-        this.ivy = ivy;
-    }
+  public void setIvy(Ivy ivy) {
+    this.ivy = ivy;
+  }
 
-    @Override
-    public void run() {
-        while (indicator.isRunning()) {
-            if (ivy != null && indicator.isCanceled()) {
-                ivy.interrupt(resolveThread);
-                return;
-            }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e1) {
-            }
-        }
+  @Override
+  public void run() {
+    while (indicator.isRunning()) {
+      if (ivy != null && indicator.isCanceled()) {
+        ivy.interrupt(resolveThread);
+        return;
+      }
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e1) {
+      }
     }
+  }
 }

@@ -24,44 +24,41 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.util.indexing.FileContent;
+import java.util.Collection;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+/** @author Maarten Coene */
+public class IvyIdeaFacetDetector
+    extends FacetBasedFrameworkDetector<IvyIdeaFacet, IvyIdeaFacetConfiguration> {
 
-/**
- * @author Maarten Coene
- */
+  public IvyIdeaFacetDetector() {
+    super("IvyIDEA");
+  }
 
-public class IvyIdeaFacetDetector extends FacetBasedFrameworkDetector<IvyIdeaFacet, IvyIdeaFacetConfiguration> {
+  public FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> getFacetType() {
+    return IvyIdeaFacetType.getInstance();
+  }
 
-    public IvyIdeaFacetDetector() {
-        super("IvyIDEA");
+  @NotNull
+  public FileType getFileType() {
+    return FileTypeManager.getInstance().getFileTypeByExtension("xml");
+  }
+
+  @NotNull
+  public ElementPattern<FileContent> createSuitableFilePattern() {
+    return FileContentPattern.fileContent().withName("ivy.xml").xmlWithRootTag("ivy-module");
+  }
+
+  @Override
+  protected IvyIdeaFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
+    final IvyIdeaFacetConfiguration result = super.createConfiguration(files);
+
+    if (!files.isEmpty()) {
+      VirtualFile ivyFile = files.iterator().next();
+      result.setIvyFile(ivyFile.getPath());
     }
 
-    public FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> getFacetType() {
-        return IvyIdeaFacetType.getInstance();
-    }
-
-    @NotNull
-    public FileType getFileType() {
-        return FileTypeManager.getInstance().getFileTypeByExtension("xml");
-    }
-
-    @NotNull
-    public ElementPattern<FileContent> createSuitableFilePattern() {
-        return FileContentPattern.fileContent().withName("ivy.xml").xmlWithRootTag("ivy-module");
-    }
-
-    @Override
-    protected IvyIdeaFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
-        final IvyIdeaFacetConfiguration result = super.createConfiguration(files);
-
-        if (!files.isEmpty()) {
-            VirtualFile ivyFile = files.iterator().next();
-            result.setIvyFile(ivyFile.getPath());
-        }
-
-        return result;
-    }
+    return result;
+  }
 }

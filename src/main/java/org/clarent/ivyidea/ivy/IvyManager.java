@@ -17,6 +17,9 @@
 package org.clarent.ivyidea.ivy;
 
 import com.intellij.openapi.module.Module;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
@@ -25,46 +28,42 @@ import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * @author Guy Mahieu
- */
-
+/** @author Guy Mahieu */
 public class IvyManager {
 
-    private Map<Module, Ivy> configuredIvyInstances = new HashMap<Module, Ivy>();
-    private Map<Module, ModuleDescriptor> moduleDescriptors = new HashMap<Module, ModuleDescriptor>();
+  private Map<Module, Ivy> configuredIvyInstances = new HashMap<Module, Ivy>();
+  private Map<Module, ModuleDescriptor> moduleDescriptors = new HashMap<Module, ModuleDescriptor>();
 
-    public Ivy getIvy(final Module module) throws IvySettingsNotFoundException, IvySettingsFileReadException {
-        if (!configuredIvyInstances.containsKey(module)) {
-            final IvySettings configuredIvySettings = IvyIdeaConfigHelper.createConfiguredIvySettings(module);
-            final Ivy ivy = IvyUtil.createConfiguredIvyEngine(module, configuredIvySettings);
+  public Ivy getIvy(final Module module)
+      throws IvySettingsNotFoundException, IvySettingsFileReadException {
+    if (!configuredIvyInstances.containsKey(module)) {
+      final IvySettings configuredIvySettings =
+          IvyIdeaConfigHelper.createConfiguredIvySettings(module);
+      final Ivy ivy = IvyUtil.createConfiguredIvyEngine(module, configuredIvySettings);
 
-            configuredIvyInstances.put(module, ivy);
+      configuredIvyInstances.put(module, ivy);
+    }
+    return configuredIvyInstances.get(module);
+  }
+
+  @Nullable
+  public ModuleDescriptor getModuleDescriptor(Module module)
+      throws IvySettingsNotFoundException, IvySettingsFileReadException {
+    if (!moduleDescriptors.containsKey(module)) {
+      final File ivyFile = IvyUtil.getIvyFile(module);
+      if (ivyFile != null) {
+        try {
+          final ModuleDescriptor descriptor = IvyUtil.parseIvyFile(ivyFile, getIvy(module));
+          moduleDescriptors.put(module, descriptor);
+        } catch (RuntimeException e) {
+          // ignore
+          moduleDescriptors.put(module, null);
         }
-        return configuredIvyInstances.get(module);
+      } else {
+        moduleDescriptors.put(module, null);
+      }
     }
 
-    @Nullable
-    public ModuleDescriptor getModuleDescriptor(Module module) throws IvySettingsNotFoundException, IvySettingsFileReadException {
-        if (!moduleDescriptors.containsKey(module)) {
-            final File ivyFile = IvyUtil.getIvyFile(module);
-            if (ivyFile != null) {
-                try {
-                    final ModuleDescriptor descriptor = IvyUtil.parseIvyFile(ivyFile, getIvy(module));
-                    moduleDescriptors.put(module, descriptor);
-                } catch (RuntimeException e) {
-                    // ignore
-                    moduleDescriptors.put(module, null);
-                }
-            } else {
-                moduleDescriptors.put(module, null);
-            }
-        }
-
-        return moduleDescriptors.get(module);
-    }
+    return moduleDescriptors.get(module);
+  }
 }
