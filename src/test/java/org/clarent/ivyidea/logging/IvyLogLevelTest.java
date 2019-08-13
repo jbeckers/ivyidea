@@ -16,18 +16,18 @@
 
 package org.clarent.ivyidea.logging;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.Assert.*;
 import static org.clarent.ivyidea.logging.IvyLogLevel.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *  @author Guy Mahieu
  */
-public class IvyLogLevelTest {
+class IvyLogLevelTest {
 
     @Test
-    public void test_isMoreVerboseThan() {
+    void test_isMoreVerboseThan() {
         assertTrue(Error.isMoreVerboseThan(None));
         assertTrue(Info.isMoreVerboseThan(None));
         assertFalse(Error.isMoreVerboseThan(Debug));
