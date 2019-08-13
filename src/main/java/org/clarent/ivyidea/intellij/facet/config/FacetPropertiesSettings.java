@@ -47,9 +47,10 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
     this.includeProjectLevelAdditionalProperties = includeProjectLevelAdditionalProperties;
   }
 
+  @Override
   public void readExternal(Element propertiesSettingsElement) throws InvalidDataException {
     final Element propertiesFilesElement = propertiesSettingsElement.getChild("propertiesFiles");
-    List<String> fileNames = new ArrayList<String>();
+    List<String> fileNames = new ArrayList<>();
     if (propertiesFilesElement != null) {
       setIncludeProjectLevelPropertiesFiles(
           Boolean.valueOf(
@@ -57,7 +58,7 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
                   "includeProjectLevelPropertiesFiles", Boolean.TRUE.toString())));
       @SuppressWarnings("unchecked")
       final List<Element> propertiesFileNames =
-          (List<Element>) propertiesFilesElement.getChildren("fileName");
+          propertiesFilesElement.getChildren("fileName");
       for (Element element : propertiesFileNames) {
         fileNames.add(element.getValue());
       }
@@ -65,6 +66,7 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
     setPropertyFiles(fileNames);
   }
 
+  @Override
   public void writeExternal(Element propertiesSettingsElement) throws WriteExternalException {
     final Element propertiesFilesElement = new Element("propertiesFiles");
     propertiesFilesElement.setAttribute(

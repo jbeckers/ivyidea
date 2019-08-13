@@ -31,6 +31,7 @@ public class InternalDependency implements ResolvedDependency {
     this.module = module;
   }
 
+  @Override
   public void addTo(IntellijModuleWrapper intellijModuleWrapper) {
     if (!intellijModuleWrapper.alreadyHasDependencyOnModule(module)) {
       LOGGER.info(

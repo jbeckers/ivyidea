@@ -28,10 +28,12 @@ public class ExternalJarDependency extends ExternalDependency {
     super(artifact, externalArtifact, configurationName);
   }
 
+  @Override
   protected String getTypeName() {
     return "jar";
   }
 
+  @Override
   public OrderRootType getType() {
     return OrderRootType.CLASSES;
   }

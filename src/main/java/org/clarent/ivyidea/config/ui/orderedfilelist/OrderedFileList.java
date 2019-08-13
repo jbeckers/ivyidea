@@ -65,11 +65,7 @@ public class OrderedFileList {
   private void installActivityListener() {
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(
-        new UserActivityListener() {
-          public void stateChanged() {
-            modified = true;
-          }
-        });
+        () -> modified = true);
     watcher.register(pnlRoot);
   }
 
@@ -80,23 +76,22 @@ public class OrderedFileList {
     lstFileNames
         .getSelectionModel()
         .addListSelectionListener(
-            new ListSelectionListener() {
-              public void valueChanged(ListSelectionEvent e) {
-                updateButtonStates();
-              }
-            });
+            e -> updateButtonStates());
     lstFileNames
         .getModel()
         .addListDataListener(
             new ListDataListener() {
+              @Override
               public void intervalAdded(ListDataEvent e) {
                 updateButtonStates();
               }
 
+              @Override
               public void intervalRemoved(ListDataEvent e) {
                 updateButtonStates();
               }
 
+              @Override
               public void contentsChanged(ListDataEvent e) {
                 updateButtonStates();
               }
@@ -138,46 +133,32 @@ public class OrderedFileList {
 
   private void wireAddButton() {
     btnAdd.addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            final FileChooserDescriptor fcDescriptor =
-                FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor();
-            fcDescriptor.setTitle("Select properties file(s)");
-            final VirtualFile[] files =
-                IntellijCompatibilityService.getCompatibilityMethods()
-                    .chooseFiles(fcDescriptor, pnlRoot, project, null);
-            for (VirtualFile file : files) {
-              addFilenameToList(file.getPresentableUrl());
-            }
+        e -> {
+          final FileChooserDescriptor fcDescriptor =
+              FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor();
+          fcDescriptor.setTitle("Select Properties File(S)");
+          final VirtualFile[] files =
+              IntellijCompatibilityService.getCompatibilityMethods()
+                  .chooseFiles(fcDescriptor, pnlRoot, project, null);
+          for (VirtualFile file : files) {
+            addFilenameToList(file.getPresentableUrl());
           }
         });
   }
 
   private void wireRemoveButton() {
     btnRemove.addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            removeSelectedItemFromList();
-          }
-        });
+        e -> removeSelectedItemFromList());
   }
 
   private void wireMoveUpButton() {
     btnUp.addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            moveSelectedItemUp();
-          }
-        });
+        e -> moveSelectedItemUp());
   }
 
   private void wireMoveDownButton() {
     btnDown.addActionListener(
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            moveSelectedItemDown();
-          }
-        });
+        e -> moveSelectedItemDown());
   }
 
   private void addFilenameToList(String fileName) {

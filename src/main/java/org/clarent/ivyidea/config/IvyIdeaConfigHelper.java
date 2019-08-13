@@ -241,7 +241,7 @@ public class IvyIdeaConfigHelper {
   public static Properties getIvyProperties(Module module)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     final IvyIdeaFacetConfiguration moduleConfiguration = getModuleConfiguration(module);
-    final List<String> propertiesFiles = new ArrayList<String>();
+    final List<String> propertiesFiles = new ArrayList<>();
     propertiesFiles.addAll(moduleConfiguration.getPropertiesSettings().getPropertyFiles());
     final FacetPropertiesSettings modulePropertiesSettings =
         moduleConfiguration.getPropertiesSettings();
@@ -311,9 +311,7 @@ public class IvyIdeaConfigHelper {
       } else {
         s.loadDefault();
       }
-    } catch (ParseException e) {
-      throw new IvySettingsFileReadException(settingsFile, module.getName(), e);
-    } catch (IOException e) {
+    } catch (ParseException | IOException e) {
       throw new IvySettingsFileReadException(settingsFile, module.getName(), e);
     }
 

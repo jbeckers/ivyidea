@@ -1,3 +1,6 @@
+import net.ltgt.gradle.errorprone.errorprone
+import org.jetbrains.intellij.tasks.PatchPluginXmlTask
+
 group = "org.clarent.ivyidea"
 version = "1.0.14"
 
@@ -16,12 +19,15 @@ dependencies {
     runtimeOnly("com.jcraft", "jsch.agentproxy.jsch", "0.0.9") // optional SFTP support
     runtimeOnly("org.bouncycastle", "bcpg-jdk15on", "1.62") // optional
     runtimeOnly("org.bouncycastle", "bcprov-jdk15on", "1.62") // optional
+    errorprone ("com.google.errorprone", "error_prone_core", "2.3.3")
+    errorproneJavac("com.google.errorprone", "javac", "9+181-r4173-1")
     testCompile("org.junit.jupiter", "junit-jupiter-api", "5.5.1")
 }
 
 plugins {
     java
     id("org.jetbrains.intellij") version "0.4.10"
+    id("net.ltgt.errorprone") version "0.8.1"
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -33,7 +39,11 @@ configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
+tasks.withType<JavaCompile>().configureEach {
+    options.errorprone.disableWarningsInGeneratedCode.set(true)
+}
+
+tasks.getByName<PatchPluginXmlTask>("patchPluginXml") {
     pluginId("org.clarent.ivyidea")
     pluginDescription("""
         Resolves module dependencies through Ivy

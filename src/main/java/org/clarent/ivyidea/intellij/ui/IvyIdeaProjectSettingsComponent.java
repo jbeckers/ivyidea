@@ -38,6 +38,7 @@ public class IvyIdeaProjectSettingsComponent implements Configurable {
     this.project = project;
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return "IvyIDEA";
@@ -48,12 +49,14 @@ public class IvyIdeaProjectSettingsComponent implements Configurable {
     return IvyIdeaIcons.MAIN_ICON;
   }
 
+  @Override
   @Nullable
   @NonNls
   public String getHelpTopic() {
     return null;
   }
 
+  @Override
   public JComponent createComponent() {
     return getSettingsPanel().createComponent();
   }
@@ -66,18 +69,22 @@ public class IvyIdeaProjectSettingsComponent implements Configurable {
     return settingsPanel;
   }
 
+  @Override
   public boolean isModified() {
     return getSettingsPanel().isModified();
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     getSettingsPanel().apply();
   }
 
+  @Override
   public void reset() {
     getSettingsPanel().reset();
   }
 
+  @Override
   public void disposeUIResources() {
     settingsPanel = null;
   }

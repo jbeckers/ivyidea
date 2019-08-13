@@ -28,10 +28,12 @@ public class ExternalSourceDependency extends ExternalDependency {
     super(artifact, externalArtifact, configurationName);
   }
 
+  @Override
   protected String getTypeName() {
     return "sources";
   }
 
+  @Override
   public OrderRootType getType() {
     return OrderRootType.SOURCES;
   }

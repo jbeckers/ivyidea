@@ -37,7 +37,7 @@ public class IntellijUtils {
   @NotNull
   public static Module[] getAllModulesWithIvyIdeaFacet(Project project) {
     final Module[] allModules = ModuleManager.getInstance(project).getModules();
-    final List<Module> result = new ArrayList<Module>();
+    final List<Module> result = new ArrayList<>();
     for (Module module : allModules) {
       if (containsIvyIdeaFacet(module)) {
         result.add(module);

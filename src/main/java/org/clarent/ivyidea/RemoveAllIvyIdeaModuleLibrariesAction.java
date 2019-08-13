@@ -41,11 +41,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
 
+  @Override
   public void actionPerformed(AnActionEvent e) {
     final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
     ProgressManager.getInstance()
         .run(
             new IvyIdeaBackgroundTask(e) {
+              @Override
               public void run(@NotNull final ProgressIndicator indicator) {
                 final Module[] facet = IntellijUtils.getAllModulesWithIvyIdeaFacet(project);
                 indicator.setIndeterminate(false);
@@ -53,36 +55,30 @@ public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
                   indicator.setText2("Removing for module " + module.getName());
                   ApplicationManager.getApplication()
                       .invokeAndWait(
-                          new Runnable() {
-                            public void run() {
-                              ApplicationManager.getApplication()
-                                  .runWriteAction(
-                                      new Runnable() {
-                                        public void run() {
-                                          final ModifiableRootModel model =
-                                              ModuleRootManager.getInstance(module)
-                                                  .getModifiableModel();
-                                          final LibraryTable moduleLibraryTable =
-                                              model.getModuleLibraryTable();
-                                          final Library[] libraries =
-                                              moduleLibraryTable.getLibraries();
-                                          boolean found = false;
-                                          for (final Library library : libraries) {
-                                            if (IvyIdeaConfigHelper.isCreatedLibraryName(
-                                                library.getName())) {
-                                              found = true;
-                                              moduleLibraryTable.removeLibrary(library);
-                                            }
-                                          }
-                                          if (found) {
-                                            model.commit();
-                                          } else {
-                                            model.dispose();
-                                          }
-                                        }
-                                      });
-                            }
-                          },
+                          () -> ApplicationManager.getApplication()
+                              .runWriteAction(
+                                  () -> {
+                                    final ModifiableRootModel model =
+                                        ModuleRootManager.getInstance(module)
+                                            .getModifiableModel();
+                                    final LibraryTable moduleLibraryTable =
+                                        model.getModuleLibraryTable();
+                                    final Library[] libraries =
+                                        moduleLibraryTable.getLibraries();
+                                    boolean found = false;
+                                    for (final Library library : libraries) {
+                                      if (IvyIdeaConfigHelper.isCreatedLibraryName(
+                                          library.getName())) {
+                                        found = true;
+                                        moduleLibraryTable.removeLibrary(library);
+                                      }
+                                    }
+                                    if (found) {
+                                      model.commit();
+                                    } else {
+                                      model.dispose();
+                                    }
+                                  }),
                           ModalityState.NON_MODAL);
                 }
               }

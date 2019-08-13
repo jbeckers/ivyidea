@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.ivy.util.Message;
 
+@SuppressWarnings("ImmutableEnumChecker")
 public enum IvyLogLevel {
   None(Integer.MIN_VALUE, SYSTEM_OUTPUT),
   Error(Message.MSG_ERR, ERROR_OUTPUT),
@@ -37,7 +38,7 @@ public enum IvyLogLevel {
   private static final Map<Integer, IvyLogLevel> loglevels;
 
   static {
-    Map<Integer, IvyLogLevel> temp = new HashMap<Integer, IvyLogLevel>();
+    Map<Integer, IvyLogLevel> temp = new HashMap<>();
     for (IvyLogLevel ivyLogLevel : values()) {
       temp.put(ivyLogLevel.levelCode, ivyLogLevel);
     }

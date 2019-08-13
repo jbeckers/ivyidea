@@ -66,6 +66,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
     return monitorThread;
   }
 
+  @Override
   public final void run(@NotNull final ProgressIndicator indicator) {
     final Thread resolveThread = Thread.currentThread();
     monitorThread = new ProgressMonitorThread(indicator, resolveThread);
@@ -89,11 +90,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
           .isTaskCancelledOnProgressIndicatorCancel()) {
         ApplicationManager.getApplication()
             .invokeLater(
-                new Runnable() {
-                  public void run() {
-                    onCancel();
-                  }
-                });
+                () -> onCancel());
       }
     } catch (RuntimeException e) {
       if (!indicator.isCanceled()) {
@@ -137,12 +134,8 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
                   + " settings for "
                   + exception.getConfigName()
                   + "...",
-              new LinkListener() {
-                public void linkSelected(LinkLabel linkLabel, Object o) {
-                  ShowSettingsUtil.getInstance()
-                      .showSettingsDialog(project, IvyIdeaProjectSettingsComponent.class);
-                }
-              },
+              (linkLabel, o) -> ShowSettingsUtil.getInstance()
+                  .showSettingsDialog(project, IvyIdeaProjectSettingsComponent.class),
               null);
     }
     IvyIdeaExceptionDialog.showModalDialog(

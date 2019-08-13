@@ -47,10 +47,12 @@ public class IntellijProxyURLHandler extends AbstractURLHandler {
     this.delegate = delegate;
   }
 
+  @Override
   public URLInfo getURLInfo(URL url) {
     return getURLInfo(url, 0);
   }
 
+  @Override
   public URLInfo getURLInfo(URL url, int timeout) {
     try {
       prepareURL(url);
@@ -60,21 +62,25 @@ public class IntellijProxyURLHandler extends AbstractURLHandler {
     }
   }
 
+  @Override
   public InputStream openStream(URL url) throws IOException {
     prepareURL(url);
     return delegate.openStream(url);
   }
 
+  @Override
   public void download(URL src, File dest, CopyProgressListener l) throws IOException {
     prepareURL(src);
     delegate.download(src, dest, l);
   }
 
+  @Override
   public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
     prepareURL(dest);
     delegate.upload(src, dest, l);
   }
 
+  @Override
   public void setRequestMethod(int requestMethod) {
     delegate.setRequestMethod(requestMethod);
   }

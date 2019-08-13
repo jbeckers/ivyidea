@@ -37,7 +37,7 @@ class LibraryModels implements Closeable {
   private static final Logger LOGGER = Logger.getLogger(LibraryModels.class.getName());
 
   private final ConcurrentMap<String, Library.ModifiableModel> libraryModels =
-      new ConcurrentHashMap<String, Library.ModifiableModel>();
+      new ConcurrentHashMap<>();
 
   private ModifiableRootModel intellijModule;
 
@@ -86,7 +86,7 @@ class LibraryModels implements Closeable {
   }
 
   public List<String> getIntellijDependencyUrlsForType(OrderRootType type) {
-    final List<String> intellijDependencies = new ArrayList<String>();
+    final List<String> intellijDependencies = new ArrayList<>();
     for (final Library.ModifiableModel libraryModel : libraryModels.values()) {
       final String[] libraryModelUrls = libraryModel.getUrls(type);
       intellijDependencies.addAll(asList(libraryModelUrls));
@@ -94,6 +94,7 @@ class LibraryModels implements Closeable {
     return intellijDependencies;
   }
 
+  @Override
   public void close() {
     for (Library.ModifiableModel libraryModel : libraryModels.values()) {
       if (libraryModel.isChanged()) {

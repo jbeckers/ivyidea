@@ -55,6 +55,7 @@ public abstract class ExternalDependency implements ResolvedDependency {
     return configurationName;
   }
 
+  @Override
   public void addTo(IntellijModuleWrapper intellijModuleWrapper) {
     if (localFile == null) {
       LOGGER.warning(

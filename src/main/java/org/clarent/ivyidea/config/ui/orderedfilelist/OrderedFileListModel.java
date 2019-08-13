@@ -23,10 +23,10 @@ import javax.swing.AbstractListModel;
 /** @author Guy Mahieu */
 class OrderedFileListModel extends AbstractListModel {
 
-  private List<String> items = new ArrayList<String>();
+  private List<String> items = new ArrayList<>();
 
   public List<String> getAllItems() {
-    return new ArrayList<String>(items);
+    return new ArrayList<>(items);
   }
 
   public void setItems(List<String> itemsToSet) {
@@ -73,6 +73,7 @@ class OrderedFileListModel extends AbstractListModel {
     fireContentsChanged(this, 0, nrOfItemsBeforeClear);
   }
 
+  @Override
   public int getSize() {
     return items.size();
   }
@@ -81,6 +82,7 @@ class OrderedFileListModel extends AbstractListModel {
     return items.get(index);
   }
 
+  @Override
   public Object getElementAt(int index) {
     return getItemAt(index);
   }

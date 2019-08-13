@@ -39,7 +39,7 @@ class IntellijModuleDependencies {
 
   private IvyManager ivyManager;
   private Module module;
-  private Map<ModuleId, Module> moduleDependencies = new HashMap<ModuleId, Module>();
+  private Map<ModuleId, Module> moduleDependencies = new HashMap<>();
 
   public IntellijModuleDependencies(Module module, IvyManager ivyManager)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
@@ -90,7 +90,7 @@ class IntellijModuleDependencies {
   @Nullable
   private ModuleId getModuleId(Module module)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
-    if (!moduleDependencies.values().contains(module)) {
+    if (!moduleDependencies.containsValue(module)) {
       final ModuleDescriptor ivyModuleDescriptor = ivyManager.getModuleDescriptor(module);
       if (ivyModuleDescriptor != null) {
         moduleDependencies.put(ivyModuleDescriptor.getModuleRevisionId().getModuleId(), module);

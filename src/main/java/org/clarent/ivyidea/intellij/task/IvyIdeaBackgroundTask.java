@@ -33,14 +33,16 @@ public abstract class IvyIdeaBackgroundTask extends Task.Backgroundable {
       this.project = project;
     }
 
+    @Override
     public boolean shouldStartInBackground() {
       return IvyIdeaConfigHelper.getResolveInBackground(project);
     }
 
+    @Override
     public void processSentToBackground() {}
 
     public void processRestoredToForeground() {}
-  };
+  }
 
   public IvyIdeaBackgroundTask(AnActionEvent event) {
     super(

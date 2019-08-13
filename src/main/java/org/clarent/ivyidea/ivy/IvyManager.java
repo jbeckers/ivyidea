@@ -31,8 +31,8 @@ import org.jetbrains.annotations.Nullable;
 /** @author Guy Mahieu */
 public class IvyManager {
 
-  private Map<Module, Ivy> configuredIvyInstances = new HashMap<Module, Ivy>();
-  private Map<Module, ModuleDescriptor> moduleDescriptors = new HashMap<Module, ModuleDescriptor>();
+  private Map<Module, Ivy> configuredIvyInstances = new HashMap<>();
+  private Map<Module, ModuleDescriptor> moduleDescriptors = new HashMap<>();
 
   public Ivy getIvy(final Module module)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {

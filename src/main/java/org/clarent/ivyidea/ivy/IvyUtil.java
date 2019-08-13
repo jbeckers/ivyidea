@@ -89,9 +89,7 @@ public class IvyUtil {
       moduleDescriptor =
           ModuleDescriptorParserRegistry.getInstance()
               .parseDescriptor(ivy.getSettings(), ivyFile.toURI().toURL(), false);
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
-    } catch (IOException e) {
+    } catch (ParseException | IOException e) {
       throw new RuntimeException(e);
     } finally {
       ivy.popContext();
@@ -118,12 +116,8 @@ public class IvyUtil {
       if (file.exists() && !file.isDirectory()) {
         final ModuleDescriptor md = parseIvyFile(file, ivy);
         Set<Configuration> result =
-            new TreeSet<Configuration>(
-                new Comparator<Configuration>() {
-                  public int compare(Configuration o1, Configuration o2) {
-                    return o1.getName().compareToIgnoreCase(o2.getName());
-                  }
-                });
+            new TreeSet<>(
+                (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         result.addAll(Arrays.asList(md.getConfigurations()));
         return result;
       } else {

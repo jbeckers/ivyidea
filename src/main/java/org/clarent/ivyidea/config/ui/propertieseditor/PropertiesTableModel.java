@@ -27,29 +27,33 @@ public class PropertiesTableModel extends AbstractTableModel {
   private List<Property> data;
 
   public PropertiesTableModel() {
-    this.data = new ArrayList<Property>();
+    this.data = new ArrayList<>();
   }
 
   public PropertiesTableModel(Collection<Property> data) {
-    this.data = new ArrayList<Property>(data);
+    this.data = new ArrayList<>(data);
   }
 
   public Property getPropertyAt(int rowIndex) {
     return data.get(rowIndex);
   }
 
+  @Override
   public int getRowCount() {
     return data.size();
   }
 
+  @Override
   public int getColumnCount() {
     return 2;
   }
 
+  @Override
   public boolean isCellEditable(int rowIndex, int columnIndex) {
     return true;
   }
 
+  @Override
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
     String value = aValue == null ? "" : aValue.toString();
     while (rowIndex > data.size()) {
@@ -63,6 +67,7 @@ public class PropertiesTableModel extends AbstractTableModel {
     }
   }
 
+  @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
     if (columnIndex == 0) {
       return data.get(rowIndex).getKey();

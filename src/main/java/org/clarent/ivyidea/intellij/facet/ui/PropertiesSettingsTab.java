@@ -20,7 +20,6 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import java.awt.BorderLayout;
 import javax.swing.JComponent;
@@ -30,6 +29,7 @@ import org.clarent.ivyidea.config.ui.orderedfilelist.OrderedFileList;
 import org.clarent.ivyidea.config.ui.propertieseditor.PropertiesEditor;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
 public class PropertiesSettingsTab extends FacetEditorTab {
@@ -60,23 +60,23 @@ public class PropertiesSettingsTab extends FacetEditorTab {
   private void wireActivityWatcher() {
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(
-        new UserActivityListener() {
-          public void stateChanged() {
-            modified = true;
-          }
-        });
+        () -> modified = true);
     watcher.register(pnlRoot);
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return "Properties (optional)";
   }
 
+  @NotNull
+  @Override
   public JComponent createComponent() {
     return pnlRoot;
   }
 
+  @Override
   public boolean isModified() {
     return modified || orderedFileList.isModified();
   }
@@ -89,13 +89,12 @@ public class PropertiesSettingsTab extends FacetEditorTab {
     return orderedFileList.getFileNames();
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     final Facet facet = editorContext.getFacet();
-    if (facet != null) {
-      IvyIdeaFacetConfiguration configuration =
-          (IvyIdeaFacetConfiguration) facet.getConfiguration();
-      configuration.getPropertiesSettings().setPropertyFiles(orderedFileList.getFileNames());
-    }
+    IvyIdeaFacetConfiguration configuration =
+        (IvyIdeaFacetConfiguration) facet.getConfiguration();
+    configuration.getPropertiesSettings().setPropertyFiles(orderedFileList.getFileNames());
   }
 
   @Override
@@ -104,17 +103,18 @@ public class PropertiesSettingsTab extends FacetEditorTab {
     alreadyOpenedBefore = true;
   }
 
+  @Override
   public void reset() {
     final Facet facet = editorContext.getFacet();
-    if (facet != null) {
-      IvyIdeaFacetConfiguration configuration =
-          (IvyIdeaFacetConfiguration) facet.getConfiguration();
-      orderedFileList.setFileNames(configuration.getPropertiesSettings().getPropertyFiles());
-    }
+    IvyIdeaFacetConfiguration configuration =
+        (IvyIdeaFacetConfiguration) facet.getConfiguration();
+    orderedFileList.setFileNames(configuration.getPropertiesSettings().getPropertyFiles());
   }
 
+  @Override
   public void disposeUIResources() {}
 
+  @SuppressWarnings("UnusedMethod")
   private void createUIComponents() {
     pnlPropertiesFiles = new JPanel(new BorderLayout());
     orderedFileList = new OrderedFileList(editorContext.getProject());

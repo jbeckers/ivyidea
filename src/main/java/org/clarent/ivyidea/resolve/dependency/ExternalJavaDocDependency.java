@@ -29,10 +29,12 @@ public class ExternalJavaDocDependency extends ExternalDependency {
     super(artifact, externalArtifact, configurationName);
   }
 
+  @Override
   protected String getTypeName() {
     return "javadoc";
   }
 
+  @Override
   public OrderRootType getType() {
     return IntellijCompatibilityService.getCompatibilityMethods().getJavadocOrderRootType();
   }

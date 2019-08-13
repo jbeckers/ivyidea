@@ -18,6 +18,7 @@ package org.clarent.ivyidea.config.ui.propertieseditor;
 
 import com.intellij.util.ui.Table;
 import javax.swing.table.TableModel;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Table to allow the user to add custom properties to inject during the ivy resolve process from
@@ -32,7 +33,8 @@ public class PropertiesTable extends Table {
     initComponents();
   }
 
-  public void setModel(TableModel dataModel) {
+  @Override
+  public void setModel(@NotNull TableModel dataModel) {
     super.setModel(dataModel);
     initComponents();
   }

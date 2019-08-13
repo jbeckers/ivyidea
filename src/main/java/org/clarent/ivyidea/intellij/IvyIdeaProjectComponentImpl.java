@@ -31,11 +31,9 @@ public class IvyIdeaProjectComponentImpl
 
   public static final String COMPONENT_NAME = "IvyIDEA.ProjectSettings";
 
-  private final Project project;
   private final IvyIdeaProjectSettings internalState;
 
   public IvyIdeaProjectComponentImpl(Project project) {
-    this.project = project;
     this.internalState = new IvyIdeaProjectSettings();
   }
 
@@ -53,12 +51,14 @@ public class IvyIdeaProjectComponentImpl
 
   public void disposeComponent() {}
 
+  @Override
   @NotNull
   public IvyIdeaProjectSettings getState() {
     return internalState;
   }
 
-  public void loadState(IvyIdeaProjectSettings state) {
+  @Override
+  public void loadState(@NotNull IvyIdeaProjectSettings state) {
     XmlSerializerUtil.copyBean(state, this.getState());
   }
 }

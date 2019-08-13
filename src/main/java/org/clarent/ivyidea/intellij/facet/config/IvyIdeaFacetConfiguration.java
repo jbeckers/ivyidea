@@ -126,6 +126,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return facetPropertiesSettings;
   }
 
+  @Override
   public FacetEditorTab[] createEditorTabs(
       FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
     final PropertiesSettingsTab propertiesSettingsTab = new PropertiesSettingsTab(editorContext);
@@ -134,6 +135,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return new FacetEditorTab[] {basicSettingsTab, propertiesSettingsTab};
   }
 
+  @Override
   public void readExternal(Element element) throws InvalidDataException {
     readBasicSettings(element);
     final Element propertiesSettingsElement = element.getChild("propertiesSettings");
@@ -155,10 +157,10 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
         Boolean.valueOf(element.getAttributeValue("useProjectSettings", Boolean.TRUE.toString())));
     final Element configsToResolveElement = element.getChild("configsToResolve");
     if (configsToResolveElement != null) {
-      Set<String> configsToResolve = new TreeSet<String>();
+      Set<String> configsToResolve = new TreeSet<>();
       @SuppressWarnings("unchecked")
       final List<Element> configElements =
-          (List<Element>) configsToResolveElement.getChildren("config");
+          configsToResolveElement.getChildren("config");
       for (Element configElement : configElements) {
         configsToResolve.add(configElement.getTextTrim());
       }
@@ -166,6 +168,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     }
   }
 
+  @Override
   public void writeExternal(Element element) throws WriteExternalException {
     writeBasicSettings(element);
     final Element propertiesSettingsElement = new Element("propertiesSettings");

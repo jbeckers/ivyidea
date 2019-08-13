@@ -64,6 +64,7 @@ public class IntellijModuleWrapper implements Closeable {
     removeDependenciesNotInList(resolvedDependencies);
   }
 
+  @Override
   public void close() {
     libraryModels.close();
     if (intellijModule.isChanged()) {
@@ -116,7 +117,7 @@ public class IntellijModuleWrapper implements Closeable {
     }
 
     // remove resolved libraries that are no longer used
-    Set<String> librariesInUse = new HashSet<String>();
+    Set<String> librariesInUse = new HashSet<>();
     for (ResolvedDependency dependency : dependenciesToKeep) {
       if (dependency instanceof ExternalDependency) {
         ExternalDependency externalDependency = (ExternalDependency) dependency;
@@ -141,7 +142,7 @@ public class IntellijModuleWrapper implements Closeable {
       OrderRootType type, Collection<ResolvedDependency> resolvedDependencies) {
     final List<String> intellijDependencies = libraryModels.getIntellijDependencyUrlsForType(type);
     final List<String> dependenciesToRemove =
-        new ArrayList<String>(intellijDependencies); // add all dependencies initially
+        new ArrayList<>(intellijDependencies); // add all dependencies initially
     for (String intellijDependency : intellijDependencies) {
       for (ResolvedDependency resolvedDependency : resolvedDependencies) {
         // TODO: We don't touch module to module dependencies here because we currently can't

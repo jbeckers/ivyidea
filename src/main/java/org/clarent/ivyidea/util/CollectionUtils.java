@@ -24,7 +24,7 @@ import java.util.List;
 public class CollectionUtils {
 
   public static <T> List<T> createReversedList(List<T> inputList) {
-    List<T> result = new ArrayList<T>(inputList); // avoid changing the input
+    List<T> result = new ArrayList<>(inputList); // avoid changing the input
     Collections.reverse(result);
     return result;
   }

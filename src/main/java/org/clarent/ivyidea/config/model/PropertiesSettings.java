@@ -22,11 +22,11 @@ import java.util.List;
 /** @author Guy Mahieu */
 public class PropertiesSettings {
 
-  private List<String> propertyFiles = new ArrayList<String>();
+  private List<String> propertyFiles = new ArrayList<>();
 
   public static PropertiesSettings copyDataFrom(PropertiesSettings propertiesSettings) {
     PropertiesSettings result = new PropertiesSettings();
-    result.propertyFiles = new ArrayList<String>(propertiesSettings.propertyFiles);
+    result.propertyFiles = new ArrayList<>(propertiesSettings.propertyFiles);
     return result;
   }
 

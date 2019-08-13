@@ -35,10 +35,12 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     threshold = IvyIdeaConfigHelper.getIvyLoggingThreshold(project);
   }
 
+  @Override
   public void log(final String msg, final int level) {
     rawlog(msg, level);
   }
 
+  @Override
   public void rawlog(final String msg, final int level) {
     rawlog(msg, IvyLogLevel.fromLevelCode(level));
   }
@@ -49,10 +51,12 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     }
   }
 
+  @Override
   protected void doProgress() {
     logToConsoleView(".", SYSTEM_OUTPUT);
   }
 
+  @Override
   protected void doEndProgress(final String msg) {
     logToConsoleView(msg + '\n', SYSTEM_OUTPUT);
   }
@@ -60,10 +64,6 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
   private void logToConsoleView(final String message, final ConsoleViewContentType contentType) {
     ApplicationManager.getApplication()
         .invokeLater(
-            new Runnable() {
-              public void run() {
-                consoleView.print(message, contentType);
-              }
-            });
+            () -> consoleView.print(message, contentType));
   }
 }

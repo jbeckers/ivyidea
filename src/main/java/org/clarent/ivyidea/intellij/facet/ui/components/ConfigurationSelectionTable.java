@@ -28,6 +28,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Table to allow the user to configure the configurations that need to be resolved from within
@@ -44,7 +45,8 @@ public class ConfigurationSelectionTable extends Table {
     initComponents();
   }
 
-  public void setModel(TableModel dataModel) {
+  @Override
+  public void setModel(@NotNull TableModel dataModel) {
     super.setModel(dataModel);
     ((ConfigurationSelectionTableModel) dataModel).setEditable(editable);
     initComponents();
@@ -81,6 +83,7 @@ public class ConfigurationSelectionTable extends Table {
         .getColumn(0)
         .setCellRenderer(
             new BooleanTableCellRenderer() {
+              @Override
               public Component getTableCellRendererComponent(
                   JTable table,
                   Object value,
@@ -106,6 +109,7 @@ public class ConfigurationSelectionTable extends Table {
               private Font regularFont;
               private Font strikethroughFont;
 
+              @Override
               public Component getTableCellRendererComponent(
                   JTable table,
                   Object value,
@@ -127,7 +131,7 @@ public class ConfigurationSelectionTable extends Table {
                 if (configuration.getDeprecated() != null) {
                   if (strikethroughFont == null) {
                     final HashMap<TextAttribute, Object> attribs =
-                        new HashMap<TextAttribute, Object>();
+                        new HashMap<>();
                     attribs.put(TextAttribute.STRIKETHROUGH, Boolean.TRUE);
                     strikethroughFont = regularFont.deriveFont(attribs);
                   }
@@ -147,6 +151,7 @@ public class ConfigurationSelectionTable extends Table {
         .getColumn(2)
         .setCellRenderer(
             new DefaultTableCellRenderer() {
+              @Override
               public Component getTableCellRendererComponent(
                   JTable table,
                   Object value,

@@ -26,14 +26,17 @@ import com.intellij.openapi.roots.OrderRootType;
  */
 class Intellij8Methods extends Intellij7Methods {
 
+  @Override
   public OrderRootType[] getAllOrderRootTypes() {
     return OrderRootType.getAllTypes();
   }
 
+  @Override
   public OrderRootType getJavadocOrderRootType() {
     return JavadocOrderRootType.getInstance();
   }
 
+  @Override
   public boolean isTaskCancelledOnProgressIndicatorCancel() {
     return true;
   }

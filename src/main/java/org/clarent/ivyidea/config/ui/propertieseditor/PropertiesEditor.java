@@ -23,8 +23,6 @@ import javax.swing.JPanel;
 /** @author Guy Mahieu */
 public class PropertiesEditor {
   private JPanel rootPanel;
-  private JButton btnAdd;
-  private JButton btnRemove;
 
   public PropertiesEditor() {}
 

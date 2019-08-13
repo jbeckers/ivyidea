@@ -23,6 +23,7 @@ import static org.clarent.ivyidea.config.model.ArtifactTypeSettings.DependencyCa
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,24 +35,25 @@ import org.jetbrains.annotations.Nullable;
 /** @author Guy Mahieu */
 public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTypeSettings> {
 
+  @SuppressWarnings("ImmutableEnumChecker")
   public enum DependencyCategory {
     Sources("source", "src", "sources", "srcs"),
     Javadoc("javadoc", "doc", "docs", "apidoc", "apidocs", "documentation", "documents"),
     Classes("jar", "mar", "sar", "war", "ear", "ejb", "bundle", "test-jar");
 
-    private final String[] defaultTypes;
+    private final List<String> defaultTypes;
 
     DependencyCategory(String... defaultTypes) {
-      this.defaultTypes = defaultTypes;
+      this.defaultTypes = Collections.unmodifiableList(asList(defaultTypes));
     }
 
     public List<String> getDefaultTypes() {
-      return asList(defaultTypes);
+      return defaultTypes;
     }
   }
 
   private Map<DependencyCategory, Set<String>> typesPerCategory =
-      new HashMap<DependencyCategory, Set<String>>();
+      new HashMap<>();
 
   @Nullable
   public DependencyCategory getCategoryForType(String type) {
@@ -102,8 +104,9 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
     return !configFound;
   }
 
+  @SuppressWarnings("StringSplitter")
   private Set<String> splitArtifactTypes(String artifactTypesString) {
-    Set<String> result = new LinkedHashSet<String>();
+    Set<String> result = new LinkedHashSet<>();
     if (artifactTypesString != null) {
       final String[] types = artifactTypesString.split(",");
       for (String type : types) {
@@ -129,14 +132,13 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
     return sb.toString();
   }
 
+  @Override
   public ArtifactTypeSettings getState() {
     return this;
   }
 
-  public void loadState(ArtifactTypeSettings state) {
-    if (state == null) {
-      state = new ArtifactTypeSettings();
-    }
+  @Override
+  public void loadState(@NotNull ArtifactTypeSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

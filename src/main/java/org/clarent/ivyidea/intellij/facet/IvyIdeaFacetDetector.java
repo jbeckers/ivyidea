@@ -36,15 +36,19 @@ public class IvyIdeaFacetDetector
     super("IvyIDEA");
   }
 
+  @NotNull
+  @Override
   public FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> getFacetType() {
     return IvyIdeaFacetType.getInstance();
   }
 
+  @Override
   @NotNull
   public FileType getFileType() {
     return FileTypeManager.getInstance().getFileTypeByExtension("xml");
   }
 
+  @Override
   @NotNull
   public ElementPattern<FileContent> createSuitableFilePattern() {
     return FileContentPattern.fileContent().withName("ivy.xml").xmlWithRootTag("ivy-module");
@@ -54,7 +58,7 @@ public class IvyIdeaFacetDetector
   protected IvyIdeaFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
     final IvyIdeaFacetConfiguration result = super.createConfiguration(files);
 
-    if (!files.isEmpty()) {
+    if (result != null && !files.isEmpty()) {
       VirtualFile ivyFile = files.iterator().next();
       result.setIvyFile(ivyFile.getPath());
     }

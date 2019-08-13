@@ -57,8 +57,8 @@ class DependencyResolver {
   private final List<ResolvedDependency> resolvedDependencies;
 
   public DependencyResolver() {
-    resolveProblems = new ArrayList<ResolveProblem>();
-    resolvedDependencies = new ArrayList<ResolvedDependency>();
+    resolveProblems = new ArrayList<>();
+    resolvedDependencies = new ArrayList<>();
   }
 
   public List<ResolveProblem> getResolveProblems() {
@@ -81,9 +81,7 @@ class DependencyResolver {
       final ResolveReport resolveReport =
           ivy.resolve(ivyFile.toURI().toURL(), IvyIdeaConfigHelper.createResolveOptions(module));
       extractDependencies(ivy, resolveReport, new IntellijModuleDependencies(module, ivyManager));
-    } catch (ParseException e) {
-      throw new IvyFileReadException(ivyFile.getAbsolutePath(), module.getName(), e);
-    } catch (IOException e) {
+    } catch (ParseException | IOException e) {
       throw new IvyFileReadException(ivyFile.getAbsolutePath(), module.getName(), e);
     }
   }
@@ -101,7 +99,7 @@ class DependencyResolver {
 
       @SuppressWarnings({"unchecked"})
       Set<ModuleRevisionId> dependencies =
-          (Set<ModuleRevisionId>) configurationReport.getModuleRevisionIds();
+          configurationReport.getModuleRevisionIds();
       for (ModuleRevisionId dependency : dependencies) {
         if (moduleDependencies.isInternalIntellijModuleDependency(dependency.getModuleId())) {
           resolvedDependencies.add(

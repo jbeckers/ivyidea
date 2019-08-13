@@ -109,10 +109,12 @@ public class IvyIdeaExceptionDialog extends DialogWrapper {
     }
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return rootPanel;
   }
 
+  @NotNull
   @Override
   protected Action[] createActions() {
     return new Action[] {getOKAction()};

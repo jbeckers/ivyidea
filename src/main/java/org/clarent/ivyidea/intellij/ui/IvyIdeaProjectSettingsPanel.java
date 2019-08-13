@@ -52,16 +52,11 @@ public class IvyIdeaProjectSettingsPanel {
   private TextFieldWithBrowseButton txtIvySettingsFile;
   private JPanel projectSettingsPanel;
   private JCheckBox chkValidateIvyFiles;
-  private JTabbedPane tabbedPane1;
-  private JLabel lblIvySettingsErrorMessage;
-  private JRadioButton useIvyDefaultRadioButton;
   private JRadioButton useYourOwnIvySettingsRadioButton;
   private JPanel pnlPropertiesFiles;
   private JComboBox ivyLogLevelComboBox;
   private JCheckBox includeModuleNameCheckBox;
   private JCheckBox includeConfigurationNameCheckBox;
-  private JPanel pnlIvyLogging;
-  private JPanel pnlLibraryNaming;
   private JTextField txtClassesArtifactTypes;
   private JTextField txtSourcesArtifactTypes;
   private JTextField txtJavadocArtifactTypes;
@@ -70,8 +65,6 @@ public class IvyIdeaProjectSettingsPanel {
   private JCheckBox chkBackground;
   private JCheckBox autoAttachSources;
   private JCheckBox autoAttachJavadocs;
-  private JPanel pnlIvyFiles;
-  private JPanel pnlArtefactTypes;
   private IvyIdeaProjectSettings internalState;
   private OrderedFileList orderedFileList;
   private final Project project;
@@ -81,7 +74,7 @@ public class IvyIdeaProjectSettingsPanel {
     this.internalState = state;
 
     txtIvySettingsFile.addBrowseFolderListener(
-        "Select ivy settings file",
+        "Select Ivy Settings File",
         null,
         project,
         new FileChooserDescriptor(true, false, false, false, false, false));
@@ -92,21 +85,13 @@ public class IvyIdeaProjectSettingsPanel {
 
   private void wireIvySettingsRadioButtons() {
     useYourOwnIvySettingsRadioButton.addChangeListener(
-        new ChangeListener() {
-          public void stateChanged(ChangeEvent e) {
-            txtIvySettingsFile.setEnabled(useYourOwnIvySettingsRadioButton.isSelected());
-          }
-        });
+        e -> txtIvySettingsFile.setEnabled(useYourOwnIvySettingsRadioButton.isSelected()));
   }
 
   private void wireActivityWatchers() {
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(
-        new UserActivityListener() {
-          public void stateChanged() {
-            modified = true;
-          }
-        });
+        () -> modified = true);
     watcher.register(projectSettingsPanel);
   }
 
@@ -185,6 +170,7 @@ public class IvyIdeaProjectSettingsPanel {
 
   public void disposeUIResources() {}
 
+  @SuppressWarnings("UnusedMethod")
   private void createUIComponents() {
     pnlPropertiesFiles = new JPanel(new BorderLayout());
     orderedFileList = new OrderedFileList(project);
