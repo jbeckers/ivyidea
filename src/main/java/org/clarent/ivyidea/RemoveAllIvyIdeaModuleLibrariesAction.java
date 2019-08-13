@@ -18,7 +18,7 @@ package org.clarent.ivyidea;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
-        final Project project = DataKeys.PROJECT.getData(e.getDataContext());
+        final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
         ProgressManager.getInstance().run(new IvyIdeaBackgroundTask(e) {
             public void run(@NotNull final ProgressIndicator indicator) {
                 final Module[] facet = IntellijUtils.getAllModulesWithIvyIdeaFacet(project);

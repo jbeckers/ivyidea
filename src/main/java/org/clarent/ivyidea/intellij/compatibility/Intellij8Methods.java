@@ -16,8 +16,6 @@
 
 package org.clarent.ivyidea.intellij.compatibility;
 
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 
@@ -34,10 +32,6 @@ class Intellij8Methods extends Intellij7Methods {
 
     public OrderRootType getJavadocOrderRootType() {
         return JavadocOrderRootType.getInstance();
-    }
-
-    public ModuleType getJavaModuleType() {
-        return StdModuleTypes.JAVA;
     }
 
     public boolean isTaskCancelledOnProgressIndicatorCancel() {

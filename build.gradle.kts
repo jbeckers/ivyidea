@@ -1,8 +1,3 @@
-plugins {
-    id("org.jetbrains.intellij") version "0.4.10"
-    java
-}
-
 group = "org.clarent.ivyidea"
 version = "1.0.14"
 
@@ -12,19 +7,32 @@ repositories {
 
 dependencies {
     compile("org.apache.ivy", "ivy", "2.5.0-rc1")
-    runtime("oro", "oro", "2.0.8")
-    runtime("commons-vfs", "commons-vfs", "1.0")
-    runtime("com.jcraft", "jsch", "0.1.31")
+    runtimeOnly("org.apache.httpcomponents", "httpclient", "4.5.9") // optional httpclient for better http handling
+    runtimeOnly("oro", "oro", "2.0.8") // to use optional glob matcher
+    runtimeOnly("org.apache.commons", "commons-vfs2", "2.4") // optional VirtualFileSystem(VFS) support
+    runtimeOnly("com.jcraft", "jsch", "0.1.55") // optional SFTP support
+    runtimeOnly("com.jcraft", "jsch.agentproxy", "0.0.9") // optional SFTP support
+    runtimeOnly("com.jcraft", "jsch.agentproxy.connector-factory", "0.0.9") // optional SFTP support
+    runtimeOnly("com.jcraft", "jsch.agentproxy.jsch", "0.0.9") // optional SFTP support
+    runtimeOnly("org.bouncycastle", "bcpg-jdk15on", "1.62") // optional
+    runtimeOnly("org.bouncycastle", "bcprov-jdk15on", "1.62") // optional
     testCompile("junit", "junit", "4.12")
+}
+
+plugins {
+    java
+    id("org.jetbrains.intellij") version "0.4.10"
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = "LATEST-EAP-SNAPSHOT"
 }
+
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_1_8
 }
+
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
     changeNotes("""
             <strong>1.0.14</strong>
