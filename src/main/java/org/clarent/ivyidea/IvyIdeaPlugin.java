@@ -17,19 +17,14 @@
 package org.clarent.ivyidea;
 
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
-public class IvyIdeaPlugin implements ApplicationComponent {
+public interface IvyIdeaPlugin {
 
-  @NonNls
-  @NotNull
-  public String getComponentName() {
-    return "IvyIDEA.PluginApplicationComponent";
+  static IvyIdeaPlugin getInstance() {
+    return ServiceManager.getService(IvyIdeaPlugin.class);
   }
-
-  public void initComponent() {}
-
-  public void disposeComponent() {}
 }
