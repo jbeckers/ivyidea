@@ -11,6 +11,10 @@ repositories {
 }
 
 dependencies {
+    compile("org.apache.ivy", "ivy", "2.5.0-rc1")
+    runtime("oro", "oro", "2.0.8")
+    runtime("commons-vfs", "commons-vfs", "1.0")
+    runtime("com.jcraft", "jsch", "0.1.31")
     testCompile("junit", "junit", "4.12")
 }
 
