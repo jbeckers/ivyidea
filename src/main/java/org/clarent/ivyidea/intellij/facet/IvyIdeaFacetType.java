@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +27,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiFile;
@@ -59,7 +60,7 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
       String name,
       @NotNull IvyIdeaFacetConfiguration configuration,
       @Nullable Facet underlyingFacet) {
-    return new IvyIdeaFacet(this, module, name, configuration, underlyingFacet);
+    return new IvyIdeaFacet(module, this, name, configuration, underlyingFacet);
   }
 
   @Override
@@ -70,6 +71,7 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
     // IntellijCompatibilityService.getCompatibilityMethods().getJavaModuleType().equals(moduleType);
   }
 
+  @Nullable
   @Override
   public javax.swing.Icon getIcon() {
     return IvyIdeaIcons.MAIN_ICON_SMALL;

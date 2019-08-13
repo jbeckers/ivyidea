@@ -1,5 +1,7 @@
 /*
- * Copyright 2010 Maarten Coene
+ * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +29,7 @@ import com.intellij.util.indexing.FileContent;
 import java.util.Collection;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Maarten Coene */
 public class IvyIdeaFacetDetector
@@ -55,6 +58,7 @@ public class IvyIdeaFacetDetector
   }
 
   @Override
+  @Nullable
   protected IvyIdeaFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
     final IvyIdeaFacetConfiguration result = super.createConfiguration(files);
 

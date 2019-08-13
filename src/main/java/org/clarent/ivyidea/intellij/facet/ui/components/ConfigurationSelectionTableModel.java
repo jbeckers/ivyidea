@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +27,7 @@ import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 public class ConfigurationSelectionTableModel extends AbstractTableModel {
@@ -33,8 +36,8 @@ public class ConfigurationSelectionTableModel extends AbstractTableModel {
   private static final int COLUMN_NAME = 1;
   private static final int COLUMN_DESCRIPTION = 2;
 
-  private List<Configuration> data;
-  private Set<Integer> selectedIndexes;
+  private final List<Configuration> data;
+  private final Set<Integer> selectedIndexes;
   private boolean editable = true;
 
   public ConfigurationSelectionTableModel() {
@@ -105,6 +108,7 @@ public class ConfigurationSelectionTableModel extends AbstractTableModel {
   }
 
   @Override
+  @Nullable
   public Object getValueAt(int rowIndex, int columnIndex) {
     final Configuration configuration = getConfigurationAt(rowIndex);
     if (columnIndex == COLUMN_SELECTION) {

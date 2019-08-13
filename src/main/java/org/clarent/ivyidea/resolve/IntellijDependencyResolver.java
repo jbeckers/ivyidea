@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +40,7 @@ public class IntellijDependencyResolver {
   private List<ResolvedDependency> dependencies = Collections.emptyList();
   private List<ResolveProblem> problems = Collections.emptyList();
 
-  private IvyManager ivyManager;
+  private final IvyManager ivyManager;
 
   public IntellijDependencyResolver(IvyManager ivyManager) {
     this.ivyManager = ivyManager;

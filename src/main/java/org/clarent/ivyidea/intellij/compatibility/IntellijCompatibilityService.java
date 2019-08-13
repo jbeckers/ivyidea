@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +27,9 @@ import java.util.logging.Logger;
  *
  * @author Guy Mahieu
  */
-public class IntellijCompatibilityService {
+public final class IntellijCompatibilityService {
 
-  private static Logger LOGGER = Logger.getLogger("IvyIDEA-Compatibility");
+  private static final Logger LOGGER = Logger.getLogger("IvyIDEA-Compatibility");
 
   private static IntellijCompatibilityMethods compatibilityMethods;
 
@@ -51,6 +53,9 @@ public class IntellijCompatibilityService {
       LOGGER.info("Non-numeric major version encountered:" + majorVersion);
       compatibilityMethods = new Intellij12Methods();
     }
+  }
+
+  private IntellijCompatibilityService() {
   }
 
   public static IntellijCompatibilityMethods getCompatibilityMethods() {

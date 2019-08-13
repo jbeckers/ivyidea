@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,7 +152,7 @@ class DependencyResolver {
   private void addExternalDependency(
       Artifact artifact, File artifactFile, String resolvedConfiguration, Project project) {
     ExternalDependency externalDependency =
-        ExternalDependencyFactory.getInstance()
+        ExternalDependencyFactory
             .createExternalDependency(artifact, artifactFile, project, resolvedConfiguration);
     if (externalDependency == null) {
       resolveProblems.add(
@@ -174,12 +176,12 @@ class DependencyResolver {
     }
   }
 
-  private boolean isSource(Project project, Artifact artifact) {
+  private static boolean isSource(Project project, Artifact artifact) {
     return ArtifactTypeSettings.DependencyCategory.Sources
         == ExternalDependencyFactory.determineCategory(project, artifact);
   }
 
-  private boolean isJavadoc(Project project, Artifact artifact) {
+  private static boolean isJavadoc(Project project, Artifact artifact) {
     return ArtifactTypeSettings.DependencyCategory.Javadoc
         == ExternalDependencyFactory.determineCategory(project, artifact);
   }

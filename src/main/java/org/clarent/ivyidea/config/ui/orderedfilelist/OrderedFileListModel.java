@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +25,7 @@ import javax.swing.AbstractListModel;
 /** @author Guy Mahieu */
 class OrderedFileListModel extends AbstractListModel {
 
-  private List<String> items = new ArrayList<>();
+  private final List<String> items = new ArrayList<>();
 
   public List<String> getAllItems() {
     return new ArrayList<>(items);

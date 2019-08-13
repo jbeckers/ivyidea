@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,16 +27,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
-public class ExternalDependencyFactory {
+public final class ExternalDependencyFactory {
 
-  private static ExternalDependencyFactory instance = new ExternalDependencyFactory();
-
-  public static ExternalDependencyFactory getInstance() {
-    return instance;
+  private ExternalDependencyFactory() {
   }
 
   @Nullable
-  public ExternalDependency createExternalDependency(
+  public static ExternalDependency createExternalDependency(
       @NotNull Artifact artifact,
       @Nullable File file,
       @NotNull Project project,

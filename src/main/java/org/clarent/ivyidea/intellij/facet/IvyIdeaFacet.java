@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +36,7 @@ public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
   }
 
   public IvyIdeaFacet(
-      @NotNull FacetType facetType,
-      @NotNull Module module,
+      @NotNull Module module, @NotNull FacetType facetType,
       String name,
       @NotNull IvyIdeaFacetConfiguration configuration,
       Facet underlyingFacet) {
@@ -44,8 +45,7 @@ public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
 
   public IvyIdeaFacet(@NotNull Module module) {
     this(
-        FacetTypeRegistry.getInstance().findFacetType(IvyIdeaFacetType.ID),
-        module,
+        module, FacetTypeRegistry.getInstance().findFacetType(IvyIdeaFacetType.ID),
         "IvyIdeaFacet",
         new IvyIdeaFacetConfiguration(),
         null);

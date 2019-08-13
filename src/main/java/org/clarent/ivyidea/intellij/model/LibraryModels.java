@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +41,7 @@ class LibraryModels implements Closeable {
   private final ConcurrentMap<String, Library.ModifiableModel> libraryModels =
       new ConcurrentHashMap<>();
 
-  private ModifiableRootModel intellijModule;
+  private final ModifiableRootModel intellijModule;
 
   LibraryModels(ModifiableRootModel intellijModule) {
     this.intellijModule = intellijModule;
@@ -62,7 +64,7 @@ class LibraryModels implements Closeable {
     return libraryModels.get(libraryName);
   }
 
-  private Library getIvyIdeaLibrary(
+  private static Library getIvyIdeaLibrary(
       ModifiableRootModel modifiableRootModel, final String libraryName) {
     final LibraryTable libraryTable = modifiableRootModel.getModuleLibraryTable();
     final Library library = libraryTable.getLibraryByName(libraryName);

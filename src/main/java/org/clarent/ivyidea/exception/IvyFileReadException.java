@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +26,8 @@ package org.clarent.ivyidea.exception;
  */
 public class IvyFileReadException extends IvyIdeaException {
 
-  private String fileName;
-  private String moduleName;
+  private final String fileName;
+  private final String moduleName;
 
   public IvyFileReadException(String fileName, String moduleName, Throwable cause) {
     super(cause);

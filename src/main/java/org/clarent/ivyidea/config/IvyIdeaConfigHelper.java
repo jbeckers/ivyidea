@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,9 +57,12 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Guy Mahieu
  */
-public class IvyIdeaConfigHelper {
+public final class IvyIdeaConfigHelper {
 
   private static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
+
+  private IvyIdeaConfigHelper() {
+  }
 
   public static String getCreatedLibraryName(
       final ModifiableRootModel model, final String configName) {
@@ -299,7 +304,7 @@ public class IvyIdeaConfigHelper {
         properties); // inject our properties; they may be needed to parse the settings file
 
     try {
-      if (!StringUtils.isBlank(settingsFile)) {
+      if (settingsFile != null && !StringUtils.isBlank(settingsFile)) {
         if (settingsFile.startsWith("http://") || settingsFile.startsWith("https://")) {
           HttpConfigurable.getInstance().prepareURL(settingsFile);
           s.load(new URL(settingsFile));

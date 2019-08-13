@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +35,7 @@ import org.clarent.ivyidea.resolve.problem.ResolveProblem;
 /** @author Guy Mahieu */
 public abstract class AbstractResolveAction extends AnAction {
 
-  protected void updateIntellijModel(
+  protected static void updateIntellijModel(
       final Module module, final List<ResolvedDependency> dependencies) {
     ApplicationManager.getApplication()
         .invokeLater(
@@ -50,13 +52,13 @@ public abstract class AbstractResolveAction extends AnAction {
                     }));
   }
 
-  protected void clearConsole(final Project project) {
+  protected static void clearConsole(final Project project) {
     ApplicationManager.getApplication()
         .invokeLater(
             () -> IntellijUtils.getConsoleView(project).clear());
   }
 
-  protected void reportProblems(final Module module, final List<ResolveProblem> problems) {
+  protected static void reportProblems(final Module module, final List<ResolveProblem> problems) {
     ApplicationManager.getApplication()
         .invokeLater(
             () -> {

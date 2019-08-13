@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +26,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import java.io.File;
 import java.text.ParseException;
@@ -40,8 +41,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -72,7 +71,7 @@ public class BasicSettingsTab extends FacetEditorTab {
   private JLabel lblIvyFileMessage;
   private JRadioButton rbnUseDefaultIvySettings;
   private JRadioButton rbnUseCustomIvySettings;
-  private FacetEditorContext editorContext;
+  private final FacetEditorContext editorContext;
   private final PropertiesSettingsTab propertiesSettingsTab;
   private boolean modified;
   private boolean foundConfigsBefore = false;
@@ -192,6 +191,7 @@ public class BasicSettingsTab extends FacetEditorTab {
     }
   }
 
+  @Nullable
   private Set<Configuration> loadConfigurations()
       throws IvySettingsNotFoundException, IvySettingsFileReadException, ParseException {
     return IvyUtil.loadConfigurations(

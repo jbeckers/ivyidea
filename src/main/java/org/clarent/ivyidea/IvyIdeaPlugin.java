@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +18,13 @@
 
 package org.clarent.ivyidea;
 
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ServiceManager;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
-public interface IvyIdeaPlugin {
+public final class IvyIdeaPlugin {
+
+  private IvyIdeaPlugin() {
+  }
 
   static IvyIdeaPlugin getInstance() {
     return ServiceManager.getService(IvyIdeaPlugin.class);

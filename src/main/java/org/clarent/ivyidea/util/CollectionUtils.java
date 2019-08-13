@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +23,10 @@ import java.util.Collections;
 import java.util.List;
 
 /** @author Guy Mahieu */
-public class CollectionUtils {
+public final class CollectionUtils {
+
+  private CollectionUtils() {
+  }
 
   public static <T> List<T> createReversedList(List<T> inputList) {
     List<T> result = new ArrayList<>(inputList); // avoid changing the input

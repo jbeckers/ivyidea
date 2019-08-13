@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +39,9 @@ class IntellijModuleDependencies {
 
   private static final Logger LOGGER = Logger.getLogger(IntellijModuleDependencies.class.getName());
 
-  private IvyManager ivyManager;
-  private Module module;
-  private Map<ModuleId, Module> moduleDependencies = new HashMap<>();
+  private final IvyManager ivyManager;
+  private final Module module;
+  private final Map<ModuleId, Module> moduleDependencies = new HashMap<>();
 
   public IntellijModuleDependencies(Module module, IvyManager ivyManager)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {

@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +34,7 @@ public class IvyIdeaProjectSettingsComponent implements Configurable {
 
   private final Project project;
 
+  @Nullable
   private IvyIdeaProjectSettingsPanel settingsPanel;
 
   public IvyIdeaProjectSettingsComponent(Project project) {
@@ -45,7 +48,7 @@ public class IvyIdeaProjectSettingsComponent implements Configurable {
   }
 
   @Nullable
-  public Icon getIcon() {
+  public static Icon getIcon() {
     return IvyIdeaIcons.MAIN_ICON;
   }
 

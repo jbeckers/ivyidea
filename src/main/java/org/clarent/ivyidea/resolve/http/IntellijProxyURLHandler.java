@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +30,7 @@ import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /** @author Guy Mahieu */
-public class IntellijProxyURLHandler extends AbstractURLHandler {
+public final class IntellijProxyURLHandler extends AbstractURLHandler {
 
   private final URLHandler delegate;
 
@@ -85,7 +87,7 @@ public class IntellijProxyURLHandler extends AbstractURLHandler {
     delegate.setRequestMethod(requestMethod);
   }
 
-  private void prepareURL(URL dest) throws IOException {
+  private static void prepareURL(URL dest) throws IOException {
     HttpConfigurable.getInstance().prepareURL(dest.toExternalForm());
   }
 }

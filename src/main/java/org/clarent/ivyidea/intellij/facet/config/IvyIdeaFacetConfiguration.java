@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +23,6 @@ import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -136,7 +136,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
+  public void readExternal(Element element) {
     readBasicSettings(element);
     final Element propertiesSettingsElement = element.getChild("propertiesSettings");
     if (propertiesSettingsElement != null) {
@@ -169,7 +169,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
   }
 
   @Override
-  public void writeExternal(Element element) throws WriteExternalException {
+  public void writeExternal(Element element) {
     writeBasicSettings(element);
     final Element propertiesSettingsElement = new Element("propertiesSettings");
     if (facetPropertiesSettings != null) {

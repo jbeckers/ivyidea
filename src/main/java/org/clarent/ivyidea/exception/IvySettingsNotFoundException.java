@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +30,8 @@ public class IvySettingsNotFoundException extends IvyIdeaException {
     Module
   }
 
-  private ConfigLocation configLocation;
-  private String configName;
+  private final ConfigLocation configLocation;
+  private final String configName;
 
   public IvySettingsNotFoundException(
       String message, ConfigLocation configLocation, String configName) {

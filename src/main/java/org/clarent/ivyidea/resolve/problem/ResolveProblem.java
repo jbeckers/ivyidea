@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +23,10 @@ import org.jetbrains.annotations.Nullable;
 /** @author Guy Mahieu */
 public class ResolveProblem {
 
-  private String targetId;
-  private String message;
-  private Throwable throwable;
+  private final String targetId;
+  private final String message;
+  @Nullable
+  private final Throwable throwable;
 
   public ResolveProblem(String targetId, String message) {
     this(targetId, message, null);
@@ -43,6 +46,7 @@ public class ResolveProblem {
     return message;
   }
 
+  @Nullable
   public Throwable getThrowable() {
     return throwable;
   }

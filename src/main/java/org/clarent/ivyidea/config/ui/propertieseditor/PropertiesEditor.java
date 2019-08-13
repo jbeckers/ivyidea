@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +19,6 @@
 package org.clarent.ivyidea.config.ui.propertieseditor;
 
 import java.awt.Component;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /** @author Guy Mahieu */

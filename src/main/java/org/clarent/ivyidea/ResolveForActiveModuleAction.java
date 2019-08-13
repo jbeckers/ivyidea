@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +78,7 @@ public class ResolveForActiveModuleAction extends AbstractResolveAction {
     updatePresentation(e.getPresentation(), activeModule);
   }
 
-  private void updatePresentation(Presentation presentation, Module activeModule) {
+  private static void updatePresentation(Presentation presentation, Module activeModule) {
     boolean linkEnabled = IntellijUtils.containsIvyIdeaFacet(activeModule);
     presentation.setText(
         MessageFormat.format(MENU_TEXT, linkEnabled ? activeModule.getName() : "active"));

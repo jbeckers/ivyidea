@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +54,7 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
     }
   }
 
-  private Map<DependencyCategory, Set<String>> typesPerCategory =
+  private final Map<DependencyCategory, Set<String>> typesPerCategory =
       new HashMap<>();
 
   @Nullable
@@ -105,7 +107,7 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
   }
 
   @SuppressWarnings("StringSplitter")
-  private Set<String> splitArtifactTypes(String artifactTypesString) {
+  private static Set<String> splitArtifactTypes(String artifactTypesString) {
     Set<String> result = new LinkedHashSet<>();
     if (artifactTypesString != null) {
       final String[] types = artifactTypesString.split(",");
@@ -119,7 +121,7 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
     return result;
   }
 
-  private String joinArtifactTypes(Iterable<String> artifactTypes) {
+  private static String joinArtifactTypes(Iterable<String> artifactTypes) {
     if (artifactTypes == null) {
       return "";
     }

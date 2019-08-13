@@ -1,5 +1,7 @@
 /*
- * Copyright 2013 Maarten Coene
+ * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +28,8 @@ import org.apache.ivy.Ivy;
  */
 public class ProgressMonitorThread extends Thread {
 
-  private ProgressIndicator indicator;
-  private Thread resolveThread;
+  private final ProgressIndicator indicator;
+  private final Thread resolveThread;
   private Ivy ivy;
 
   public ProgressMonitorThread(ProgressIndicator indicator, Thread resolveThread) {

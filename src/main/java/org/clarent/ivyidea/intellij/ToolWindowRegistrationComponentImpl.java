@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +29,13 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.clarent.ivyidea.intellij.ui.IvyIdeaIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 public class ToolWindowRegistrationComponentImpl implements ToolWindowRegistrationComponent {
 
-  private Project project;
+  private final Project project;
+  @Nullable
   private ConsoleView console;
 
   public ToolWindowRegistrationComponentImpl(Project project) {
@@ -43,7 +47,7 @@ public class ToolWindowRegistrationComponentImpl implements ToolWindowRegistrati
   public void disposeComponent() {}
 
   @NotNull
-  public String getComponentName() {
+  public static String getComponentName() {
     return COMPONENT_NAME;
   }
 
@@ -55,6 +59,7 @@ public class ToolWindowRegistrationComponentImpl implements ToolWindowRegistrati
     unregisterToolWindow();
   }
 
+  @Nullable
   @Override
   public ConsoleView getConsole() {
     return console;

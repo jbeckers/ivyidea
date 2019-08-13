@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +18,7 @@
 
 package org.clarent.ivyidea.intellij.facet.config;
 
-import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import java.util.ArrayList;
 import java.util.List;
 import org.clarent.ivyidea.config.model.PropertiesSettings;
@@ -48,7 +48,7 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
   }
 
   @Override
-  public void readExternal(Element propertiesSettingsElement) throws InvalidDataException {
+  public void readExternal(Element propertiesSettingsElement) {
     final Element propertiesFilesElement = propertiesSettingsElement.getChild("propertiesFiles");
     List<String> fileNames = new ArrayList<>();
     if (propertiesFilesElement != null) {
@@ -67,7 +67,7 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
   }
 
   @Override
-  public void writeExternal(Element propertiesSettingsElement) throws WriteExternalException {
+  public void writeExternal(Element propertiesSettingsElement) {
     final Element propertiesFilesElement = new Element("propertiesFiles");
     propertiesFilesElement.setAttribute(
         "includeProjectLevelPropertiesFiles",

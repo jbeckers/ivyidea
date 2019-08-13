@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Guy Mahieu
  */
-public class IvyIdeaExceptionDialog extends DialogWrapper {
+public final class IvyIdeaExceptionDialog extends DialogWrapper {
 
   private JPanel rootPanel;
   private JTextArea txtMessage;
