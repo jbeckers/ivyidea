@@ -34,7 +34,7 @@ configure<JavaPluginConvention> {
 }
 
 tasks.getByName<org.jetbrains.intellij.tasks.PatchPluginXmlTask>("patchPluginXml") {
-    pluginId("be.clarent.ivyidea")
+    pluginId("org.clarent.ivyidea")
     pluginDescription("""
         Resolves module dependencies through Ivy
         <p>Features:
