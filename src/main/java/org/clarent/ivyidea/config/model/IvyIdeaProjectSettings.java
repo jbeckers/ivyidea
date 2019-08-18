@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +18,8 @@
 
 package org.clarent.ivyidea.config.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.clarent.ivyidea.logging.IvyLogLevel;
 
@@ -35,7 +39,7 @@ public class IvyIdeaProjectSettings {
   private String ivyLogLevelThreshold = IvyLogLevel.None.name();
   private ArtifactTypeSettings artifactTypeSettings = new ArtifactTypeSettings();
 
-  private PropertiesSettings propertiesSettings = new PropertiesSettings();
+  private List<String> propertiesSettings = new ArrayList<>();
 
   public String getIvySettingsFile() {
     return ivySettingsFile;
@@ -101,11 +105,11 @@ public class IvyIdeaProjectSettings {
     this.useCustomIvySettings = useCustomIvySettings;
   }
 
-  public PropertiesSettings getPropertiesSettings() {
+  public List<String> getPropertiesSettings() {
     return propertiesSettings;
   }
 
-  public void setPropertiesSettings(PropertiesSettings propertiesSettings) {
+  public void setPropertiesSettings(List<String> propertiesSettings) {
     this.propertiesSettings = propertiesSettings;
   }
 

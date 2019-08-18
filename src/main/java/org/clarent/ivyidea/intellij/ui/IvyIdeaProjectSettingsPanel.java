@@ -29,6 +29,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.UserActivityWatcher;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -36,7 +37,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import org.clarent.ivyidea.config.model.IvyIdeaProjectSettings;
-import org.clarent.ivyidea.config.model.PropertiesSettings;
 import org.clarent.ivyidea.config.ui.orderedfilelist.OrderedFileList;
 import org.clarent.ivyidea.logging.IvyLogLevel;
 
@@ -100,14 +100,6 @@ public class IvyIdeaProjectSettingsPanel {
     return modified;
   }
 
-  private List<String> getPropertiesFiles() {
-    return orderedFileList.getFileNames();
-  }
-
-  private void setPropertiesFiles(List<String> fileNames) {
-    orderedFileList.setFileNames(fileNames);
-  }
-
   public void apply() throws ConfigurationException {
     if (internalState == null) {
       internalState = new IvyIdeaProjectSettings();
@@ -120,8 +112,7 @@ public class IvyIdeaProjectSettingsPanel {
     internalState.setAlwaysAttachSources(autoAttachSources.isSelected());
     internalState.setAlwaysAttachJavadocs(autoAttachJavadocs.isSelected());
     internalState.setUseCustomIvySettings(useYourOwnIvySettingsRadioButton.isSelected());
-    final PropertiesSettings propertiesSettings = new PropertiesSettings();
-    propertiesSettings.setPropertyFiles(getPropertiesFiles());
+    final List<String> propertiesSettings = new ArrayList<>(orderedFileList.getFileNames());
     internalState.setPropertiesSettings(propertiesSettings);
     internalState.setLibraryNameIncludesModule(includeModuleNameCheckBox.isSelected());
     internalState.setLibraryNameIncludesConfiguration(
@@ -153,7 +144,7 @@ public class IvyIdeaProjectSettingsPanel {
     autoAttachSources.setSelected(config.isAlwaysAttachSources());
     autoAttachJavadocs.setSelected(config.isAlwaysAttachJavadocs());
     useYourOwnIvySettingsRadioButton.setSelected(config.isUseCustomIvySettings());
-    setPropertiesFiles(config.getPropertiesSettings().getPropertyFiles());
+    orderedFileList.setFileNames(config.getPropertiesSettings());
     includeModuleNameCheckBox.setSelected(config.isLibraryNameIncludesModule());
     includeConfigurationNameCheckBox.setSelected(config.isLibraryNameIncludesConfiguration());
     ivyLogLevelComboBox.setSelectedItem(IvyLogLevel.fromName(config.getIvyLogLevelThreshold()));
