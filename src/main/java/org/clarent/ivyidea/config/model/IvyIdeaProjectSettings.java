@@ -18,8 +18,6 @@
 
 package org.clarent.ivyidea.config.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.clarent.ivyidea.logging.IvyLogLevel;
 
@@ -39,7 +37,7 @@ public class IvyIdeaProjectSettings {
   private String ivyLogLevelThreshold = IvyLogLevel.None.name();
   private ArtifactTypeSettings artifactTypeSettings = new ArtifactTypeSettings();
 
-  private List<String> propertiesSettings = new ArrayList<>();
+  private PropertiesSettings propertiesSettings = new PropertiesSettings();
 
   public String getIvySettingsFile() {
     return ivySettingsFile;
@@ -105,11 +103,11 @@ public class IvyIdeaProjectSettings {
     this.useCustomIvySettings = useCustomIvySettings;
   }
 
-  public List<String> getPropertiesSettings() {
+  public PropertiesSettings getPropertiesSettings() {
     return propertiesSettings;
   }
 
-  public void setPropertiesSettings(List<String> propertiesSettings) {
+  public void setPropertiesSettings(PropertiesSettings propertiesSettings) {
     this.propertiesSettings = propertiesSettings;
   }
 

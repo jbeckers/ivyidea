@@ -20,23 +20,21 @@ package org.clarent.ivyidea.intellij.facet.config;
 
 import com.intellij.openapi.util.JDOMExternalizable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import org.clarent.ivyidea.config.model.PropertiesSettings;
 import org.jdom.Element;
 
 /** @author Guy Mahieu */
-public class FacetPropertiesSettings implements JDOMExternalizable {
+public class FacetPropertiesSettings extends PropertiesSettings implements JDOMExternalizable {
 
   private boolean includeProjectLevelPropertiesFiles = true;
   private boolean includeProjectLevelAdditionalProperties = true;
-  private final List<String> propertyFiles = new ArrayList<>();
 
   public boolean isIncludeProjectLevelPropertiesFiles() {
     return includeProjectLevelPropertiesFiles;
   }
 
-  public void setIncludeProjectLevelPropertiesFiles(
-      final boolean includeProjectLevelPropertiesFiles) {
+  public void setIncludeProjectLevelPropertiesFiles(boolean includeProjectLevelPropertiesFiles) {
     this.includeProjectLevelPropertiesFiles = includeProjectLevelPropertiesFiles;
   }
 
@@ -45,43 +43,36 @@ public class FacetPropertiesSettings implements JDOMExternalizable {
   }
 
   public void setIncludeProjectLevelAdditionalProperties(
-      final boolean includeProjectLevelAdditionalProperties) {
+      boolean includeProjectLevelAdditionalProperties) {
     this.includeProjectLevelAdditionalProperties = includeProjectLevelAdditionalProperties;
   }
 
-  public List<String> getPropertyFiles() {
-    return Collections.unmodifiableList(propertyFiles);
-  }
-
-  public void setPropertyFiles(final List<String> propertyFiles) {
-    this.propertyFiles.clear();
-    this.propertyFiles.addAll(propertyFiles);
-  }
-
   @Override
-  public void readExternal(final Element propertiesSettingsElement) {
+  public void readExternal(Element propertiesSettingsElement) {
     final Element propertiesFilesElement = propertiesSettingsElement.getChild("propertiesFiles");
-    final List<String> fileNames = new ArrayList<>();
+    List<String> fileNames = new ArrayList<>();
     if (propertiesFilesElement != null) {
-      includeProjectLevelPropertiesFiles =
-          Boolean.parseBoolean(
+      setIncludeProjectLevelPropertiesFiles(
+          Boolean.valueOf(
               propertiesFilesElement.getAttributeValue(
-                  "includeProjectLevelPropertiesFiles", Boolean.TRUE.toString()));
-      for (final Element element : propertiesFilesElement.getChildren("fileName")) {
+                  "includeProjectLevelPropertiesFiles", Boolean.TRUE.toString())));
+      @SuppressWarnings("unchecked") final List<Element> propertiesFileNames =
+          propertiesFilesElement.getChildren("fileName");
+      for (Element element : propertiesFileNames) {
         fileNames.add(element.getValue());
       }
     }
-    this.propertyFiles.clear();
-    this.propertyFiles.addAll(fileNames);
+    setPropertyFiles(fileNames);
   }
 
   @Override
-  public void writeExternal(final Element propertiesSettingsElement) {
+  public void writeExternal(Element propertiesSettingsElement) {
     final Element propertiesFilesElement = new Element("propertiesFiles");
     propertiesFilesElement.setAttribute(
-        "includeProjectLevelPropertiesFiles", Boolean.toString(includeProjectLevelPropertiesFiles));
+        "includeProjectLevelPropertiesFiles",
+        Boolean.toString(isIncludeProjectLevelPropertiesFiles()));
     propertiesSettingsElement.addContent(propertiesFilesElement);
-    for (final String fileName : propertyFiles) {
+    for (String fileName : getPropertyFiles()) {
       propertiesFilesElement.addContent(new Element("fileName").setText(fileName));
     }
   }

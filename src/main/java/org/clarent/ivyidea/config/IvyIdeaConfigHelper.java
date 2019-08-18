@@ -81,10 +81,9 @@ public final class IvyIdeaConfigHelper {
   }
 
   @NotNull
-  public static ResolveOptions createResolveOptions(final Module module) {
-    final ResolveOptions options = new ResolveOptions();
-    module.getProject().getComponent(IvyIdeaProjectComponent.class).getState()
-        .updateResolveOptions(options);
+  public static ResolveOptions createResolveOptions(Module module) {
+    ResolveOptions options = new ResolveOptions();
+    getProjectConfig(module.getProject()).updateResolveOptions(options);
     final Set<String> configsToResolve = getConfigurationsToResolve(module);
     if (!configsToResolve.isEmpty()) {
       options.setConfs(configsToResolve.toArray(new String[configsToResolve.size()]));
@@ -99,7 +98,7 @@ public final class IvyIdeaConfigHelper {
    * @return an unmodifiable Set with the configurations to resolve for the given module
    */
   @NotNull
-  public static Set<String> getConfigurationsToResolve(final Module module) {
+  public static Set<String> getConfigurationsToResolve(Module module) {
     final IvyIdeaFacetConfiguration moduleConfiguration =
         IvyIdeaFacetConfiguration.getInstance(module);
     if (moduleConfiguration != null
@@ -111,44 +110,47 @@ public final class IvyIdeaConfigHelper {
     }
   }
 
-  public static ArtifactTypeSettings getArtifactTypeSettings(final Project project) {
-    return project.getComponent(IvyIdeaProjectComponent.class).getState().getArtifactTypeSettings();
+  public static ArtifactTypeSettings getArtifactTypeSettings(Project project) {
+    return getProjectConfig(project).getArtifactTypeSettings();
   }
 
-  public static List<String> getPropertiesFiles(final Project project) {
-    return project.getComponent(IvyIdeaProjectComponent.class).getState().getPropertiesSettings();
+  public static List<String> getPropertiesFiles(Project project) {
+    return getProjectConfig(project).getPropertiesSettings().getPropertyFiles();
   }
 
   public static boolean isLibraryNameIncludesModule(final Project project) {
-    return project.getComponent(IvyIdeaProjectComponent.class).getState()
-        .isLibraryNameIncludesModule();
+    return getProjectConfig(project).isLibraryNameIncludesModule();
   }
 
   public static boolean isLibraryNameIncludesConfiguration(final Project project) {
-    return project.getComponent(IvyIdeaProjectComponent.class).getState()
-        .isLibraryNameIncludesConfiguration();
+    return getProjectConfig(project).isLibraryNameIncludesConfiguration();
   }
 
   public static IvyLogLevel getIvyLoggingThreshold(final Project project) {
-    return IvyLogLevel.fromName(
-        project.getComponent(IvyIdeaProjectComponent.class).getState().getIvyLogLevelThreshold());
+    String ivyLogLevelThreshold = getProjectConfig(project).getIvyLogLevelThreshold();
+    return IvyLogLevel.fromName(ivyLogLevelThreshold);
   }
 
   public static boolean getResolveInBackground(final Project project) {
-    return project.getComponent(IvyIdeaProjectComponent.class).getState().isResolveInBackground();
+    return getProjectConfig(project).isResolveInBackground();
   }
 
   public static boolean alwaysAttachSources(final Project project) {
-    return project.getComponent(IvyIdeaProjectComponent.class).getState().isAlwaysAttachSources();
+    return getProjectConfig(project).isAlwaysAttachSources();
   }
 
   public static boolean alwaysAttachJavadocs(final Project project) {
-    return project.getComponent(IvyIdeaProjectComponent.class).getState().isAlwaysAttachJavadocs();
+    return getProjectConfig(project).isAlwaysAttachJavadocs();
+  }
+
+  @NotNull
+  private static IvyIdeaProjectSettings getProjectConfig(Project project) {
+    IvyIdeaProjectComponent component = project.getComponent(IvyIdeaProjectComponent.class);
+    return component.getState();
   }
 
   @Nullable
-  private static String getIvySettingsFile(final Module module)
-      throws IvySettingsNotFoundException {
+  private static String getIvySettingsFile(Module module) throws IvySettingsNotFoundException {
     final IvyIdeaFacetConfiguration moduleConfiguration = getModuleConfiguration(module);
     if (moduleConfiguration.isUseProjectSettings()) {
       return getProjectIvySettingsFile(module.getProject());
@@ -159,16 +161,16 @@ public final class IvyIdeaConfigHelper {
 
   @Nullable
   private static String getModuleIvySettingsFile(
-      final Module module, final IvyIdeaFacetConfiguration moduleConfiguration)
+      Module module, IvyIdeaFacetConfiguration moduleConfiguration)
       throws IvySettingsNotFoundException {
     if (moduleConfiguration.isUseCustomIvySettings()) {
-      final String s = moduleConfiguration.getIvySettingsFile();
+      String s = moduleConfiguration.getIvySettingsFile();
       final String ivySettingsFile = s == null ? null : s.trim();
       if (!(ivySettingsFile == null || ivySettingsFile.trim().isEmpty())) {
         if (!ivySettingsFile.startsWith("http://")
             && !ivySettingsFile.startsWith("https://")
             && !ivySettingsFile.startsWith("file://")) {
-          final File result = new File(ivySettingsFile);
+          File result = new File(ivySettingsFile);
           if (!result.exists()) {
             throw new IvySettingsNotFoundException(
                 "The ivy settings file given in the module settings for module "
@@ -201,18 +203,18 @@ public final class IvyIdeaConfigHelper {
   }
 
   @Nullable
-  public static String getProjectIvySettingsFile(final Project project)
+  public static String getProjectIvySettingsFile(Project project)
       throws IvySettingsNotFoundException {
-    final IvyIdeaProjectComponent component = project.getComponent(IvyIdeaProjectComponent.class);
+    IvyIdeaProjectComponent component = project.getComponent(IvyIdeaProjectComponent.class);
     final IvyIdeaProjectSettings state = component.getState();
     if (state.isUseCustomIvySettings()) {
-      final String s = state.getIvySettingsFile();
-      final String settingsFile = s == null ? null : s.trim();
+      String s = state.getIvySettingsFile();
+      String settingsFile = s == null ? null : s.trim();
       if (settingsFile != null && !settingsFile.trim().isEmpty()) {
         if (!settingsFile.startsWith("http://")
             && !settingsFile.startsWith("https://")
             && !settingsFile.startsWith("file://")) {
-          final File result = new File(settingsFile);
+          File result = new File(settingsFile);
           if (!result.exists()) {
             throw new IvySettingsNotFoundException(
                 "The ivy settings file given in the project settings does not exist: "
@@ -241,7 +243,7 @@ public final class IvyIdeaConfigHelper {
   }
 
   @NotNull
-  private static Properties getIvyProperties(final Module module)
+  public static Properties getIvyProperties(Module module)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     final IvyIdeaFacetConfiguration moduleConfiguration = getModuleConfiguration(module);
     final List<String> propertiesFiles = new ArrayList<>();
@@ -250,24 +252,23 @@ public final class IvyIdeaConfigHelper {
         moduleConfiguration.getPropertiesSettings();
     if (modulePropertiesSettings.isIncludeProjectLevelPropertiesFiles()) {
       propertiesFiles.addAll(
-          module.getProject().getComponent(IvyIdeaProjectComponent.class).getState()
-              .getPropertiesSettings());
+          getProjectConfig(module.getProject()).getPropertiesSettings().getPropertyFiles());
     }
     return loadProperties(module, propertiesFiles);
   }
 
   @NotNull
-  public static Properties loadProperties(final Module module, final List<String> propertiesFiles)
+  public static Properties loadProperties(Module module, List<String> propertiesFiles)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     // Go over the files in reverse order --> files listed first should have priority and loading
     // properties
     // overwrited previously loaded ones.
     final Properties properties = new Properties();
-    final List<String> result1 = new ArrayList<>(propertiesFiles); // avoid changing the input
+    List<String> result1 = new ArrayList<>(propertiesFiles); // avoid changing the input
     Collections.reverse(result1);
-    for (final String propertiesFile : result1) {
+    for (String propertiesFile : result1) {
       if (propertiesFile != null) {
-        final File result = new File(propertiesFile);
+        File result = new File(propertiesFile);
         if (!result.exists()) {
           throw new IvySettingsNotFoundException(
               "The ivy properties file given in the module settings for module "
@@ -279,7 +280,7 @@ public final class IvyIdeaConfigHelper {
         }
         try {
           properties.load(new FileInputStream(result));
-        } catch (final IOException e) {
+        } catch (IOException e) {
           throw new IvySettingsFileReadException(result.getAbsolutePath(), module.getName(), e);
         }
       }
@@ -288,7 +289,7 @@ public final class IvyIdeaConfigHelper {
   }
 
   @NotNull
-  public static IvySettings createConfiguredIvySettings(final Module module)
+  public static IvySettings createConfiguredIvySettings(Module module)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     return createConfiguredIvySettings(
         module, getIvySettingsFile(module), getIvyProperties(module));
@@ -296,9 +297,9 @@ public final class IvyIdeaConfigHelper {
 
   @NotNull
   public static IvySettings createConfiguredIvySettings(
-      final Module module, @Nullable final String settingsFile, final Properties properties)
+      Module module, @Nullable String settingsFile, Properties properties)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
-    final IvySettings s = new IvySettings();
+    IvySettings s = new IvySettings();
     injectProperties(
         s,
         module,
@@ -317,14 +318,14 @@ public final class IvyIdeaConfigHelper {
       } else {
         s.loadDefault();
       }
-    } catch (final ParseException | IOException e) {
+    } catch (ParseException | IOException e) {
       throw new IvySettingsFileReadException(settingsFile, module.getName(), e);
     }
 
     // re-inject our properties; they may overwrite some properties loaded by the settings file
-    for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
-      final String key = (String) entry.getKey();
-      final String value = (String) entry.getValue();
+    for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+      String key = (String) entry.getKey();
+      String value = (String) entry.getValue();
 
       // we first clear the property to avoid possible cyclic-variable errors (cfr issue 95)
       s.setVariable(key, null);
@@ -335,7 +336,7 @@ public final class IvyIdeaConfigHelper {
   }
 
   private static void injectProperties(
-      final IvySettings ivySettings, final Module module, final Properties properties) {
+      IvySettings ivySettings, Module module, Properties properties) {
     // By default, we use the module root as basedir (can be overridden by properties injected
     // below)
     fillDefaultBaseDir(ivySettings, module);
@@ -343,23 +344,23 @@ public final class IvyIdeaConfigHelper {
   }
 
   private static void fillSettingsVariablesWithProperties(
-      final IvySettings ivySettings, final Properties properties) {
+      IvySettings ivySettings, Properties properties) {
     @SuppressWarnings("unchecked")
     final Enumeration<String> propertyNames = (Enumeration<String>) properties.propertyNames();
     while (propertyNames.hasMoreElements()) {
-      final String propertyName = propertyNames.nextElement();
+      String propertyName = propertyNames.nextElement();
       ivySettings.setVariable(propertyName, properties.getProperty(propertyName));
     }
   }
 
-  private static void fillDefaultBaseDir(final IvySettings ivySettings, final Module module) {
+  private static void fillDefaultBaseDir(IvySettings ivySettings, Module module) {
     final File moduleFileFolder = new File(module.getModuleFilePath()).getParentFile();
     if (moduleFileFolder != null) {
       ivySettings.setBaseDir(moduleFileFolder.getAbsoluteFile());
     }
   }
 
-  private static IvyIdeaFacetConfiguration getModuleConfiguration(final Module module) {
+  private static IvyIdeaFacetConfiguration getModuleConfiguration(Module module) {
     final IvyIdeaFacetConfiguration moduleConfiguration =
         IvyIdeaFacetConfiguration.getInstance(module);
     if (moduleConfiguration == null) {
