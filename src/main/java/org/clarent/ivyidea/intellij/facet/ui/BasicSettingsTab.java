@@ -78,13 +78,13 @@ public class BasicSettingsTab extends FacetEditorTab {
   private Set<Configuration> selectedConfigurations = new HashSet<>();
 
   public BasicSettingsTab(
-      @NotNull FacetEditorContext editorContext,
-      @NotNull PropertiesSettingsTab propertiesSettingsTab) {
+      @NotNull final FacetEditorContext editorContext,
+      @NotNull final PropertiesSettingsTab propertiesSettingsTab) {
     this.editorContext = editorContext;
     this.propertiesSettingsTab = propertiesSettingsTab;
     this.propertiesSettingsTab.reset();
 
-    UserActivityWatcher watcher = new UserActivityWatcher();
+    final UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(
         () -> modified = true);
     watcher.register(pnlRoot);
@@ -106,7 +106,7 @@ public class BasicSettingsTab extends FacetEditorTab {
         .addDocumentListener(
             new DocumentAdapter() {
               @Override
-              public void textChanged(@NotNull DocumentEvent e) {
+              public void textChanged(@NotNull final DocumentEvent e) {
                 reloadIvyFile();
               }
             });
@@ -157,14 +157,14 @@ public class BasicSettingsTab extends FacetEditorTab {
             "Detected configs in file "
                 + txtIvyFile.getText()
                 + ": "
-                + allConfigurations.toString());
+                + allConfigurations);
         tblConfigurationSelection.setModel(
             new ConfigurationSelectionTableModel(
                 allConfigurations, getNames(selectedConfigurations)));
         lblIvyFileMessage.setText("");
         foundConfigsBefore = true;
       } else {
-        File ivyFile = new File(txtIvyFile.getText());
+        final File ivyFile = new File(txtIvyFile.getText());
         if (ivyFile.isDirectory() || !ivyFile.exists()) {
           lblIvyFileMessage.setText("Please enter the name of an existing ivy file.");
         } else {
@@ -177,14 +177,14 @@ public class BasicSettingsTab extends FacetEditorTab {
         tblConfigurationSelection.setModel(new ConfigurationSelectionTableModel());
         foundConfigsBefore = false;
       }
-    } catch (ParseException e1) {
+    } catch (final ParseException e1) {
       // TODO: provide link to error display dialog with full exception
       lblIvyFileMessage.setText(
           "Error parsing the file. If you use properties or specific ivy settings, configure those first.");
-    } catch (IvySettingsNotFoundException e) {
+    } catch (final IvySettingsNotFoundException e) {
       lblIvyFileMessage.setText(
           "Could not find the settings file. Configure the settings file here or in the project settings first.");
-    } catch (IvySettingsFileReadException e) {
+    } catch (final IvySettingsFileReadException e) {
       lblIvyFileMessage.setText(
           "Error parsing the settings file. If you use properties, configure those first.");
     }
@@ -228,7 +228,7 @@ public class BasicSettingsTab extends FacetEditorTab {
         new ArrayList<>(propertiesSettingsTab.getFileNames());
     // TODO: only include the project properties files if this option is chosen on the screen.
     //          for now this is not configurable yet - so it always is true
-    boolean includeProjectProperties = true;
+    final boolean includeProjectProperties = true;
     //noinspection ConstantConditions
     if (includeProjectProperties) {
       propertiesFiles.addAll(IvyIdeaConfigHelper.getPropertiesFiles(editorContext.getProject()));
@@ -256,7 +256,7 @@ public class BasicSettingsTab extends FacetEditorTab {
   @Override
   public void apply() throws ConfigurationException {
     final Facet<?> facet = editorContext.getFacet();
-    IvyIdeaFacetConfiguration configuration =
+    final IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     configuration.setUseProjectSettings(!chkOverrideProjectIvySettings.isSelected());
     configuration.setUseCustomIvySettings(rbnUseCustomIvySettings.isSelected());
@@ -268,9 +268,9 @@ public class BasicSettingsTab extends FacetEditorTab {
   }
 
   @NotNull
-  private static Set<String> getNames(@NotNull Set<Configuration> selectedConfigurations) {
-    Set<String> result = new TreeSet<>();
-    for (Configuration selectedConfiguration : selectedConfigurations) {
+  private static Set<String> getNames(@NotNull final Set<Configuration> selectedConfigurations) {
+    final Set<String> result = new TreeSet<>();
+    for (final Configuration selectedConfiguration : selectedConfigurations) {
       result.add(selectedConfiguration.getName());
     }
     return result;
@@ -279,7 +279,7 @@ public class BasicSettingsTab extends FacetEditorTab {
   @Override
   public void reset() {
     final Facet<?> facet = editorContext.getFacet();
-    IvyIdeaFacetConfiguration configuration =
+    final IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     txtIvyFile.setText(configuration.getIvyFile());
     chkOverrideProjectIvySettings.setSelected(!configuration.isUseProjectSettings());
@@ -290,24 +290,23 @@ public class BasicSettingsTab extends FacetEditorTab {
     Set<Configuration> allConfigurations;
     try {
       allConfigurations = loadConfigurations();
-    } catch (ParseException | IvySettingsFileReadException | IvySettingsNotFoundException e) {
+    } catch (final ParseException | IvySettingsFileReadException | IvySettingsNotFoundException e) {
       allConfigurations = null;
     }
-    String s = configuration.getIvyFile();
-    if (s != null && !s.trim().isEmpty()) {
-      if (allConfigurations != null) {
-        tblConfigurationSelection.setModel(
-            new ConfigurationSelectionTableModel(
-                allConfigurations, configuration.getConfigsToResolve()));
-      } else {
-        tblConfigurationSelection.setModel(new ConfigurationSelectionTableModel());
-      }
-      selectedConfigurations = tblConfigurationSelection.getSelectedConfigurations();
-      updateConfigurationsTable();
-    } else {
+    if (configuration.getIvyFile().isEmpty()) {
       tblConfigurationSelection.setModel(new ConfigurationSelectionTableModel());
       selectedConfigurations = new HashSet<>();
       tblConfigurationSelection.setEditable(false);
+    } else {
+      if (allConfigurations == null) {
+        tblConfigurationSelection.setModel(new ConfigurationSelectionTableModel());
+      } else {
+        tblConfigurationSelection.setModel(
+            new ConfigurationSelectionTableModel(
+                allConfigurations, configuration.getConfigsToResolve()));
+      }
+      selectedConfigurations = tblConfigurationSelection.getSelectedConfigurations();
+      updateConfigurationsTable();
     }
     updateUI();
   }

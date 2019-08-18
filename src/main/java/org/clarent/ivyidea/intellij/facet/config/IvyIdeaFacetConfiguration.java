@@ -66,7 +66,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
 
   @NotNull
   public String getIvyFile() {
-    return ivyFile;
+    return ivyFile.trim();
   }
 
   public void setIvyFile(@NotNull String ivyFile) {

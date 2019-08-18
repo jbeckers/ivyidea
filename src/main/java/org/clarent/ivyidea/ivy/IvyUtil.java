@@ -70,11 +70,8 @@ public final class IvyUtil {
     }
 
     String ivyFile = configuration.getIvyFile();
-    if (ivyFile == null || ivyFile.trim().isEmpty()) {
-      return null;
-    }
+    return ivyFile.isEmpty() ? null : new File(ivyFile);
 
-    return new File(ivyFile);
   }
 
   /**

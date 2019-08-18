@@ -59,12 +59,11 @@ public class IvyIdeaFacetDetector
 
   @Override
   @Nullable
-  protected IvyIdeaFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
+  protected IvyIdeaFacetConfiguration createConfiguration(final Collection<VirtualFile> files) {
     final IvyIdeaFacetConfiguration result = super.createConfiguration(files);
 
     if (result != null && !files.isEmpty()) {
-      VirtualFile ivyFile = files.iterator().next();
-      result.setIvyFile(ivyFile.getPath());
+      result.setIvyFile(files.iterator().next().getPath());
     }
 
     return result;
