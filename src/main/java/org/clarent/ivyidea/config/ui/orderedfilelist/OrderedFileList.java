@@ -18,6 +18,7 @@
 
 package org.clarent.ivyidea.config.ui.orderedfilelist;
 
+import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
@@ -30,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import org.clarent.ivyidea.intellij.compatibility.IntellijCompatibilityService;
 
 /** @author Guy Mahieu */
 public class OrderedFileList {
@@ -42,7 +42,7 @@ public class OrderedFileList {
   private JButton btnRemove;
   private JButton btnDown;
   private JButton btnAdd;
-  private JList lstFileNames;
+  private JList<String> lstFileNames;
   private boolean modified;
 
   public OrderedFileList(Project project) {
@@ -135,8 +135,7 @@ public class OrderedFileList {
               FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor();
           fcDescriptor.setTitle("Select Properties File(S)");
           final VirtualFile[] files =
-              IntellijCompatibilityService.getCompatibilityMethods()
-                  .chooseFiles(fcDescriptor, pnlRoot, project, null);
+              FileChooser.chooseFiles(fcDescriptor, pnlRoot, project, null);
           for (VirtualFile file : files) {
             addFilenameToList(file.getPresentableUrl());
           }

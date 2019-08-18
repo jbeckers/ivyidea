@@ -21,15 +21,9 @@ package org.clarent.ivyidea.intellij.facet;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
-import com.intellij.facet.autodetecting.FacetDetector;
-import com.intellij.facet.autodetecting.FacetDetectorRegistry;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
-import com.intellij.psi.PsiFile;
 import java.util.Collection;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.intellij.ui.IvyIdeaIcons;
@@ -59,12 +53,12 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
       @NotNull Module module,
       String name,
       @NotNull IvyIdeaFacetConfiguration configuration,
-      @Nullable Facet underlyingFacet) {
+      @SuppressWarnings("rawtypes") @Nullable Facet underlyingFacet) {
     return new IvyIdeaFacet(module, this, name, configuration, underlyingFacet);
   }
 
   @Override
-  public boolean isSuitableModuleType(ModuleType moduleType) {
+  public boolean isSuitableModuleType(@SuppressWarnings("rawtypes") ModuleType moduleType) {
     // Allow ivy facets for all module types...
     return true;
     // return
@@ -75,52 +69,6 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
   @Override
   public javax.swing.Icon getIcon() {
     return IvyIdeaIcons.MAIN_ICON_SMALL;
-  }
-
-  @Override
-  public void registerDetectors(
-      FacetDetectorRegistry<IvyIdeaFacetConfiguration> ivyIdeaDetectorRegistry) {
-    VirtualFileFilter virtualFileFilter =
-        file -> "ivy.xml".equals(file.getName());
-
-    final FileType xmlFileType = FileTypeManager.getInstance().getFileTypeByExtension("xml");
-
-    ivyIdeaDetectorRegistry.registerUniversalDetector(
-        xmlFileType,
-        virtualFileFilter,
-        new FacetDetector<VirtualFile, IvyIdeaFacetConfiguration>() {
-          @Override
-          public IvyIdeaFacetConfiguration detectFacet(
-              VirtualFile source,
-              Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
-            return configureDetectedFacet(source, existentFacetConfigurations);
-          }
-        });
-
-    ivyIdeaDetectorRegistry.registerOnTheFlyDetector(
-        xmlFileType,
-        virtualFileFilter,
-        psiFile -> true,
-        new FacetDetector<PsiFile, IvyIdeaFacetConfiguration>() {
-          @Override
-          public IvyIdeaFacetConfiguration detectFacet(
-              PsiFile source, Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
-            return configureDetectedFacet(source.getVirtualFile(), existentFacetConfigurations);
-          }
-        });
-
-    ivyIdeaDetectorRegistry.registerDetectorForWizard(
-        xmlFileType,
-        virtualFileFilter,
-        new FacetDetector<VirtualFile, IvyIdeaFacetConfiguration>() {
-
-          @Override
-          public IvyIdeaFacetConfiguration detectFacet(
-              VirtualFile source,
-              Collection<IvyIdeaFacetConfiguration> existentFacetConfigurations) {
-            return configureDetectedFacet(source, existentFacetConfigurations);
-          }
-        });
   }
 
   protected IvyIdeaFacetConfiguration configureDetectedFacet(

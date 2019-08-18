@@ -62,9 +62,7 @@ public final class IntellijUtils {
   }
 
   public static ConsoleView getConsoleView(Project project) {
-    return ((ToolWindowRegistrationComponent)
-            project.getComponent(ToolWindowRegistrationComponent.COMPONENT_NAME))
-        .getConsole();
+    return project.getComponent(ToolWindowRegistrationComponent.class).getConsole();
   }
 
   public static ToolWindow getToolWindow(Project project) {

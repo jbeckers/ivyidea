@@ -23,12 +23,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Defines the behavior of a hyperlink label. */
-public class LinkBehavior { // is behavior a good name? it has a presentation part as well...
+public class LinkBehavior<T> { // is behavior a good name? it has a presentation part as well...
 
   private final String linkText;
-  private final LinkListener linkListener;
+  private final LinkListener<T> linkListener;
   @Nullable
-  private final Object data;
+  private final T data;
 
   /**
    * Constructs a new LinkBehavior instance.
@@ -39,7 +39,7 @@ public class LinkBehavior { // is behavior a good name? it has a presentation pa
    *     can be used to store some data that is needed during the handling of the link-click
    */
   public LinkBehavior(
-      @NotNull String linkText, @NotNull LinkListener linkListener, @Nullable Object data) {
+      @NotNull String linkText, @NotNull LinkListener<T> linkListener, @Nullable T data) {
     this.linkText = linkText;
     this.linkListener = linkListener;
     this.data = data;
@@ -49,12 +49,12 @@ public class LinkBehavior { // is behavior a good name? it has a presentation pa
     return linkText;
   }
 
-  public LinkListener getLinkListener() {
+  public LinkListener<T> getLinkListener() {
     return linkListener;
   }
 
   @Nullable
-  public Object getData() {
+  public T getData() {
     return data;
   }
 }

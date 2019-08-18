@@ -26,6 +26,8 @@ import javax.swing.table.AbstractTableModel;
 /** @author Guy Mahieu */
 public class PropertiesTableModel extends AbstractTableModel {
 
+  private static final long serialVersionUID = 6153216757094248324L;
+
   private final List<Property> data;
 
   public PropertiesTableModel() {

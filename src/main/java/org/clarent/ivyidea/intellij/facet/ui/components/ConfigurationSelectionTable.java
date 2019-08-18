@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +20,7 @@ package org.clarent.ivyidea.intellij.facet.ui.components;
 
 import com.intellij.ui.BooleanTableCellEditor;
 import com.intellij.ui.BooleanTableCellRenderer;
-import com.intellij.util.ui.Table;
+import com.intellij.ui.table.JBTable;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
@@ -36,7 +38,9 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Guy Mahieu
  */
-public class ConfigurationSelectionTable extends Table {
+public class ConfigurationSelectionTable extends JBTable {
+
+  private static final long serialVersionUID = 7190498625135720513L;
 
   private boolean editable = true;
 

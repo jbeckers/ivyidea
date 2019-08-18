@@ -36,10 +36,11 @@ public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
   }
 
   public IvyIdeaFacet(
-      @NotNull Module module, @NotNull FacetType facetType,
+      @NotNull Module module,
+      @NotNull FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> facetType,
       String name,
       @NotNull IvyIdeaFacetConfiguration configuration,
-      Facet underlyingFacet) {
+      @SuppressWarnings("rawtypes") Facet underlyingFacet) {
     super(facetType, module, name, configuration, underlyingFacet);
   }
 

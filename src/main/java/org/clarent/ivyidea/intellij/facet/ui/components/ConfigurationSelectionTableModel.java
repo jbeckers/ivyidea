@@ -36,6 +36,8 @@ public class ConfigurationSelectionTableModel extends AbstractTableModel {
   private static final int COLUMN_NAME = 1;
   private static final int COLUMN_DESCRIPTION = 2;
 
+  private static final long serialVersionUID = -4485590409443411702L;
+
   private final List<Configuration> data;
   private final Set<Integer> selectedIndexes;
   private boolean editable = true;

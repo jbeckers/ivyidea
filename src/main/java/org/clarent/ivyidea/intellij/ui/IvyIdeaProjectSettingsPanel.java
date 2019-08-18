@@ -25,12 +25,12 @@ import static org.clarent.ivyidea.config.model.ArtifactTypeSettings.DependencyCa
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.UserActivityWatcher;
 import java.awt.BorderLayout;
 import java.util.List;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -51,7 +51,7 @@ public class IvyIdeaProjectSettingsPanel {
   private JCheckBox chkValidateIvyFiles;
   private JRadioButton useYourOwnIvySettingsRadioButton;
   private JPanel pnlPropertiesFiles;
-  private JComboBox ivyLogLevelComboBox;
+  private ComboBox<IvyLogLevel> ivyLogLevelComboBox;
   private JCheckBox includeModuleNameCheckBox;
   private JCheckBox includeConfigurationNameCheckBox;
   private JTextField txtClassesArtifactTypes;
@@ -172,6 +172,6 @@ public class IvyIdeaProjectSettingsPanel {
     pnlPropertiesFiles = new JPanel(new BorderLayout());
     orderedFileList = new OrderedFileList(project);
     pnlPropertiesFiles.add(orderedFileList.getRootPanel(), BorderLayout.CENTER);
-    ivyLogLevelComboBox = new JComboBox(IvyLogLevel.values());
+    ivyLogLevelComboBox = new ComboBox<>(IvyLogLevel.values());
   }
 }

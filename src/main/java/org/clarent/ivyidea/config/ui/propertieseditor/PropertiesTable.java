@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +18,7 @@
 
 package org.clarent.ivyidea.config.ui.propertieseditor;
 
-import com.intellij.util.ui.Table;
+import com.intellij.ui.table.JBTable;
 import javax.swing.table.TableModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +28,9 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Guy Mahieu
  */
-public class PropertiesTable extends Table {
+public class PropertiesTable extends JBTable {
+
+  private static final long serialVersionUID = 3183706152800105622L;
 
   public PropertiesTable() {
     super(new PropertiesTableModel());

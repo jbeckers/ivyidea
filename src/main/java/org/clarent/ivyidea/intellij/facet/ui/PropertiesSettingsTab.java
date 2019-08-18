@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +93,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
 
   @Override
   public void apply() throws ConfigurationException {
-    final Facet facet = editorContext.getFacet();
+    final Facet<?> facet = editorContext.getFacet();
     IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     configuration.getPropertiesSettings().setPropertyFiles(orderedFileList.getFileNames());
@@ -105,7 +107,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
 
   @Override
   public void reset() {
-    final Facet facet = editorContext.getFacet();
+    final Facet<?> facet = editorContext.getFacet();
     IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     orderedFileList.setFileNames(configuration.getPropertiesSettings().getPropertyFiles());

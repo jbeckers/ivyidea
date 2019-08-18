@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +18,10 @@
 
 package org.clarent.ivyidea.resolve.dependency;
 
+import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.clarent.ivyidea.intellij.compatibility.IntellijCompatibilityService;
 
 /** @author Guy Mahieu */
 public class ExternalJavaDocDependency extends ExternalDependency {
@@ -36,6 +38,6 @@ public class ExternalJavaDocDependency extends ExternalDependency {
 
   @Override
   public OrderRootType getType() {
-    return IntellijCompatibilityService.getCompatibilityMethods().getJavadocOrderRootType();
+    return JavadocOrderRootType.getInstance();
   }
 }

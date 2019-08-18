@@ -35,11 +35,11 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Guy Mahieu
  */
-public final class IvyIdeaExceptionDialog extends DialogWrapper {
+public final class IvyIdeaExceptionDialog<T> extends DialogWrapper {
 
   private JPanel rootPanel;
   private JTextArea txtMessage;
-  private LinkLabel lblLink;
+  private LinkLabel<T> lblLink;
 
   /** Shows a standard IvyIDEA exception dialog without a hyperlink. */
   public static void showModalDialog(String title, Throwable exception, Project project) {
@@ -50,9 +50,9 @@ public final class IvyIdeaExceptionDialog extends DialogWrapper {
    * Shows a standard IvyIDEA exception dialog with a hyperlink that takes its parameters from the
    * given linkBehavior.
    */
-  public static void showModalDialog(
-      String title, Throwable exception, Project project, LinkBehavior linkBehavior) {
-    final IvyIdeaExceptionDialog dlg = new IvyIdeaExceptionDialog(project);
+  public static <T> void showModalDialog(
+      String title, Throwable exception, Project project, LinkBehavior<T> linkBehavior) {
+    final IvyIdeaExceptionDialog<T> dlg = new IvyIdeaExceptionDialog<>(project);
     dlg.setTitle(title);
     dlg.setMessageFromThrowable(exception);
     dlg.setLinkBehavior(linkBehavior);
@@ -97,7 +97,7 @@ public final class IvyIdeaExceptionDialog extends DialogWrapper {
     setMessage(message);
   }
 
-  public void setLinkBehavior(@Nullable LinkBehavior linkBehavior) {
+  public void setLinkBehavior(@Nullable LinkBehavior<T> linkBehavior) {
     if (linkBehavior == null
         || linkBehavior.getLinkText() == null
         || linkBehavior.getLinkText().trim().length() == 0) {

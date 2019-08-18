@@ -19,7 +19,6 @@
 package org.clarent.ivyidea.intellij.task;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -29,7 +28,6 @@ import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
 import org.clarent.ivyidea.exception.ui.IvyIdeaExceptionDialog;
 import org.clarent.ivyidea.exception.ui.LinkBehavior;
-import org.clarent.ivyidea.intellij.compatibility.IntellijCompatibilityService;
 import org.clarent.ivyidea.intellij.ui.IvyIdeaProjectSettingsComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,14 +82,6 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
     } catch (IvyIdeaException e) {
       exception = e;
       indicator.cancel();
-      // In InteliJ 7 cancelling the progressIndicator does not trigger the
-      // onCancel() method, but in IntelliJ 8 it does
-      if (!IntellijCompatibilityService.getCompatibilityMethods()
-          .isTaskCancelledOnProgressIndicatorCancel()) {
-        ApplicationManager.getApplication()
-            .invokeLater(
-                () -> onCancel());
-      }
     } catch (RuntimeException e) {
       if (!indicator.isCanceled()) {
         throw e;
@@ -122,13 +112,13 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
   }
 
   private void showIvySettingsNotFoundErrorDialog(IvySettingsNotFoundException exception) {
-    LinkBehavior linkBehavior = null;
+    LinkBehavior<?> linkBehavior = null;
     // TODO: For now I can only activate the link on project settings errors...
     //       Currently I don't know how to open the facet setting from the code...
     //       if only the facet config was a Configurable instance!
     if (exception.getConfigLocation() == IvySettingsNotFoundException.ConfigLocation.Project) {
       linkBehavior =
-          new LinkBehavior(
+          new LinkBehavior<>(
               "Open "
                   + exception.getConfigLocation()
                   + " settings for "

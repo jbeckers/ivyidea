@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.clarent.ivyidea.config.IvyIdeaConfigHelper;
-import org.clarent.ivyidea.intellij.compatibility.IntellijCompatibilityService;
 import org.clarent.ivyidea.resolve.dependency.ExternalDependency;
 import org.clarent.ivyidea.resolve.dependency.ResolvedDependency;
 
@@ -111,7 +110,7 @@ public final class IntellijModuleWrapper implements Closeable {
 
   public void removeDependenciesNotInList(Collection<ResolvedDependency> dependenciesToKeep) {
     for (OrderRootType type :
-        IntellijCompatibilityService.getCompatibilityMethods().getAllOrderRootTypes()) {
+        OrderRootType.getAllTypes()) {
       List<String> dependenciesToRemove = getDependenciesToRemove(type, dependenciesToKeep);
       for (String dependencyUrl : dependenciesToRemove) {
         libraryModels.removeDependency(type, dependencyUrl);

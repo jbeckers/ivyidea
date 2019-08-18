@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -35,12 +34,13 @@ import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.BasicResolver;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.clarent.ivyidea.intellij.IntellijUtils;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.logging.ConsoleViewMessageLogger;
-import org.clarent.ivyidea.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +70,7 @@ public final class IvyUtil {
     }
 
     String ivyFile = configuration.getIvyFile();
-    if (StringUtils.isBlank(ivyFile)) {
+    if (ivyFile == null || ivyFile.trim().isEmpty()) {
       return null;
     }
 
@@ -151,16 +151,14 @@ public final class IvyUtil {
 
   private static void postConfigure(final Ivy ivy) {
     EventManager eventManager = ivy.getEventManager();
-    Collection triggers = ivy.getSettings().getTriggers();
-    for (Iterator iter = triggers.iterator(); iter.hasNext(); ) {
-      Trigger trigger = (Trigger) iter.next();
+    Collection<Trigger> triggers = ivy.getSettings().getTriggers();
+    for (Trigger trigger : triggers) {
       eventManager.addIvyListener(trigger, trigger.getEventFilter());
     }
 
-    for (Iterator iter = ivy.getSettings().getResolvers().iterator(); iter.hasNext(); ) {
-      Object resolver = iter.next();
+    for (DependencyResolver resolver : ivy.getSettings().getResolvers()) {
       if (resolver instanceof BasicResolver) {
-        ((BasicResolver) resolver).setEventManager(eventManager);
+        ((AbstractResolver) resolver).setEventManager(eventManager);
       }
     }
   }

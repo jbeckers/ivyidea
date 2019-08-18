@@ -52,7 +52,6 @@ import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.intellij.facet.ui.components.ConfigurationSelectionTable;
 import org.clarent.ivyidea.intellij.facet.ui.components.ConfigurationSelectionTableModel;
 import org.clarent.ivyidea.ivy.IvyUtil;
-import org.clarent.ivyidea.util.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -256,7 +255,7 @@ public class BasicSettingsTab extends FacetEditorTab {
 
   @Override
   public void apply() throws ConfigurationException {
-    final Facet facet = editorContext.getFacet();
+    final Facet<?> facet = editorContext.getFacet();
     IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     configuration.setUseProjectSettings(!chkOverrideProjectIvySettings.isSelected());
@@ -279,7 +278,7 @@ public class BasicSettingsTab extends FacetEditorTab {
 
   @Override
   public void reset() {
-    final Facet facet = editorContext.getFacet();
+    final Facet<?> facet = editorContext.getFacet();
     IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     txtIvyFile.setText(configuration.getIvyFile());
@@ -294,7 +293,8 @@ public class BasicSettingsTab extends FacetEditorTab {
     } catch (ParseException | IvySettingsFileReadException | IvySettingsNotFoundException e) {
       allConfigurations = null;
     }
-    if (StringUtils.isNotBlank(configuration.getIvyFile())) {
+    String s = configuration.getIvyFile();
+    if (s != null && !s.trim().isEmpty()) {
       if (allConfigurations != null) {
         tblConfigurationSelection.setModel(
             new ConfigurationSelectionTableModel(

@@ -19,7 +19,6 @@
 package org.clarent.ivyidea.intellij.model;
 
 import static java.util.Arrays.asList;
-import static org.clarent.ivyidea.util.StringUtils.isBlank;
 
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
@@ -50,7 +49,9 @@ class LibraryModels implements Closeable {
   public Library.ModifiableModel getForExternalDependency(
       final ExternalDependency externalDependency) {
     String resolvedConfiguration = externalDependency.getConfigurationName();
-    return getForConfiguration(isBlank(resolvedConfiguration) ? "default" : resolvedConfiguration);
+    return getForConfiguration(
+        resolvedConfiguration == null || resolvedConfiguration.trim().isEmpty() ? "default"
+            : resolvedConfiguration);
   }
 
   private Library.ModifiableModel getForConfiguration(String ivyConfiguration) {

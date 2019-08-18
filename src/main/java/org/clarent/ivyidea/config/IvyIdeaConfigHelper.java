@@ -44,8 +44,6 @@ import org.clarent.ivyidea.intellij.IvyIdeaProjectComponent;
 import org.clarent.ivyidea.intellij.facet.config.FacetPropertiesSettings;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.logging.IvyLogLevel;
-import org.clarent.ivyidea.util.CollectionUtils;
-import org.clarent.ivyidea.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -166,8 +164,9 @@ public final class IvyIdeaConfigHelper {
       Module module, IvyIdeaFacetConfiguration moduleConfiguration)
       throws IvySettingsNotFoundException {
     if (moduleConfiguration.isUseCustomIvySettings()) {
-      final String ivySettingsFile = StringUtils.trim(moduleConfiguration.getIvySettingsFile());
-      if (!StringUtils.isBlank(ivySettingsFile)) {
+      String s = moduleConfiguration.getIvySettingsFile();
+      final String ivySettingsFile = s == null ? null : s.trim();
+      if (!(ivySettingsFile == null || ivySettingsFile.trim().isEmpty())) {
         if (!ivySettingsFile.startsWith("http://")
             && !ivySettingsFile.startsWith("https://")
             && !ivySettingsFile.startsWith("file://")) {
@@ -209,8 +208,9 @@ public final class IvyIdeaConfigHelper {
     IvyIdeaProjectComponent component = project.getComponent(IvyIdeaProjectComponent.class);
     final IvyIdeaProjectSettings state = component.getState();
     if (state.isUseCustomIvySettings()) {
-      String settingsFile = StringUtils.trim(state.getIvySettingsFile());
-      if (StringUtils.isNotBlank(settingsFile)) {
+      String s = state.getIvySettingsFile();
+      String settingsFile = s == null ? null : s.trim();
+      if (settingsFile != null && !settingsFile.trim().isEmpty()) {
         if (!settingsFile.startsWith("http://")
             && !settingsFile.startsWith("https://")
             && !settingsFile.startsWith("file://")) {
@@ -264,7 +264,9 @@ public final class IvyIdeaConfigHelper {
     // properties
     // overwrited previously loaded ones.
     final Properties properties = new Properties();
-    for (String propertiesFile : CollectionUtils.createReversedList(propertiesFiles)) {
+    List<String> result1 = new ArrayList<>(propertiesFiles); // avoid changing the input
+    Collections.reverse(result1);
+    for (String propertiesFile : result1) {
       if (propertiesFile != null) {
         File result = new File(propertiesFile);
         if (!result.exists()) {
@@ -304,7 +306,7 @@ public final class IvyIdeaConfigHelper {
         properties); // inject our properties; they may be needed to parse the settings file
 
     try {
-      if (settingsFile != null && !StringUtils.isBlank(settingsFile)) {
+      if (settingsFile != null && !(settingsFile == null || settingsFile.trim().isEmpty())) {
         if (settingsFile.startsWith("http://") || settingsFile.startsWith("https://")) {
           HttpConfigurable.getInstance().prepareURL(settingsFile);
           s.load(new URL(settingsFile));

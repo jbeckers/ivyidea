@@ -26,6 +26,8 @@ package org.clarent.ivyidea.exception;
  */
 public class IvyFileReadException extends IvyIdeaException {
 
+  private static final long serialVersionUID = 2569486467585035102L;
+
   private final String fileName;
   private final String moduleName;
 

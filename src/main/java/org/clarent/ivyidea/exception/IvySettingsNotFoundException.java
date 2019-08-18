@@ -25,6 +25,8 @@ package org.clarent.ivyidea.exception;
  */
 public class IvySettingsNotFoundException extends IvyIdeaException {
 
+  private static final long serialVersionUID = 4606478597395336177L;
+
   public enum ConfigLocation {
     Project,
     Module
