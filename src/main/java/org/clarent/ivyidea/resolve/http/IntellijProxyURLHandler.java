@@ -23,71 +23,203 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import org.apache.ivy.core.settings.TimeoutConstraint;
 import org.apache.ivy.util.CopyProgressListener;
-import org.apache.ivy.util.url.AbstractURLHandler;
-import org.apache.ivy.util.url.URLHandler;
+import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
-public final class IntellijProxyURLHandler extends AbstractURLHandler {
+public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandler {
 
-  private final URLHandler delegate;
+  @NotNull
+  private final TimeoutConstrainedURLHandler delegate;
+
+  private IntellijProxyURLHandler(@NotNull final TimeoutConstrainedURLHandler urlHandler) {
+    this.delegate = urlHandler;
+  }
 
   public static void setupHttpProxy() {
-    URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-    URLHandler httpHandler = new IntellijProxyURLHandler(URLHandlerRegistry.getHttp());
+    final URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
+    final TimeoutConstrainedURLHandler httpHandler =
+        new IntellijProxyURLHandler(URLHandlerRegistry.getHttp());
     dispatcher.setDownloader("http", httpHandler);
     dispatcher.setDownloader("https", httpHandler);
     URLHandlerRegistry.setDefault(dispatcher);
   }
 
-  private IntellijProxyURLHandler(URLHandler delegate) {
-    if (delegate == null) {
-      throw new IllegalArgumentException("delegate can't be null");
-    }
-    this.delegate = delegate;
-  }
-
   @Override
-  public URLInfo getURLInfo(URL url) {
-    return getURLInfo(url, 0);
-  }
-
-  @Override
-  public URLInfo getURLInfo(URL url, int timeout) {
+  public boolean isReachable(final URL url) {
     try {
-      prepareURL(url);
-      return delegate.getURLInfo(url, timeout);
-    } catch (IOException e) {
-      return URLHandler.UNAVAILABLE;
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.isReachable();
     }
+    return delegate.isReachable(url);
   }
 
   @Override
-  public InputStream openStream(URL url) throws IOException {
-    prepareURL(url);
+  public boolean isReachable(final URL url, final int timeout) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.isReachable();
+    }
+    return delegate.isReachable(url, timeout);
+  }
+
+  @Override
+  public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.isReachable();
+    }
+    return delegate.isReachable(url, timeoutConstraint);
+  }
+
+  @Override
+  public long getContentLength(final URL url) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.getContentLength();
+    }
+    return delegate.getContentLength(url);
+  }
+
+  @Override
+  public long getContentLength(final URL url, final int timeout) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.getContentLength();
+    }
+    return delegate.getContentLength(url, timeout);
+  }
+
+  @Override
+  public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.getContentLength();
+    }
+    return delegate.getContentLength(url, timeoutConstraint);
+  }
+
+  @Override
+  public long getLastModified(final URL url) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.getLastModified();
+    }
+    return delegate.getLastModified(url);
+  }
+
+  @Override
+  public long getLastModified(final URL url, final int timeout) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.getLastModified();
+    }
+    return delegate.getLastModified(url, timeout);
+  }
+
+  @Override
+  public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE.getLastModified();
+    }
+    return delegate.getLastModified(url, timeoutConstraint);
+  }
+
+  @Override
+  public URLInfo getURLInfo(final URL url) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE;
+    }
+    return delegate.getURLInfo(url, null);
+  }
+
+  @Override
+  public URLInfo getURLInfo(final URL url, final int timeout) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE;
+    }
+    return delegate.getURLInfo(url, timeout);
+  }
+
+  @Override
+  public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
+    try {
+      HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    } catch (final IOException e) {
+      return UNAVAILABLE;
+    }
+    return delegate.getURLInfo(url, timeoutConstraint);
+  }
+
+  @Override
+  public InputStream openStream(final URL url) throws IOException {
+    HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     return delegate.openStream(url);
   }
 
   @Override
-  public void download(URL src, File dest, CopyProgressListener l) throws IOException {
-    prepareURL(src);
+  public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint)
+      throws IOException {
+    HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
+    return delegate.openStream(url, timeoutConstraint);
+  }
+
+  @Override
+  public void download(final URL src, final File dest, final CopyProgressListener l)
+      throws IOException {
+    HttpConfigurable.getInstance().prepareURL(src.toExternalForm());
     delegate.download(src, dest, l);
   }
 
   @Override
-  public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
-    prepareURL(dest);
+  public void download(
+      final URL src,
+      final File dest,
+      final CopyProgressListener listener,
+      final TimeoutConstraint timeoutConstraint)
+      throws IOException {
+    HttpConfigurable.getInstance().prepareURL(src.toExternalForm());
+    delegate.download(src, dest, listener, timeoutConstraint);
+  }
+
+  @Override
+  public void upload(final File src, final URL dest, final CopyProgressListener l)
+      throws IOException {
+    HttpConfigurable.getInstance().prepareURL(dest.toExternalForm());
     delegate.upload(src, dest, l);
   }
 
   @Override
-  public void setRequestMethod(int requestMethod) {
-    delegate.setRequestMethod(requestMethod);
+  public void upload(
+      final File src,
+      final URL dest,
+      final CopyProgressListener listener,
+      final TimeoutConstraint timeoutConstraint)
+      throws IOException {
+    HttpConfigurable.getInstance().prepareURL(dest.toExternalForm());
+    delegate.upload(src, dest, listener, timeoutConstraint);
   }
 
-  private static void prepareURL(URL dest) throws IOException {
-    HttpConfigurable.getInstance().prepareURL(dest.toExternalForm());
+  @Override
+  public void setRequestMethod(final int requestMethod) {
+    delegate.setRequestMethod(requestMethod);
   }
 }
