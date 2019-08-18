@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FacetAutodetectingManager">
+    <autodetection-disabled>
+      <facet-type id="IvyIDEA">
+        <modules>
+          <module name="extensions">
+            <files>
+              <file url="file://$PROJECT_DIR$/extensions/ivy.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
+    </autodetection-disabled>
+  </component>
+  <component name="IvyIDEA.ProjectSettings">
+    <option name="artifactTypeSettings">
+      <ArtifactTypeSettings>
+        <option name="classesTypes" value="jar, mar, sar, war, ear, ejb, bundle, test-jar" />
+        <option name="javadocTypes" value="javadoc, doc, docs, apidoc, apidocs, documentation, documents" />
+        <option name="sourcesTypes" value="source, src, sources, srcs" />
+      </ArtifactTypeSettings>
+    </option>
+    <option name="ivyLogLevelThreshold" value="Warning" />
+    <option name="ivySettingsFile" value="D:\Development\ivyidea\sample\untitled\ivy-settings.xml" />
+    <option name="libraryNameIncludesConfiguration" value="true" />
+    <option name="libraryNameIncludesModule" value="true" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
