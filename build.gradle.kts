@@ -37,9 +37,10 @@ dependencies {
     runtimeOnly("com.jcraft", "jsch.agentproxy.jsch", "0.0.9") // optional SFTP support
     runtimeOnly("org.bouncycastle", "bcpg-jdk15on", "1.62") // optional
     runtimeOnly("org.bouncycastle", "bcprov-jdk15on", "1.62") // optional
-    errorprone ("com.google.errorprone", "error_prone_core", "2.3.3")
+    errorprone("com.google.errorprone", "error_prone_core", "2.3.3")
     errorproneJavac("com.google.errorprone", "javac", "9+181-r4173-1")
     testCompile("org.junit.jupiter", "junit-jupiter-api", "5.5.1")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.5.1")
 }
 
 plugins {
@@ -55,6 +56,10 @@ intellij {
 
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.withType<JavaCompile>().configureEach {
