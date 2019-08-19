@@ -6,7 +6,7 @@ An [Intellij IDEA](https://www.jetbrains.com/idea/) plugin to resolve module dep
 
 Get it from the IntelliJ Plugin Marketplace or from the [plugin page](https://plugins.jetbrains.com/plugin/3612-ivyidea).
 
-##Usage
+## Usage
 
 * Configure the ivysettings file (usually called ivyconf.xml or ivysettings.xml) in the project settings. 
 * Add an IvyIDEA facet for every module you have that uses Ivy (if it was not autodetected already) and point it to the ivy.xml file for that module.
@@ -14,7 +14,7 @@ Get it from the IntelliJ Plugin Marketplace or from the [plugin page](https://pl
 
 For a more detailed guide with screenshots, see [Getting started](getting-started).
 
-##Features
+## Features
   * Apache Ivy integration (up to v2.5.0-rc1); no need for external ant build scripts to be called
   * Detection of Intellij module dependencies; these are added as module references
   * Detect source/document/jar type artifacts of dependencies and add them as such to the module
@@ -25,12 +25,12 @@ For a more detailed guide with screenshots, see [Getting started](getting-starte
   * Compatibile with IntelliJ 7 - 2019+
   * Show Ivy resolve messages in a console (basic)
 
-####Nice-to-haves
+#### Nice-to-haves
   * Show resolve report in Intellij (report xml transformed through the Ivy xsl)
   * Respect the order of dependencies in the ivy.xml file if feasible (this means that a module library can't always be used -> module and jar dependencies might be interleaved)
   * ~~Auto re-resolve on changed ivy.xml file~~ (is this even useful?)
 
-####Wild ideas for the future
+#### Wild ideas for the future
   * Intellisense in Ivy files (known organisations, artifacts, ...)
   * Any remarks/suggestions of your own? [Just send an e-mail!](mailto:guy.mahieu@gmail.com)
 
