@@ -29,7 +29,8 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import java.util.ArrayList;
 import java.util.List;
-import org.clarent.ivyidea.intellij.facet.IvyIdeaFacetType;
+import org.clarent.ivyidea.intellij.extension.ToolWindowRegistrationComponent;
+import org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

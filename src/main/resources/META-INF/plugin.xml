@@ -22,8 +22,7 @@
   <!--<description></description>-->
   <!--<change-notes></change-notes>-->
   <!--<version></version>-->
-  <vendor email="guy.mahieu@gmail.com" url="https://github.com/guymahieu/ivyidea"
-    logo="/ivyidea16.png">
+  <vendor email="guy.mahieu@gmail.com" url="http://www.ivyidea.org">
     Guy Mahieu
   </vendor>
   <!--<idea-version since-build="3000"/>-->
@@ -53,19 +52,17 @@
   </actions>
   <extensions defaultExtensionNs="com.intellij">
     <applicationService
-      serviceImplementation="org.clarent.ivyidea.IvyIdeaPlugin"/>
+      serviceImplementation="org.clarent.ivyidea.intellij.extension.IvyIdeaPlugin"/>
     <projectService
-      serviceInterface="org.clarent.ivyidea.intellij.IvyIdeaProjectComponent"
-      serviceImplementation="org.clarent.ivyidea.intellij.IvyIdeaProjectComponentImpl"/>
+      serviceImplementation="org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent"/>
     <projectService
-      serviceInterface="org.clarent.ivyidea.intellij.ToolWindowRegistrationComponent"
-      serviceImplementation="org.clarent.ivyidea.intellij.ToolWindowRegistrationComponentImpl"/>
+      serviceImplementation="org.clarent.ivyidea.intellij.extension.ToolWindowRegistrationComponent"/>
     <facetType
-      implementation="org.clarent.ivyidea.intellij.facet.IvyIdeaFacetType"/>
+      implementation="org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType"/>
     <framework.detector
-      implementation="org.clarent.ivyidea.intellij.facet.IvyIdeaFacetDetector"/>
+      implementation="org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetDetector"/>
     <projectConfigurable id="IvyIDEA.ProjectSettings"
-      instance="org.clarent.ivyidea.intellij.ui.IvyIdeaProjectSettingsComponent"
+      instance="org.clarent.ivyidea.intellij.extension.settings.IvyIdeaProjectSettingsComponent"
       displayName="IvyIDEA"/>
   </extensions>
 </idea-plugin>

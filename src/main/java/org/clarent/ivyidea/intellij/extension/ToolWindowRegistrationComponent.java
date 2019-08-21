@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.clarent.ivyidea.intellij;
+package org.clarent.ivyidea.intellij.extension;
 
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
@@ -32,14 +32,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
-public class ToolWindowRegistrationComponentImpl implements ToolWindowRegistrationComponent {
+public class ToolWindowRegistrationComponent {
 
+  public static final String COMPONENT_NAME = "IvyIDEA.ToolWindowRegistrationComponent";
+  public static final String TOOLWINDOW_ID = "IvyIDEA";
   private final Project project;
   @Nullable
   private ConsoleView console;
 
-  public ToolWindowRegistrationComponentImpl(Project project) {
+  public ToolWindowRegistrationComponent(Project project) {
     this.project = project;
+  }
+
+  public static ToolWindowRegistrationComponent getInstance(@NotNull Project project) {
+    return ServiceManager.getService(project, ToolWindowRegistrationComponent.class);
   }
 
   public void initComponent() {}
@@ -60,7 +66,6 @@ public class ToolWindowRegistrationComponentImpl implements ToolWindowRegistrati
   }
 
   @Nullable
-  @Override
   public ConsoleView getConsole() {
     return console;
   }

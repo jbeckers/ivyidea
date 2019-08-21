@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
-package org.clarent.ivyidea.intellij;
+package org.clarent.ivyidea.intellij.extension;
 
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -27,16 +28,20 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
-@State(name = IvyIdeaProjectComponentImpl.COMPONENT_NAME)
-public class IvyIdeaProjectComponentImpl
-    implements IvyIdeaProjectComponent, PersistentStateComponent<IvyIdeaProjectSettings> {
+@State(name = IvyIdeaProjectComponent.COMPONENT_NAME)
+public class IvyIdeaProjectComponent
+    implements PersistentStateComponent<IvyIdeaProjectSettings> {
 
   public static final String COMPONENT_NAME = "IvyIDEA.ProjectSettings";
 
   private final IvyIdeaProjectSettings internalState;
 
-  public IvyIdeaProjectComponentImpl(Project project) {
+  public IvyIdeaProjectComponent(Project project) {
     this.internalState = new IvyIdeaProjectSettings();
+  }
+
+  public static IvyIdeaProjectComponent getInstance(@NotNull Project project) {
+    return ServiceManager.getService(project, IvyIdeaProjectComponent.class);
   }
 
   public void projectOpened() {}
@@ -53,7 +58,6 @@ public class IvyIdeaProjectComponentImpl
 
   public void disposeComponent() {}
 
-  @Override
   @NotNull
   public IvyIdeaProjectSettings getState() {
     return internalState;

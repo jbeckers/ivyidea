@@ -28,7 +28,7 @@ import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
 import org.clarent.ivyidea.exception.ui.IvyIdeaExceptionDialog;
 import org.clarent.ivyidea.exception.ui.LinkBehavior;
-import org.clarent.ivyidea.intellij.ui.IvyIdeaProjectSettingsComponent;
+import org.clarent.ivyidea.intellij.extension.settings.IvyIdeaProjectSettingsComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
