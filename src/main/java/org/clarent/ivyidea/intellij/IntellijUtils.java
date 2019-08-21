@@ -41,18 +41,18 @@ public final class IntellijUtils {
   }
 
   @NotNull
-  public static Module[] getAllModulesWithIvyIdeaFacet(Project project) {
+  public static Module[] getAllModulesWithIvyIdeaFacet(final Project project) {
     final Module[] allModules = ModuleManager.getInstance(project).getModules();
     final List<Module> result = new ArrayList<>();
-    for (Module module : allModules) {
+    for (final Module module : allModules) {
       if (containsIvyIdeaFacet(module)) {
         result.add(module);
       }
     }
-    return result.toArray(new Module[result.size()]);
+    return result.toArray(new Module[0]);
   }
 
-  public static boolean containsIvyIdeaFacet(@Nullable Module module) {
+  public static boolean containsIvyIdeaFacet(@Nullable final Module module) {
     return module != null
         && FacetManager.getInstance(module).getFacetByType(IvyIdeaFacetType.ID) != null;
   }
@@ -62,11 +62,11 @@ public final class IntellijUtils {
     return FileTypeManager.getInstance().getFileTypeByExtension("xml");
   }
 
-  public static ConsoleView getConsoleView(Project project) {
+  public static ConsoleView getConsoleView(final Project project) {
     return project.getComponent(ToolWindowRegistrationComponent.class).getConsole();
   }
 
-  public static ToolWindow getToolWindow(Project project) {
+  public static ToolWindow getToolWindow(final Project project) {
     return ToolWindowManager.getInstance(project)
         .getToolWindow(ToolWindowRegistrationComponent.TOOLWINDOW_ID);
   }

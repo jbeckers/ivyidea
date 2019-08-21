@@ -24,7 +24,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import org.clarent.ivyidea.intellij.IntellijUtils;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
@@ -33,33 +33,32 @@ import org.clarent.ivyidea.resolve.dependency.ResolvedDependency;
 import org.clarent.ivyidea.resolve.problem.ResolveProblem;
 
 /** @author Guy Mahieu */
-public abstract class AbstractResolveAction extends AnAction {
+abstract class AbstractResolveAction extends AnAction {
 
-  protected static void updateIntellijModel(
-      final Module module, final List<ResolvedDependency> dependencies) {
+  static void updateIntellijModel(
+      final Module module, final Collection<ResolvedDependency> dependencies) {
     ApplicationManager.getApplication()
         .invokeLater(
-            () -> ApplicationManager.getApplication()
+            () -> ApplicationManager
+                .getApplication()
                 .runWriteAction(
                     () -> {
-                      final IntellijModuleWrapper moduleWrapper =
-                          IntellijModuleWrapper.forModule(module);
-                      try {
+                      try(final IntellijModuleWrapper moduleWrapper = IntellijModuleWrapper.forModule(module)) {
                         moduleWrapper.updateDependencies(dependencies);
-                      } finally {
-                        moduleWrapper.close();
                       }
                     }));
   }
 
-  protected static void clearConsole(final Project project) {
-    ApplicationManager.getApplication()
+  static void clearConsole(final Project project) {
+    ApplicationManager
+        .getApplication()
         .invokeLater(
             () -> IntellijUtils.getConsoleView(project).clear());
   }
 
-  protected static void reportProblems(final Module module, final List<ResolveProblem> problems) {
-    ApplicationManager.getApplication()
+  static void reportProblems(final Module module, final Collection<? extends ResolveProblem> problems) {
+    ApplicationManager
+        .getApplication()
         .invokeLater(
             () -> {
               final IvyIdeaFacetConfiguration ivyIdeaFacetConfiguration =
@@ -71,10 +70,10 @@ public abstract class AbstractResolveAction extends AnAction {
                         + " does not seem to be have an IvyIDEA facet, but was included in the resolve process anyway.");
               }
               final ConsoleView consoleView = IntellijUtils.getConsoleView(module.getProject());
-              String configsForModule;
+              final String configsForModule;
               if (ivyIdeaFacetConfiguration.isOnlyResolveSelectedConfigs()) {
                 final Set<String> configs = ivyIdeaFacetConfiguration.getConfigsToResolve();
-                if (configs == null || configs.size() == 0) {
+                if (configs == null || configs.isEmpty()) {
                   configsForModule = "[No configurations selected!]";
                 } else {
                   configsForModule = configs.toString();
@@ -99,9 +98,9 @@ public abstract class AbstractResolveAction extends AnAction {
                         + "':"
                         + '\n',
                     ConsoleViewContentType.NORMAL_OUTPUT);
-                for (ResolveProblem resolveProblem : problems) {
+                for (final ResolveProblem resolveProblem : problems) {
                   consoleView.print(
-                      "\t" + resolveProblem.toString() + '\n',
+                      "\t" + resolveProblem + '\n',
                       ConsoleViewContentType.ERROR_OUTPUT);
                 }
                 // Make sure the toolwindow becomes visible if there were problems

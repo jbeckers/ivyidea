@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +28,11 @@ public class Property {
     return value;
   }
 
-  public void setKey(String key) {
+  public void setKey(final String key) {
     this.key = key;
   }
 
-  public void setValue(String value) {
+  public void setValue(final String value) {
     this.value = value;
   }
 

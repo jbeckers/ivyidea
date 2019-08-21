@@ -54,7 +54,7 @@ public class ResolveForActiveModuleAction extends AbstractResolveAction {
           .run(
               new IvyIdeaResolveBackgroundTask(module.getProject(), e) {
                 @Override
-                public void doResolve(@NotNull ProgressIndicator progressIndicator)
+                public void doResolve(@NotNull final ProgressIndicator progressIndicator)
                     throws IvySettingsNotFoundException, IvyFileReadException,
                         IvySettingsFileReadException {
                   clearConsole(myProject);
@@ -73,13 +73,13 @@ public class ResolveForActiveModuleAction extends AbstractResolveAction {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(final AnActionEvent e) {
     final Module activeModule = LangDataKeys.MODULE.getData(e.getDataContext());
     updatePresentation(e.getPresentation(), activeModule);
   }
 
-  private static void updatePresentation(Presentation presentation, Module activeModule) {
-    boolean linkEnabled = IntellijUtils.containsIvyIdeaFacet(activeModule);
+  private static void updatePresentation(final Presentation presentation, final Module activeModule) {
+    final boolean linkEnabled = IntellijUtils.containsIvyIdeaFacet(activeModule);
     presentation.setText(
         MessageFormat.format(MENU_TEXT, linkEnabled ? activeModule.getName() : "active"));
     presentation.setEnabled(linkEnabled);

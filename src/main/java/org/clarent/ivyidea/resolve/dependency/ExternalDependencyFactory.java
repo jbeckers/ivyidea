@@ -21,8 +21,8 @@ package org.clarent.ivyidea.resolve.dependency;
 import com.intellij.openapi.project.Project;
 import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.clarent.ivyidea.config.IvyIdeaConfigHelper;
 import org.clarent.ivyidea.config.model.ArtifactTypeSettings;
+import org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +34,9 @@ public final class ExternalDependencyFactory {
 
   @Nullable
   public static ExternalDependency createExternalDependency(
-      @NotNull Artifact artifact,
-      @Nullable File file,
-      @NotNull Project project,
+      @NotNull final Artifact artifact,
+      @Nullable final File file,
+      @NotNull final Project project,
       @NotNull final String configurationName) {
     final ArtifactTypeSettings.DependencyCategory category = determineCategory(project, artifact);
     if (category != null) {
@@ -54,8 +54,9 @@ public final class ExternalDependencyFactory {
 
   @Nullable
   public static ArtifactTypeSettings.DependencyCategory determineCategory(
-      @NotNull Project project, @NotNull Artifact artifact) {
-    final ArtifactTypeSettings typeSettings = IvyIdeaConfigHelper.getArtifactTypeSettings(project);
+      @NotNull final Project project, @NotNull final Artifact artifact) {
+    final ArtifactTypeSettings typeSettings = project.getComponent(IvyIdeaProjectComponent.class)
+        .getState().getArtifactTypeSettings();
     if (typeSettings == null) {
       return null;
     }

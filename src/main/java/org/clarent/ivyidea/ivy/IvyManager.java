@@ -49,7 +49,7 @@ public class IvyManager {
   }
 
   @Nullable
-  public ModuleDescriptor getModuleDescriptor(Module module)
+  public ModuleDescriptor getModuleDescriptor(final Module module)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     if (!moduleDescriptors.containsKey(module)) {
       final File ivyFile = IvyUtil.getIvyFile(module);
@@ -57,7 +57,7 @@ public class IvyManager {
         try {
           final ModuleDescriptor descriptor = IvyUtil.parseIvyFile(ivyFile, getIvy(module));
           moduleDescriptors.put(module, descriptor);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
           // ignore
           moduleDescriptors.put(module, null);
         }

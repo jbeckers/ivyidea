@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,11 +93,11 @@ class ArtifactTypeSettingsTest {
   @Test
   void testGetTypeStringReturnsDefaultValuesIfObjectEmpty() {
     final ArtifactTypeSettings typeSettings = new ArtifactTypeSettings();
-    for (ArtifactTypeSettings.DependencyCategory category :
+    for (final ArtifactTypeSettings.DependencyCategory category :
         ArtifactTypeSettings.DependencyCategory.values()) {
       final String typesStringForCategory = typeSettings.getTypesStringForCategory(category);
       assertNotNull(typesStringForCategory);
-      assertTrue(typesStringForCategory.length() > 0);
+      assertTrue(!typesStringForCategory.isEmpty());
     }
   }
 }

@@ -33,29 +33,29 @@ class OrderedFileListModel extends AbstractListModel<String> {
     return new ArrayList<>(items);
   }
 
-  public void setItems(List<String> itemsToSet) {
+  public void setItems(final List<String> itemsToSet) {
     clear();
     add(itemsToSet);
   }
 
-  private void add(List<String> itemsToAdd) {
+  private void add(final List<String> itemsToAdd) {
     items.addAll(itemsToAdd);
     fireIntervalAdded(this, items.size() - itemsToAdd.size(), items.size());
   }
 
-  void add(String item) {
+  void add(final String item) {
     items.add(item);
     fireIntervalAdded(this, items.size(), items.size());
   }
 
-  void removeItemAt(int index) {
+  void removeItemAt(final int index) {
     if (index >= 0 && index < items.size()) {
       items.remove(index);
       fireIntervalRemoved(this, index, index);
     }
   }
 
-  void moveItemUp(int index) {
+  void moveItemUp(final int index) {
     if (index > 0 && index < items.size()) {
       final String item = items.remove(index);
       items.add(index - 1, item);
@@ -63,7 +63,7 @@ class OrderedFileListModel extends AbstractListModel<String> {
     }
   }
 
-  void moveItemDown(int index) {
+  void moveItemDown(final int index) {
     if (index >= 0 && index < items.size() - 1) {
       final String item = items.remove(index);
       items.add(index + 1, item);
@@ -72,7 +72,7 @@ class OrderedFileListModel extends AbstractListModel<String> {
   }
 
   void clear() {
-    int nrOfItemsBeforeClear = items.size();
+    final int nrOfItemsBeforeClear = items.size();
     items.clear();
     fireContentsChanged(this, 0, nrOfItemsBeforeClear);
   }
@@ -82,12 +82,12 @@ class OrderedFileListModel extends AbstractListModel<String> {
     return items.size();
   }
 
-  String getItemAt(int index) {
+  String getItemAt(final int index) {
     return items.get(index);
   }
 
   @Override
-  public String getElementAt(int index) {
+  public String getElementAt(final int index) {
     return getItemAt(index);
   }
 }

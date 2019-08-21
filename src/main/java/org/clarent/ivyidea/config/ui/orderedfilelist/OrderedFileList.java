@@ -43,9 +43,9 @@ public class OrderedFileList {
   private JButton btnDown;
   private JButton btnAdd;
   private JList<String> lstFileNames;
-  private boolean modified;
+  private boolean modified = false;
 
-  public OrderedFileList(Project project) {
+  public OrderedFileList(final Project project) {
     this.project = project;
 
     wireFileList();
@@ -60,7 +60,7 @@ public class OrderedFileList {
   }
 
   private void installActivityListener() {
-    UserActivityWatcher watcher = new UserActivityWatcher();
+    final UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(
         () -> modified = true);
     watcher.register(pnlRoot);
@@ -79,17 +79,17 @@ public class OrderedFileList {
         .addListDataListener(
             new ListDataListener() {
               @Override
-              public void intervalAdded(ListDataEvent e) {
+              public void intervalAdded(final ListDataEvent e) {
                 updateButtonStates();
               }
 
               @Override
-              public void intervalRemoved(ListDataEvent e) {
+              public void intervalRemoved(final ListDataEvent e) {
                 updateButtonStates();
               }
 
               @Override
-              public void contentsChanged(ListDataEvent e) {
+              public void contentsChanged(final ListDataEvent e) {
                 updateButtonStates();
               }
             });
@@ -136,7 +136,7 @@ public class OrderedFileList {
           fcDescriptor.setTitle("Select Properties File(S)");
           final VirtualFile[] files =
               FileChooser.chooseFiles(fcDescriptor, pnlRoot, project, null);
-          for (VirtualFile file : files) {
+          for (final VirtualFile file : files) {
             addFilenameToList(file.getPresentableUrl());
           }
         });
@@ -157,7 +157,7 @@ public class OrderedFileList {
         e -> moveSelectedItemDown());
   }
 
-  private void addFilenameToList(String fileName) {
+  private void addFilenameToList(final String fileName) {
     getFileListModel().add(fileName);
     modified = true;
   }
@@ -183,7 +183,7 @@ public class OrderedFileList {
     modified = true;
   }
 
-  private void updateListSelection(int indexToSelect) {
+  private void updateListSelection(final int indexToSelect) {
     if (indexToSelect >= 0) {
       if (indexToSelect < getFileListModel().getSize()) {
         lstFileNames.getSelectionModel().setSelectionInterval(indexToSelect, indexToSelect);
@@ -208,7 +208,7 @@ public class OrderedFileList {
     return getFileListModel().getAllItems();
   }
 
-  public void setFileNames(List<String> items) {
+  public void setFileNames(final List<String> items) {
     getFileListModel().setItems(items);
   }
 

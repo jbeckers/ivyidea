@@ -29,12 +29,12 @@ public class InternalDependency implements ResolvedDependency {
 
   private final Module module;
 
-  public InternalDependency(Module module) {
+  public InternalDependency(final Module module) {
     this.module = module;
   }
 
   @Override
-  public void addTo(IntellijModuleWrapper intellijModuleWrapper) {
+  public void addTo(final IntellijModuleWrapper intellijModuleWrapper) {
     if (!intellijModuleWrapper.alreadyHasDependencyOnModule(module)) {
       LOGGER.info(
           "Registering module dependency from "

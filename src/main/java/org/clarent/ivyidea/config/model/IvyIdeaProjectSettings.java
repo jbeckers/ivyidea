@@ -43,7 +43,7 @@ public class IvyIdeaProjectSettings {
     return ivySettingsFile;
   }
 
-  public void setIvySettingsFile(String ivySettingsFile) {
+  public void setIvySettingsFile(final String ivySettingsFile) {
     this.ivySettingsFile = ivySettingsFile;
   }
 
@@ -51,7 +51,7 @@ public class IvyIdeaProjectSettings {
     return validateIvyFiles;
   }
 
-  public void setValidateIvyFiles(boolean validateIvyFiles) {
+  public void setValidateIvyFiles(final boolean validateIvyFiles) {
     this.validateIvyFiles = validateIvyFiles;
   }
 
@@ -59,7 +59,7 @@ public class IvyIdeaProjectSettings {
     return resolveTransitively;
   }
 
-  public void setResolveTransitively(boolean resolveTransitively) {
+  public void setResolveTransitively(final boolean resolveTransitively) {
     this.resolveTransitively = resolveTransitively;
   }
 
@@ -67,7 +67,7 @@ public class IvyIdeaProjectSettings {
     return resolveCacheOnly;
   }
 
-  public void setResolveCacheOnly(boolean resolveCacheOnly) {
+  public void setResolveCacheOnly(final boolean resolveCacheOnly) {
     this.resolveCacheOnly = resolveCacheOnly;
   }
 
@@ -75,7 +75,7 @@ public class IvyIdeaProjectSettings {
     return resolveInBackground;
   }
 
-  public void setResolveInBackground(boolean resolveInBackground) {
+  public void setResolveInBackground(final boolean resolveInBackground) {
     this.resolveInBackground = resolveInBackground;
   }
 
@@ -83,7 +83,7 @@ public class IvyIdeaProjectSettings {
     return alwaysAttachSources;
   }
 
-  public void setAlwaysAttachSources(boolean alwaysAttachSources) {
+  public void setAlwaysAttachSources(final boolean alwaysAttachSources) {
     this.alwaysAttachSources = alwaysAttachSources;
   }
 
@@ -91,7 +91,7 @@ public class IvyIdeaProjectSettings {
     return alwaysAttachJavadocs;
   }
 
-  public void setAlwaysAttachJavadocs(boolean alwaysAttachJavadocs) {
+  public void setAlwaysAttachJavadocs(final boolean alwaysAttachJavadocs) {
     this.alwaysAttachJavadocs = alwaysAttachJavadocs;
   }
 
@@ -99,7 +99,7 @@ public class IvyIdeaProjectSettings {
     return useCustomIvySettings;
   }
 
-  public void setUseCustomIvySettings(boolean useCustomIvySettings) {
+  public void setUseCustomIvySettings(final boolean useCustomIvySettings) {
     this.useCustomIvySettings = useCustomIvySettings;
   }
 
@@ -107,7 +107,7 @@ public class IvyIdeaProjectSettings {
     return propertiesSettings;
   }
 
-  public void setPropertiesSettings(PropertiesSettings propertiesSettings) {
+  public void setPropertiesSettings(final PropertiesSettings propertiesSettings) {
     this.propertiesSettings = propertiesSettings;
   }
 
@@ -131,7 +131,7 @@ public class IvyIdeaProjectSettings {
     return ivyLogLevelThreshold;
   }
 
-  public void setIvyLogLevelThreshold(String ivyLogLevelThreshold) {
+  public void setIvyLogLevelThreshold(final String ivyLogLevelThreshold) {
     this.ivyLogLevelThreshold = ivyLogLevelThreshold;
   }
 
@@ -139,13 +139,13 @@ public class IvyIdeaProjectSettings {
     return artifactTypeSettings;
   }
 
-  public void setArtifactTypeSettings(ArtifactTypeSettings artifactTypeSettings) {
+  public void setArtifactTypeSettings(final ArtifactTypeSettings artifactTypeSettings) {
     this.artifactTypeSettings = artifactTypeSettings;
   }
 
-  public void updateResolveOptions(ResolveOptions options) {
-    options.setValidate(isValidateIvyFiles());
-    options.setTransitive(isResolveTransitively());
-    options.setUseCacheOnly(isResolveCacheOnly());
+  public void updateResolveOptions(final ResolveOptions options) {
+    options.setValidate(validateIvyFiles);
+    options.setTransitive(resolveTransitively);
+    options.setUseCacheOnly(resolveCacheOnly);
   }
 }

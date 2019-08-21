@@ -47,7 +47,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
   private boolean alreadyOpenedBefore;
   private boolean modified;
 
-  public PropertiesSettingsTab(FacetEditorContext editorContext) {
+  public PropertiesSettingsTab(final FacetEditorContext editorContext) {
     this.editorContext = editorContext;
 
     /* No additional properties support yet in this release */
@@ -60,7 +60,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
   }
 
   private void wireActivityWatcher() {
-    UserActivityWatcher watcher = new UserActivityWatcher();
+    final UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(
         () -> modified = true);
     watcher.register(pnlRoot);
@@ -94,7 +94,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
   @Override
   public void apply() throws ConfigurationException {
     final Facet<?> facet = editorContext.getFacet();
-    IvyIdeaFacetConfiguration configuration =
+    final IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     configuration.getPropertiesSettings().setPropertyFiles(orderedFileList.getFileNames());
   }
@@ -108,7 +108,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
   @Override
   public void reset() {
     final Facet<?> facet = editorContext.getFacet();
-    IvyIdeaFacetConfiguration configuration =
+    final IvyIdeaFacetConfiguration configuration =
         (IvyIdeaFacetConfiguration) facet.getConfiguration();
     orderedFileList.setFileNames(configuration.getPropertiesSettings().getPropertyFiles());
   }

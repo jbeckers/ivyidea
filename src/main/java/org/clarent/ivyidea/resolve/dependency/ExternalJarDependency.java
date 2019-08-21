@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +26,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 public class ExternalJarDependency extends ExternalDependency {
 
   public ExternalJarDependency(
-      Artifact artifact, File externalArtifact, final String configurationName) {
+      final Artifact artifact, final File externalArtifact, final String configurationName) {
     super(artifact, externalArtifact, configurationName);
   }
 

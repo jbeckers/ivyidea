@@ -39,7 +39,7 @@ public class LinkBehavior<T> { // is behavior a good name? it has a presentation
    *     can be used to store some data that is needed during the handling of the link-click
    */
   public LinkBehavior(
-      @NotNull String linkText, @NotNull LinkListener<T> linkListener, @Nullable T data) {
+      @NotNull final String linkText, @NotNull final LinkListener<T> linkListener, @Nullable final T data) {
     this.linkText = linkText;
     this.linkListener = linkListener;
     this.data = data;

@@ -26,10 +26,11 @@ import static org.clarent.ivyidea.config.model.ArtifactTypeSettings.DependencyCa
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +46,7 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
 
     private final List<String> defaultTypes;
 
-    DependencyCategory(String... defaultTypes) {
+    DependencyCategory(final String... defaultTypes) {
       this.defaultTypes = Collections.unmodifiableList(asList(defaultTypes));
     }
 
@@ -55,38 +56,38 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
   }
 
   private final Map<DependencyCategory, Set<String>> typesPerCategory =
-      new HashMap<>();
+      new EnumMap<>(DependencyCategory.class);
 
   @Nullable
-  public DependencyCategory getCategoryForType(String type) {
+  public DependencyCategory getCategoryForType(final String type) {
     if (type == null) {
       return null;
     }
     if (isConfigurationEmpty()) {
       fillDefaults();
     }
-    for (DependencyCategory dependencyCategory : typesPerCategory.keySet()) {
-      final Set<String> types = typesPerCategory.get(dependencyCategory);
+    for (final Entry<DependencyCategory, Set<String>> entry : typesPerCategory.entrySet()) {
+      final Set<String> types = entry.getValue();
       if (types != null && types.contains(type.trim().toLowerCase())) {
-        return dependencyCategory;
+        return entry.getKey();
       }
     }
     return null;
   }
 
   private void fillDefaults() {
-    for (DependencyCategory category : DependencyCategory.values()) {
+    for (final DependencyCategory category : DependencyCategory.values()) {
       setTypesForCategory(category, joinArtifactTypes(category.getDefaultTypes()));
     }
   }
 
-  public void setTypesForCategory(@NotNull DependencyCategory category, String types) {
+  public void setTypesForCategory(@NotNull final DependencyCategory category, final String types) {
     if (types != null) {
       typesPerCategory.put(category, splitArtifactTypes(types));
     }
   }
 
-  public String getTypesStringForCategory(@NotNull DependencyCategory category) {
+  public String getTypesStringForCategory(@NotNull final DependencyCategory category) {
     if (isConfigurationEmpty()) {
       // nothing is configured for any category --> use defaults
       return joinArtifactTypes(category.getDefaultTypes());
@@ -96,9 +97,9 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
 
   protected boolean isConfigurationEmpty() {
     boolean configFound = false;
-    for (DependencyCategory dependencyCategory : DependencyCategory.values()) {
+    for (final DependencyCategory dependencyCategory : DependencyCategory.values()) {
       final Set<String> types = typesPerCategory.get(dependencyCategory);
-      configFound = types != null && types.size() > 0;
+      configFound = types != null && !types.isEmpty();
       if (configFound) {
         break;
       }
@@ -107,13 +108,13 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
   }
 
   @SuppressWarnings("StringSplitter")
-  private static Set<String> splitArtifactTypes(String artifactTypesString) {
-    Set<String> result = new LinkedHashSet<>();
+  private static Set<String> splitArtifactTypes(final String artifactTypesString) {
+    final Set<String> result = new LinkedHashSet<>();
     if (artifactTypesString != null) {
       final String[] types = artifactTypesString.split(",");
-      for (String type : types) {
+      for (final String type : types) {
         final String typeToAdd = type.trim().toLowerCase();
-        if (typeToAdd.length() > 0) {
+        if (!typeToAdd.isEmpty()) {
           result.add(typeToAdd);
         }
       }
@@ -121,13 +122,13 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
     return result;
   }
 
-  private static String joinArtifactTypes(Iterable<String> artifactTypes) {
+  private static String joinArtifactTypes(final Iterable<String> artifactTypes) {
     if (artifactTypes == null) {
       return "";
     }
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     String separator = "";
-    for (String artifactType : artifactTypes) {
+    for (final String artifactType : artifactTypes) {
       sb.append(separator).append(artifactType);
       separator = ", ";
     }
@@ -140,7 +141,7 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
   }
 
   @Override
-  public void loadState(@NotNull ArtifactTypeSettings state) {
+  public void loadState(@NotNull final ArtifactTypeSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
@@ -158,15 +159,15 @@ public class ArtifactTypeSettings implements PersistentStateComponent<ArtifactTy
     return joinArtifactTypes(typesPerCategory.get(Javadoc));
   }
 
-  public void setSourcesTypes(String types) {
+  public void setSourcesTypes(final String types) {
     setTypesForCategory(Sources, types);
   }
 
-  public void setClassesTypes(String types) {
+  public void setClassesTypes(final String types) {
     setTypesForCategory(Classes, types);
   }
 
-  public void setJavadocTypes(String types) {
+  public void setJavadocTypes(final String types) {
     setTypesForCategory(Javadoc, types);
   }
 }

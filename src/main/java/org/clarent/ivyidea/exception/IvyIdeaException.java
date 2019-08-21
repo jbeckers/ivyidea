@@ -29,15 +29,15 @@ public abstract class IvyIdeaException extends Exception {
 
   protected IvyIdeaException() {}
 
-  protected IvyIdeaException(String message) {
+  protected IvyIdeaException(final String message) {
     super(message);
   }
 
-  protected IvyIdeaException(String message, Throwable cause) {
+  protected IvyIdeaException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
-  protected IvyIdeaException(Throwable cause) {
+  protected IvyIdeaException(final Throwable cause) {
     super(cause);
   }
 }

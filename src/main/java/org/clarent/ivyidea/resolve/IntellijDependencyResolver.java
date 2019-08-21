@@ -42,7 +42,7 @@ public class IntellijDependencyResolver {
 
   private final IvyManager ivyManager;
 
-  public IntellijDependencyResolver(IvyManager ivyManager) {
+  public IntellijDependencyResolver(final IvyManager ivyManager) {
     this.ivyManager = ivyManager;
   }
 

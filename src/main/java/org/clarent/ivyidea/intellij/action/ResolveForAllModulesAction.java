@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 public class ResolveForAllModulesAction extends AbstractResolveAction {
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(final AnActionEvent e) {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
@@ -52,14 +52,14 @@ public class ResolveForAllModulesAction extends AbstractResolveAction {
         .run(
             new IvyIdeaResolveBackgroundTask(project, e) {
               @Override
-              public void doResolve(final @NotNull ProgressIndicator indicator)
+              public void doResolve(@NotNull final ProgressIndicator indicator)
                   throws IvySettingsNotFoundException, IvyFileReadException,
                       IvySettingsFileReadException {
                 clearConsole(myProject);
 
                 final IvyManager ivyManager = new IvyManager();
 
-                Collection<IntellijDependencyResolver> resolvers =
+                final Collection<IntellijDependencyResolver> resolvers =
                     new ArrayList<>();
                 for (final Module module : IntellijUtils.getAllModulesWithIvyIdeaFacet(project)) {
                   getProgressMonitorThread().setIvy(ivyManager.getIvy(module));
@@ -74,8 +74,8 @@ public class ResolveForAllModulesAction extends AbstractResolveAction {
                   }
                 }
 
-                for (IntellijDependencyResolver resolver : resolvers) {
-                  Module module = resolver.getModule();
+                for (final IntellijDependencyResolver resolver : resolvers) {
+                  final Module module = resolver.getModule();
                   updateIntellijModel(module, resolver.getDependencies());
                   reportProblems(module, resolver.getProblems());
                 }

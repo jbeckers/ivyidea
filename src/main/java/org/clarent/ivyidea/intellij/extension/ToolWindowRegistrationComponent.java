@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.clarent.ivyidea.intellij.ui.IvyIdeaIcons;
 import org.jetbrains.annotations.NotNull;
@@ -34,17 +33,16 @@ import org.jetbrains.annotations.Nullable;
 /** @author Guy Mahieu */
 public class ToolWindowRegistrationComponent {
 
-  public static final String COMPONENT_NAME = "IvyIDEA.ToolWindowRegistrationComponent";
+  private static final String COMPONENT_NAME = "IvyIDEA.ToolWindowRegistrationComponent";
   public static final String TOOLWINDOW_ID = "IvyIDEA";
   private final Project project;
-  @Nullable
-  private ConsoleView console;
+  @Nullable private ConsoleView console;
 
-  public ToolWindowRegistrationComponent(Project project) {
+  public ToolWindowRegistrationComponent(final Project project) {
     this.project = project;
   }
 
-  public static ToolWindowRegistrationComponent getInstance(@NotNull Project project) {
+  public static ToolWindowRegistrationComponent getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, ToolWindowRegistrationComponent.class);
   }
 
@@ -76,19 +74,19 @@ public class ToolWindowRegistrationComponent {
     }
     console = null;
 
-    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-    toolWindowManager.unregisterToolWindow(TOOLWINDOW_ID);
+    ToolWindowManager.getInstance(project).unregisterToolWindow(TOOLWINDOW_ID);
   }
 
   private void registerToolWindow() {
-    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-    ToolWindow toolWindow =
-        toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM);
-    console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
-    Content content =
-        ServiceManager.getService(ContentFactory.class)
-            .createContent(console.getComponent(), "Console", true);
+    final ToolWindow toolWindow =
+        ToolWindowManager.getInstance(project)
+            .registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM);
     toolWindow.setIcon(IvyIdeaIcons.MAIN_ICON_SMALL);
-    toolWindow.getContentManager().addContent(content);
+    console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
+    toolWindow
+        .getContentManager()
+        .addContent(
+            ServiceManager.getService(ContentFactory.class)
+                .createContent(console.getComponent(), "Console", true));
   }
 }

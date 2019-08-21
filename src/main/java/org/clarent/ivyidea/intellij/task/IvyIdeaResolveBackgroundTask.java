@@ -55,7 +55,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
   public abstract void doResolve(@NotNull ProgressIndicator progressIndicator)
       throws IvySettingsNotFoundException, IvyFileReadException, IvySettingsFileReadException;
 
-  protected IvyIdeaResolveBackgroundTask(Project project, AnActionEvent event) {
+  protected IvyIdeaResolveBackgroundTask(final Project project, final AnActionEvent event) {
     super(event);
     this.project = project;
   }
@@ -79,10 +79,10 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
       */
       // Start the actual resolve process
       doResolve(indicator);
-    } catch (IvyIdeaException e) {
+    } catch (final IvyIdeaException e) {
       exception = e;
       indicator.cancel();
-    } catch (RuntimeException e) {
+    } catch (final RuntimeException e) {
       if (!indicator.isCanceled()) {
         throw e;
       }
@@ -97,7 +97,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
     }
   }
 
-  private void handle(IvyIdeaException exception) {
+  private void handle(final IvyIdeaException exception) {
     if (exception instanceof IvyFileReadException) {
       showSimpleErrorDialog("Ivy File Error", exception);
     } else if (exception instanceof IvySettingsFileReadException) {
@@ -107,11 +107,11 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
     }
   }
 
-  private void showSimpleErrorDialog(String title, IvyIdeaException exception) {
+  private void showSimpleErrorDialog(final String title, final IvyIdeaException exception) {
     IvyIdeaExceptionDialog.showModalDialog(title, exception, myProject);
   }
 
-  private void showIvySettingsNotFoundErrorDialog(IvySettingsNotFoundException exception) {
+  private void showIvySettingsNotFoundErrorDialog(final IvySettingsNotFoundException exception) {
     LinkBehavior<?> linkBehavior = null;
     // TODO: For now I can only activate the link on project settings errors...
     //       Currently I don't know how to open the facet setting from the code...

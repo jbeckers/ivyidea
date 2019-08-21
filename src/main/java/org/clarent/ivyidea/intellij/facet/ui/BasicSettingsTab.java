@@ -48,6 +48,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.clarent.ivyidea.config.IvyIdeaConfigHelper;
 import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
+import org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.intellij.facet.ui.components.ConfigurationSelectionTable;
 import org.clarent.ivyidea.intellij.facet.ui.components.ConfigurationSelectionTableModel;
@@ -231,7 +232,9 @@ public class BasicSettingsTab extends FacetEditorTab {
     final boolean includeProjectProperties = true;
     //noinspection ConstantConditions
     if (includeProjectProperties) {
-      propertiesFiles.addAll(IvyIdeaConfigHelper.getPropertiesFiles(editorContext.getProject()));
+      propertiesFiles.addAll(
+          editorContext.getProject().getComponent(IvyIdeaProjectComponent.class).getState()
+              .getPropertiesSettings().getPropertyFiles());
     }
     return IvyIdeaConfigHelper.loadProperties(editorContext.getModule(), propertiesFiles);
   }

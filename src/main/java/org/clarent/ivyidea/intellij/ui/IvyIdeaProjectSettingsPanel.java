@@ -66,7 +66,7 @@ public class IvyIdeaProjectSettingsPanel {
   private OrderedFileList orderedFileList;
   private final Project project;
 
-  public IvyIdeaProjectSettingsPanel(Project project, IvyIdeaProjectSettings state) {
+  public IvyIdeaProjectSettingsPanel(final Project project, final IvyIdeaProjectSettings state) {
     this.project = project;
     this.internalState = state;
 
@@ -86,7 +86,7 @@ public class IvyIdeaProjectSettingsPanel {
   }
 
   private void wireActivityWatchers() {
-    UserActivityWatcher watcher = new UserActivityWatcher();
+    final UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(
         () -> modified = true);
     watcher.register(projectSettingsPanel);
@@ -104,7 +104,7 @@ public class IvyIdeaProjectSettingsPanel {
     return orderedFileList.getFileNames();
   }
 
-  private void setPropertiesFiles(List<String> fileNames) {
+  private void setPropertiesFiles(final List<String> fileNames) {
     orderedFileList.setFileNames(fileNames);
   }
 

@@ -42,19 +42,19 @@ class LibraryModels implements Closeable {
 
   private final ModifiableRootModel intellijModule;
 
-  LibraryModels(ModifiableRootModel intellijModule) {
+  LibraryModels(final ModifiableRootModel intellijModule) {
     this.intellijModule = intellijModule;
   }
 
   public Library.ModifiableModel getForExternalDependency(
       final ExternalDependency externalDependency) {
-    String resolvedConfiguration = externalDependency.getConfigurationName();
+    final String resolvedConfiguration = externalDependency.getConfigurationName();
     return getForConfiguration(
         resolvedConfiguration == null || resolvedConfiguration.trim().isEmpty() ? "default"
             : resolvedConfiguration);
   }
 
-  private Library.ModifiableModel getForConfiguration(String ivyConfiguration) {
+  private Library.ModifiableModel getForConfiguration(final String ivyConfiguration) {
     final String libraryName =
         IvyIdeaConfigHelper.getCreatedLibraryName(intellijModule, ivyConfiguration);
     if (!libraryModels.containsKey(libraryName)) {
@@ -66,7 +66,7 @@ class LibraryModels implements Closeable {
   }
 
   private static Library getIvyIdeaLibrary(
-      ModifiableRootModel modifiableRootModel, final String libraryName) {
+      final ModifiableRootModel modifiableRootModel, final String libraryName) {
     final LibraryTable libraryTable = modifiableRootModel.getModuleLibraryTable();
     final Library library = libraryTable.getLibraryByName(libraryName);
     if (library == null) {
@@ -81,14 +81,14 @@ class LibraryModels implements Closeable {
     return library;
   }
 
-  public void removeDependency(OrderRootType type, String dependencyUrl) {
+  public void removeDependency(final OrderRootType type, final String dependencyUrl) {
     LOGGER.info("Removing no longer needed dependency of type " + type + ": " + dependencyUrl);
-    for (Library.ModifiableModel libraryModel : libraryModels.values()) {
+    for (final Library.ModifiableModel libraryModel : libraryModels.values()) {
       libraryModel.removeRoot(dependencyUrl, type);
     }
   }
 
-  public List<String> getIntellijDependencyUrlsForType(OrderRootType type) {
+  public List<String> getIntellijDependencyUrlsForType(final OrderRootType type) {
     final List<String> intellijDependencies = new ArrayList<>();
     for (final Library.ModifiableModel libraryModel : libraryModels.values()) {
       final String[] libraryModelUrls = libraryModel.getUrls(type);
@@ -99,7 +99,7 @@ class LibraryModels implements Closeable {
 
   @Override
   public void close() {
-    for (Library.ModifiableModel libraryModel : libraryModels.values()) {
+    for (final Library.ModifiableModel libraryModel : libraryModels.values()) {
       if (libraryModel.isChanged()) {
         libraryModel.commit();
       } else {

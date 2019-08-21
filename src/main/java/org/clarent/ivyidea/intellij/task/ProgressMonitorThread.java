@@ -32,13 +32,13 @@ public class ProgressMonitorThread extends Thread {
   private final Thread resolveThread;
   private Ivy ivy;
 
-  public ProgressMonitorThread(ProgressIndicator indicator, Thread resolveThread) {
+  public ProgressMonitorThread(final ProgressIndicator indicator, final Thread resolveThread) {
     super("ProgressIndicator Monitor");
     this.indicator = indicator;
     this.resolveThread = resolveThread;
   }
 
-  public void setIvy(Ivy ivy) {
+  public void setIvy(final Ivy ivy) {
     this.ivy = ivy;
   }
 
@@ -51,7 +51,7 @@ public class ProgressMonitorThread extends Thread {
       }
       try {
         Thread.sleep(500);
-      } catch (InterruptedException e1) {
+      } catch (final InterruptedException e1) {
       }
     }
   }

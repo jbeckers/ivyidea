@@ -39,7 +39,7 @@ public class IvyIdeaProjectSettingsComponent implements Configurable {
   @Nullable
   private IvyIdeaProjectSettingsPanel settingsPanel;
 
-  public IvyIdeaProjectSettingsComponent(Project project) {
+  public IvyIdeaProjectSettingsComponent(final Project project) {
     this.project = project;
   }
 
@@ -68,7 +68,7 @@ public class IvyIdeaProjectSettingsComponent implements Configurable {
 
   private IvyIdeaProjectSettingsPanel getSettingsPanel() {
     if (settingsPanel == null) {
-      IvyIdeaProjectSettings state = project.getComponent(IvyIdeaProjectComponent.class).getState();
+      final IvyIdeaProjectSettings state = project.getComponent(IvyIdeaProjectComponent.class).getState();
       settingsPanel = new IvyIdeaProjectSettingsPanel(project, state);
     }
     return settingsPanel;

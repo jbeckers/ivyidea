@@ -28,8 +28,8 @@ public class PropertiesSettings {
 
   private List<String> propertyFiles = new ArrayList<>();
 
-  public static PropertiesSettings copyDataFrom(PropertiesSettings propertiesSettings) {
-    PropertiesSettings result = new PropertiesSettings();
+  public static PropertiesSettings copyDataFrom(final PropertiesSettings propertiesSettings) {
+    final PropertiesSettings result = new PropertiesSettings();
     result.propertyFiles = new ArrayList<>(propertiesSettings.propertyFiles);
     return result;
   }
@@ -38,7 +38,7 @@ public class PropertiesSettings {
     return propertyFiles;
   }
 
-  public void setPropertyFiles(List<String> propertyFiles) {
+  public void setPropertyFiles(final List<String> propertyFiles) {
     this.propertyFiles = propertyFiles;
   }
 }

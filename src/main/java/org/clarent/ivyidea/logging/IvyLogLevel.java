@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +40,8 @@ public enum IvyLogLevel {
   private static final Map<Integer, IvyLogLevel> loglevels;
 
   static {
-    Map<Integer, IvyLogLevel> temp = new HashMap<>();
-    for (IvyLogLevel ivyLogLevel : values()) {
+    final Map<Integer, IvyLogLevel> temp = new HashMap<>();
+    for (final IvyLogLevel ivyLogLevel : values()) {
       temp.put(ivyLogLevel.levelCode, ivyLogLevel);
     }
     loglevels = Collections.unmodifiableMap(temp);
@@ -48,25 +50,25 @@ public enum IvyLogLevel {
   private final int levelCode;
   private final ConsoleViewContentType contentType;
 
-  public static IvyLogLevel fromLevelCode(int levelCode) {
-    IvyLogLevel level = loglevels.get(levelCode);
+  public static IvyLogLevel fromLevelCode(final int levelCode) {
+    final IvyLogLevel level = loglevels.get(levelCode);
     return level == null ? None : level;
   }
 
-  public static IvyLogLevel fromName(String name) {
+  public static IvyLogLevel fromName(final String name) {
     try {
       return valueOf(name);
-    } catch (IllegalArgumentException e) {
+    } catch (final IllegalArgumentException e) {
       return None;
     }
   }
 
-  IvyLogLevel(int levelCode, ConsoleViewContentType contentType) {
+  IvyLogLevel(final int levelCode, final ConsoleViewContentType contentType) {
     this.levelCode = levelCode;
     this.contentType = contentType;
   }
 
-  public boolean isMoreVerboseThan(IvyLogLevel otherLevel) {
+  public boolean isMoreVerboseThan(final IvyLogLevel otherLevel) {
     return otherLevel.levelCode <= levelCode;
   }
 

@@ -38,7 +38,7 @@ public class PropertiesTable extends JBTable {
   }
 
   @Override
-  public void setModel(@NotNull TableModel dataModel) {
+  public void setModel(@NotNull final TableModel dataModel) {
     super.setModel(dataModel);
     initComponents();
   }

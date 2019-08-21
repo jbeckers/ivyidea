@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +39,7 @@ public abstract class ExternalDependency implements ResolvedDependency {
   private final String configurationName;
   private final File localFile;
 
-  public ExternalDependency(Artifact artifact, File localFile, final String configurationName) {
+  public ExternalDependency(final Artifact artifact, final File localFile, final String configurationName) {
     this.artifact = artifact;
     this.localFile = localFile;
     this.configurationName = configurationName;
@@ -48,7 +50,7 @@ public abstract class ExternalDependency implements ResolvedDependency {
   }
 
   public String getUrlForLibraryRoot() {
-    return VfsUtil.getUrlForLibraryRoot(getLocalFile());
+    return VfsUtil.getUrlForLibraryRoot(localFile);
   }
 
   public String getConfigurationName() {
@@ -56,7 +58,7 @@ public abstract class ExternalDependency implements ResolvedDependency {
   }
 
   @Override
-  public void addTo(IntellijModuleWrapper intellijModuleWrapper) {
+  public void addTo(final IntellijModuleWrapper intellijModuleWrapper) {
     if (localFile == null) {
       LOGGER.warning(
           "Not registering external "
@@ -92,7 +94,7 @@ public abstract class ExternalDependency implements ResolvedDependency {
     return localFile != null && !new File(localFile.getAbsolutePath()).exists();
   }
 
-  public boolean isSameDependency(String url) {
+  public boolean isSameDependency(final String url) {
     if (localFile == null) {
       return false;
     }

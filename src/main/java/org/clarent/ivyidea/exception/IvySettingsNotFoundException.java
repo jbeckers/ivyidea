@@ -36,7 +36,7 @@ public class IvySettingsNotFoundException extends IvyIdeaException {
   private final String configName;
 
   public IvySettingsNotFoundException(
-      String message, ConfigLocation configLocation, String configName) {
+      final String message, final ConfigLocation configLocation, final String configName) {
     super(message);
     this.configLocation = configLocation;
     this.configName = configName;

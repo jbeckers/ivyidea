@@ -21,6 +21,7 @@ package org.clarent.ivyidea.resolve;
 import com.intellij.openapi.module.Module;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -43,7 +44,7 @@ class IntellijModuleDependencies {
   private final Module module;
   private final Map<ModuleId, Module> moduleDependencies = new HashMap<>();
 
-  public IntellijModuleDependencies(Module module, IvyManager ivyManager)
+  public IntellijModuleDependencies(final Module module, final IvyManager ivyManager)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     this.module = module;
     this.ivyManager = ivyManager;
@@ -54,11 +55,11 @@ class IntellijModuleDependencies {
     return module;
   }
 
-  public boolean isInternalIntellijModuleDependency(ModuleId moduleId) {
+  public boolean isInternalIntellijModuleDependency(final ModuleId moduleId) {
     return moduleDependencies.containsKey(moduleId);
   }
 
-  public Module getModuleDependency(ModuleId moduleId) {
+  public Module getModuleDependency(final ModuleId moduleId) {
     return moduleDependencies.get(moduleId);
   }
 
@@ -67,10 +68,10 @@ class IntellijModuleDependencies {
     final ModuleDescriptor descriptor = ivyManager.getModuleDescriptor(module);
     if (descriptor != null) {
       final DependencyDescriptor[] ivyDependencies = descriptor.getDependencies();
-      for (Module dependencyModule :
+      for (final Module dependencyModule :
           IntellijUtils.getAllModulesWithIvyIdeaFacet(module.getProject())) {
         if (!module.equals(dependencyModule)) {
-          for (DependencyDescriptor ivyDependency : ivyDependencies) {
+          for (final DependencyDescriptor ivyDependency : ivyDependencies) {
             final ModuleId ivyDependencyId = ivyDependency.getDependencyId();
             final ModuleId dependencyModuleId = getModuleId(dependencyModule);
             if (ivyDependencyId.equals(dependencyModuleId)) {
@@ -90,7 +91,7 @@ class IntellijModuleDependencies {
   }
 
   @Nullable
-  private ModuleId getModuleId(Module module)
+  private ModuleId getModuleId(final Module module)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     if (!moduleDependencies.containsValue(module)) {
       final ModuleDescriptor ivyModuleDescriptor = ivyManager.getModuleDescriptor(module);
@@ -98,9 +99,9 @@ class IntellijModuleDependencies {
         moduleDependencies.put(ivyModuleDescriptor.getModuleRevisionId().getModuleId(), module);
       }
     }
-    for (ModuleId moduleId : moduleDependencies.keySet()) {
-      if (module.equals(moduleDependencies.get(moduleId))) {
-        return moduleId;
+    for (final Entry<ModuleId, Module> entry : moduleDependencies.entrySet()) {
+      if (module.equals(entry.getValue())) {
+        return entry.getKey();
       }
     }
     return null;

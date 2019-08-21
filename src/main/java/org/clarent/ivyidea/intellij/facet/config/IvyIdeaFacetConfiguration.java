@@ -53,7 +53,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
   private FacetPropertiesSettings facetPropertiesSettings = new FacetPropertiesSettings();
 
   @Nullable
-  public static IvyIdeaFacetConfiguration getInstance(Module module) {
+  public static IvyIdeaFacetConfiguration getInstance(final Module module) {
     final IvyIdeaFacet ivyIdeaFacet = IvyIdeaFacet.getInstance(module);
     if (ivyIdeaFacet != null) {
       return ivyIdeaFacet.getConfiguration();
@@ -69,7 +69,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return ivyFile.trim();
   }
 
-  public void setIvyFile(@NotNull String ivyFile) {
+  public void setIvyFile(@NotNull final String ivyFile) {
     this.ivyFile = ivyFile;
   }
 
@@ -77,7 +77,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return useProjectSettings;
   }
 
-  public void setUseProjectSettings(boolean useProjectSettings) {
+  public void setUseProjectSettings(final boolean useProjectSettings) {
     this.useProjectSettings = useProjectSettings;
   }
 
@@ -85,7 +85,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return useCustomIvySettings;
   }
 
-  public void setUseCustomIvySettings(boolean useCustomIvySettings) {
+  public void setUseCustomIvySettings(final boolean useCustomIvySettings) {
     this.useCustomIvySettings = useCustomIvySettings;
   }
 
@@ -93,7 +93,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return facetPropertiesSettings;
   }
 
-  public void setFacetPropertiesSettings(FacetPropertiesSettings facetPropertiesSettings) {
+  public void setFacetPropertiesSettings(final FacetPropertiesSettings facetPropertiesSettings) {
     this.facetPropertiesSettings = facetPropertiesSettings;
   }
 
@@ -102,7 +102,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return ivySettingsFile;
   }
 
-  public void setIvySettingsFile(@NotNull String ivySettingsFile) {
+  public void setIvySettingsFile(@NotNull final String ivySettingsFile) {
     this.ivySettingsFile = ivySettingsFile;
   }
 
@@ -110,7 +110,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return onlyResolveSelectedConfigs;
   }
 
-  public void setOnlyResolveSelectedConfigs(boolean onlyResolveSelectedConfigs) {
+  public void setOnlyResolveSelectedConfigs(final boolean onlyResolveSelectedConfigs) {
     this.onlyResolveSelectedConfigs = onlyResolveSelectedConfigs;
   }
 
@@ -118,7 +118,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     return configsToResolve;
   }
 
-  public void setConfigsToResolve(Set<String> configsToResolve) {
+  public void setConfigsToResolve(final Set<String> configsToResolve) {
     this.configsToResolve = configsToResolve;
   }
 
@@ -128,7 +128,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
 
   @Override
   public FacetEditorTab[] createEditorTabs(
-      FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
+      final FacetEditorContext editorContext, final FacetValidatorsManager validatorsManager) {
     final PropertiesSettingsTab propertiesSettingsTab = new PropertiesSettingsTab(editorContext);
     final BasicSettingsTab basicSettingsTab =
         new BasicSettingsTab(editorContext, propertiesSettingsTab);
@@ -136,7 +136,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
   }
 
   @Override
-  public void readExternal(Element element) {
+  public void readExternal(final Element element) {
     readBasicSettings(element);
     final Element propertiesSettingsElement = element.getChild("propertiesSettings");
     if (propertiesSettingsElement != null) {
@@ -144,7 +144,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     }
   }
 
-  private void readBasicSettings(Element element) {
+  private void readBasicSettings(final Element element) {
     setIvyFile(element.getAttributeValue("ivyFile", ""));
     setUseCustomIvySettings(
         Boolean.valueOf(
@@ -157,10 +157,10 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
         Boolean.valueOf(element.getAttributeValue("useProjectSettings", Boolean.TRUE.toString())));
     final Element configsToResolveElement = element.getChild("configsToResolve");
     if (configsToResolveElement != null) {
-      Set<String> configsToResolve = new TreeSet<>();
+      final Set<String> configsToResolve = new TreeSet<>();
       @SuppressWarnings("unchecked") final List<Element> configElements =
           configsToResolveElement.getChildren("config");
-      for (Element configElement : configElements) {
+      for (final Element configElement : configElements) {
         configsToResolve.add(configElement.getTextTrim());
       }
       setConfigsToResolve(configsToResolve);
@@ -168,7 +168,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
   }
 
   @Override
-  public void writeExternal(Element element) {
+  public void writeExternal(final Element element) {
     writeBasicSettings(element);
     final Element propertiesSettingsElement = new Element("propertiesSettings");
     if (facetPropertiesSettings != null) {
@@ -177,7 +177,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     element.addContent(propertiesSettingsElement);
   }
 
-  private void writeBasicSettings(Element element) {
+  private void writeBasicSettings(final Element element) {
     element.setAttribute("ivyFile", ivyFile == null ? "" : ivyFile);
     element.setAttribute("useProjectSettings", Boolean.toString(useProjectSettings));
     element.setAttribute("useCustomIvySettings", Boolean.toString(useCustomIvySettings));
@@ -186,7 +186,7 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
         "onlyResolveSelectedConfigs", Boolean.toString(onlyResolveSelectedConfigs));
     if (configsToResolve != null && !configsToResolve.isEmpty()) {
       final Element configsElement = new Element("configsToResolve");
-      for (String configToResolve : configsToResolve) {
+      for (final String configToResolve : configsToResolve) {
         configsElement.addContent(new Element("config").setText(configToResolve));
       }
       element.addContent(configsElement);

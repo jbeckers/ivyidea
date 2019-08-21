@@ -27,7 +27,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 public class ExternalJavaDocDependency extends ExternalDependency {
 
   public ExternalJavaDocDependency(
-      Artifact artifact, File externalArtifact, final String configurationName) {
+      final Artifact artifact, final File externalArtifact, final String configurationName) {
     super(artifact, externalArtifact, configurationName);
   }
 

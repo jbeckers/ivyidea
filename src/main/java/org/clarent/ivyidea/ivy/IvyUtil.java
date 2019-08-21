@@ -60,7 +60,7 @@ public final class IvyUtil {
    * @throws RuntimeException if the given module does not have an IvyIDEA facet configured.
    */
   @Nullable
-  public static File getIvyFile(Module module) {
+  public static File getIvyFile(final Module module) {
     final IvyIdeaFacetConfiguration configuration = IvyIdeaFacetConfiguration.getInstance(module);
     if (configuration == null) {
       throw new RuntimeException(
@@ -69,7 +69,7 @@ public final class IvyUtil {
               + ", but an attempt was made to use it as such.");
     }
 
-    String ivyFile = configuration.getIvyFile();
+    final String ivyFile = configuration.getIvyFile();
     return ivyFile.isEmpty() ? null : new File(ivyFile);
 
   }
@@ -81,7 +81,7 @@ public final class IvyUtil {
    * @param ivy the Ivy engine to use, configured with the appropriate settings
    * @return the ModuleDescriptor object representing the ivy file.
    */
-  public static ModuleDescriptor parseIvyFile(@NotNull File ivyFile, @NotNull Ivy ivy) {
+  public static ModuleDescriptor parseIvyFile(@NotNull final File ivyFile, @NotNull final Ivy ivy) {
     LOGGER.info("Parsing ivy file " + ivyFile.getAbsolutePath());
 
     ModuleDescriptor moduleDescriptor;
@@ -90,7 +90,7 @@ public final class IvyUtil {
       moduleDescriptor =
           ModuleDescriptorParserRegistry.getInstance()
               .parseDescriptor(ivy.getSettings(), ivyFile.toURI().toURL(), false);
-    } catch (ParseException | IOException e) {
+    } catch (final ParseException | IOException e) {
       throw new RuntimeException(e);
     } finally {
       ivy.popContext();
@@ -110,13 +110,13 @@ public final class IvyUtil {
    *     not exist or is a directory, no exception will be thrown
    */
   @Nullable
-  public static Set<Configuration> loadConfigurations(@NotNull String ivyFileName, @NotNull Ivy ivy)
+  public static Set<Configuration> loadConfigurations(@NotNull final String ivyFileName, @NotNull final Ivy ivy)
       throws ParseException {
     try {
       final File file = new File(ivyFileName);
       if (file.exists() && !file.isDirectory()) {
         final ModuleDescriptor md = parseIvyFile(file, ivy);
-        Set<Configuration> result =
+        final Set<Configuration> result =
             new TreeSet<>(
                 (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         result.addAll(Arrays.asList(md.getConfigurations()));
@@ -124,7 +124,7 @@ public final class IvyUtil {
       } else {
         return null;
       }
-    } catch (RuntimeException e) {
+    } catch (final RuntimeException e) {
       // Not able to parse module descriptor; no problem here...
       LOGGER.info(
           "Error while parsing ivy file during attempt to load configurations from it: " + e);
@@ -135,7 +135,7 @@ public final class IvyUtil {
     }
   }
 
-  public static Ivy createConfiguredIvyEngine(Module module, IvySettings ivySettings) {
+  public static Ivy createConfiguredIvyEngine(final Module module, final IvySettings ivySettings) {
     final Ivy ivy = Ivy.newInstance(ivySettings);
 
     // we should now call the Ivy#postConfigure() method, but it is private :-(
@@ -147,13 +147,13 @@ public final class IvyUtil {
   }
 
   private static void postConfigure(final Ivy ivy) {
-    EventManager eventManager = ivy.getEventManager();
-    Collection<Trigger> triggers = ivy.getSettings().getTriggers();
-    for (Trigger trigger : triggers) {
+    final EventManager eventManager = ivy.getEventManager();
+    final Collection<Trigger> triggers = ivy.getSettings().getTriggers();
+    for (final Trigger trigger : triggers) {
       eventManager.addIvyListener(trigger, trigger.getEventFilter());
     }
 
-    for (DependencyResolver resolver : ivy.getSettings().getResolvers()) {
+    for (final DependencyResolver resolver : ivy.getSettings().getResolvers()) {
       if (resolver instanceof BasicResolver) {
         ((AbstractResolver) resolver).setEventManager(eventManager);
       }

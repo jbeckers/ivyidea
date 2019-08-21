@@ -42,7 +42,7 @@ public final class IvyIdeaExceptionDialog<T> extends DialogWrapper {
   private LinkLabel<T> lblLink;
 
   /** Shows a standard IvyIDEA exception dialog without a hyperlink. */
-  public static void showModalDialog(String title, Throwable exception, Project project) {
+  public static void showModalDialog(final String title, final Throwable exception, final Project project) {
     showModalDialog(title, exception, project, null);
   }
 
@@ -51,7 +51,7 @@ public final class IvyIdeaExceptionDialog<T> extends DialogWrapper {
    * given linkBehavior.
    */
   public static <T> void showModalDialog(
-      String title, Throwable exception, Project project, LinkBehavior<T> linkBehavior) {
+      final String title, final Throwable exception, final Project project, final LinkBehavior<T> linkBehavior) {
     final IvyIdeaExceptionDialog<T> dlg = new IvyIdeaExceptionDialog<>(project);
     dlg.setTitle(title);
     dlg.setMessageFromThrowable(exception);
@@ -59,7 +59,7 @@ public final class IvyIdeaExceptionDialog<T> extends DialogWrapper {
     dlg.show();
   }
 
-  public IvyIdeaExceptionDialog(Project project) {
+  public IvyIdeaExceptionDialog(final Project project) {
     super(project, false);
 
     setButtonsAlignment(SwingConstants.CENTER);
@@ -75,17 +75,17 @@ public final class IvyIdeaExceptionDialog<T> extends DialogWrapper {
     return rootPanel;
   }
 
-  public void setMessage(@NotNull String message) {
+  public void setMessage(@NotNull final String message) {
     txtMessage.setText(message);
     // scroll to top
     txtMessage.setSelectionStart(0);
     txtMessage.setSelectionEnd(0);
   }
 
-  public void setMessageFromThrowable(@NotNull Throwable exception) {
+  public void setMessageFromThrowable(@NotNull final Throwable exception) {
     String message = exception.getMessage() + '\n';
     Throwable cause = exception.getCause();
-    int maxDepth = 20;
+    final int maxDepth = 20;
     int currDepth = 0;
     while (currDepth++ <= maxDepth && cause != null) {
       message += "\nCaused by: " + cause.getMessage();
@@ -97,10 +97,10 @@ public final class IvyIdeaExceptionDialog<T> extends DialogWrapper {
     setMessage(message);
   }
 
-  public void setLinkBehavior(@Nullable LinkBehavior<T> linkBehavior) {
+  public void setLinkBehavior(@Nullable final LinkBehavior<T> linkBehavior) {
     if (linkBehavior == null
         || linkBehavior.getLinkText() == null
-        || linkBehavior.getLinkText().trim().length() == 0) {
+        || linkBehavior.getLinkText().trim().isEmpty()) {
       lblLink.setText("");
       lblLink.setListener(null, null);
       lblLink.setVisible(false);

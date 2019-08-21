@@ -30,7 +30,7 @@ public class IvySettingsFileReadException extends IvyIdeaException {
   private final String fileName;
   private final String moduleName;
 
-  public IvySettingsFileReadException(String fileName, String moduleName, Throwable cause) {
+  public IvySettingsFileReadException(final String fileName, final String moduleName, final Throwable cause) {
     super(cause);
     this.fileName = fileName;
     this.moduleName = moduleName;

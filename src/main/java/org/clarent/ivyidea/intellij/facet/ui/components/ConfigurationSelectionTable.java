@@ -50,13 +50,13 @@ public class ConfigurationSelectionTable extends JBTable {
   }
 
   @Override
-  public void setModel(@NotNull TableModel dataModel) {
+  public void setModel(@NotNull final TableModel dataModel) {
     super.setModel(dataModel);
     ((ConfigurationSelectionTableModel) dataModel).setEditable(editable);
     initComponents();
   }
 
-  public void setEditable(boolean editable) {
+  public void setEditable(final boolean editable) {
     this.editable = editable;
     ((ConfigurationSelectionTableModel) dataModel).setEditable(editable);
 
@@ -89,12 +89,12 @@ public class ConfigurationSelectionTable extends JBTable {
             new BooleanTableCellRenderer() {
               @Override
               public Component getTableCellRendererComponent(
-                  JTable table,
-                  Object value,
-                  boolean isSelected,
-                  boolean hasFocus,
-                  int row,
-                  int column) {
+                  final JTable table,
+                  final Object value,
+                  final boolean isSelected,
+                  final boolean hasFocus,
+                  final int row,
+                  final int column) {
                 final Component rendererComponent =
                     super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, column);
@@ -115,12 +115,12 @@ public class ConfigurationSelectionTable extends JBTable {
 
               @Override
               public Component getTableCellRendererComponent(
-                  JTable table,
-                  Object value,
-                  boolean isSelected,
-                  boolean hasFocus,
-                  int row,
-                  int column) {
+                  final JTable table,
+                  final Object value,
+                  final boolean isSelected,
+                  final boolean hasFocus,
+                  final int row,
+                  final int column) {
                 final ConfigurationSelectionTableModel tableModel =
                     (ConfigurationSelectionTableModel) table.getModel();
                 final Component rendererComponent =
@@ -157,12 +157,12 @@ public class ConfigurationSelectionTable extends JBTable {
             new DefaultTableCellRenderer() {
               @Override
               public Component getTableCellRendererComponent(
-                  JTable table,
-                  Object value,
-                  boolean isSelected,
-                  boolean hasFocus,
-                  int row,
-                  int column) {
+                  final JTable table,
+                  final Object value,
+                  final boolean isSelected,
+                  final boolean hasFocus,
+                  final int row,
+                  final int column) {
                 final Component rendererComponent =
                     super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, column);

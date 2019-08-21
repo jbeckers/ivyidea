@@ -28,11 +28,11 @@ public class ResolveProblem {
   @Nullable
   private final Throwable throwable;
 
-  public ResolveProblem(String targetId, String message) {
+  public ResolveProblem(final String targetId, final String message) {
     this(targetId, message, null);
   }
 
-  public ResolveProblem(String targetId, String message, @Nullable Throwable throwable) {
+  public ResolveProblem(final String targetId, final String message, @Nullable final Throwable throwable) {
     this.targetId = targetId;
     this.message = message;
     this.throwable = throwable;

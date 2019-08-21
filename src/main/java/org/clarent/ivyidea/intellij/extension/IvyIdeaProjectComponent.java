@@ -32,15 +32,15 @@ import org.jetbrains.annotations.NotNull;
 public class IvyIdeaProjectComponent
     implements PersistentStateComponent<IvyIdeaProjectSettings> {
 
-  public static final String COMPONENT_NAME = "IvyIDEA.ProjectSettings";
+  static final String COMPONENT_NAME = "IvyIDEA.ProjectSettings";
 
   private final IvyIdeaProjectSettings internalState;
 
-  public IvyIdeaProjectComponent(Project project) {
+  public IvyIdeaProjectComponent(final Project project) {
     this.internalState = new IvyIdeaProjectSettings();
   }
 
-  public static IvyIdeaProjectComponent getInstance(@NotNull Project project) {
+  public static IvyIdeaProjectComponent getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, IvyIdeaProjectComponent.class);
   }
 
@@ -58,13 +58,14 @@ public class IvyIdeaProjectComponent
 
   public void disposeComponent() {}
 
+  @Override
   @NotNull
   public IvyIdeaProjectSettings getState() {
     return internalState;
   }
 
   @Override
-  public void loadState(@NotNull IvyIdeaProjectSettings state) {
-    XmlSerializerUtil.copyBean(state, this.getState());
+  public void loadState(@NotNull final IvyIdeaProjectSettings state) {
+    XmlSerializerUtil.copyBean(state, this.internalState);
   }
 }

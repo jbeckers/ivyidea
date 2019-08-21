@@ -51,15 +51,15 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
 
   @Override
   public IvyIdeaFacet createFacet(
-      @NotNull Module module,
-      String name,
-      @NotNull IvyIdeaFacetConfiguration configuration,
-      @SuppressWarnings("rawtypes") @Nullable Facet underlyingFacet) {
+      @NotNull final Module module,
+      final String name,
+      @NotNull final IvyIdeaFacetConfiguration configuration,
+      @SuppressWarnings("rawtypes") @Nullable final Facet underlyingFacet) {
     return new IvyIdeaFacet(module, this, name, configuration, underlyingFacet);
   }
 
   @Override
-  public boolean isSuitableModuleType(@SuppressWarnings("rawtypes") ModuleType moduleType) {
+  public boolean isSuitableModuleType(@SuppressWarnings("rawtypes") final ModuleType moduleType) {
     // Allow ivy facets for all module types...
     return true;
     // return
@@ -73,7 +73,7 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
   }
 
   protected IvyIdeaFacetConfiguration configureDetectedFacet(
-      VirtualFile ivyFile, Collection<IvyIdeaFacetConfiguration> existingFacetConfigurations) {
+      final VirtualFile ivyFile, final Collection<? extends IvyIdeaFacetConfiguration> existingFacetConfigurations) {
     if (existingFacetConfigurations.isEmpty()) {
       final IvyIdeaFacetConfiguration defaultConfiguration = createDefaultConfiguration();
       defaultConfiguration.setIvyFile(ivyFile.getPath());

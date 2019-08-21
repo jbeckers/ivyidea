@@ -34,7 +34,7 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
     return includeProjectLevelPropertiesFiles;
   }
 
-  public void setIncludeProjectLevelPropertiesFiles(boolean includeProjectLevelPropertiesFiles) {
+  public void setIncludeProjectLevelPropertiesFiles(final boolean includeProjectLevelPropertiesFiles) {
     this.includeProjectLevelPropertiesFiles = includeProjectLevelPropertiesFiles;
   }
 
@@ -43,14 +43,14 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
   }
 
   public void setIncludeProjectLevelAdditionalProperties(
-      boolean includeProjectLevelAdditionalProperties) {
+      final boolean includeProjectLevelAdditionalProperties) {
     this.includeProjectLevelAdditionalProperties = includeProjectLevelAdditionalProperties;
   }
 
   @Override
-  public void readExternal(Element propertiesSettingsElement) {
+  public void readExternal(final Element propertiesSettingsElement) {
     final Element propertiesFilesElement = propertiesSettingsElement.getChild("propertiesFiles");
-    List<String> fileNames = new ArrayList<>();
+    final List<String> fileNames = new ArrayList<>();
     if (propertiesFilesElement != null) {
       setIncludeProjectLevelPropertiesFiles(
           Boolean.valueOf(
@@ -58,7 +58,7 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
                   "includeProjectLevelPropertiesFiles", Boolean.TRUE.toString())));
       @SuppressWarnings("unchecked") final List<Element> propertiesFileNames =
           propertiesFilesElement.getChildren("fileName");
-      for (Element element : propertiesFileNames) {
+      for (final Element element : propertiesFileNames) {
         fileNames.add(element.getValue());
       }
     }
@@ -66,13 +66,13 @@ public class FacetPropertiesSettings extends PropertiesSettings implements JDOME
   }
 
   @Override
-  public void writeExternal(Element propertiesSettingsElement) {
+  public void writeExternal(final Element propertiesSettingsElement) {
     final Element propertiesFilesElement = new Element("propertiesFiles");
     propertiesFilesElement.setAttribute(
         "includeProjectLevelPropertiesFiles",
-        Boolean.toString(isIncludeProjectLevelPropertiesFiles()));
+        Boolean.toString(includeProjectLevelPropertiesFiles));
     propertiesSettingsElement.addContent(propertiesFilesElement);
-    for (String fileName : getPropertyFiles()) {
+    for (final String fileName : getPropertyFiles()) {
       propertiesFilesElement.addContent(new Element("fileName").setText(fileName));
     }
   }

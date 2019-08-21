@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(final AnActionEvent e) {
     final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
     ProgressManager.getInstance()
         .run(

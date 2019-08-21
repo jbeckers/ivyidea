@@ -23,7 +23,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import org.clarent.ivyidea.config.IvyIdeaConfigHelper;
+import org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent;
 
 /** @author Guy Mahieu */
 public abstract class IvyIdeaBackgroundTask extends Task.Backgroundable {
@@ -32,13 +32,13 @@ public abstract class IvyIdeaBackgroundTask extends Task.Backgroundable {
 
     private final Project project;
 
-    public IvyIdeaPerformInBackgroundOption(Project project) {
+    public IvyIdeaPerformInBackgroundOption(final Project project) {
       this.project = project;
     }
 
     @Override
     public boolean shouldStartInBackground() {
-      return IvyIdeaConfigHelper.getResolveInBackground(project);
+      return project.getComponent(IvyIdeaProjectComponent.class).getState().isResolveInBackground();
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class IvyIdeaBackgroundTask extends Task.Backgroundable {
     public void processRestoredToForeground() {}
   }
 
-  public IvyIdeaBackgroundTask(AnActionEvent event) {
+  public IvyIdeaBackgroundTask(final AnActionEvent event) {
     super(
         CommonDataKeys.PROJECT.getData(event.getDataContext()),
         "IvyIDEA " + event.getPresentation().getText(),

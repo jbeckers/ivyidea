@@ -42,6 +42,7 @@ import org.clarent.ivyidea.config.model.ArtifactTypeSettings;
 import org.clarent.ivyidea.exception.IvyFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
+import org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent;
 import org.clarent.ivyidea.ivy.IvyManager;
 import org.clarent.ivyidea.ivy.IvyUtil;
 import org.clarent.ivyidea.resolve.dependency.ExternalDependency;
@@ -71,7 +72,7 @@ class DependencyResolver {
     return Collections.unmodifiableList(resolvedDependencies);
   }
 
-  public void resolve(Module module, IvyManager ivyManager)
+  public void resolve(final Module module, final IvyManager ivyManager)
       throws IvySettingsNotFoundException, IvyFileReadException, IvySettingsFileReadException {
     final File ivyFile = IvyUtil.getIvyFile(module);
     if (ivyFile == null) {
@@ -83,26 +84,25 @@ class DependencyResolver {
       final ResolveReport resolveReport =
           ivy.resolve(ivyFile.toURI().toURL(), IvyIdeaConfigHelper.createResolveOptions(module));
       extractDependencies(ivy, resolveReport, new IntellijModuleDependencies(module, ivyManager));
-    } catch (ParseException | IOException e) {
+    } catch (final ParseException | IOException e) {
       throw new IvyFileReadException(ivyFile.getAbsolutePath(), module.getName(), e);
     }
   }
 
   // TODO: This method performs way too much tasks -- refactor it!
   protected void extractDependencies(
-      Ivy ivy, ResolveReport resolveReport, IntellijModuleDependencies moduleDependencies) {
+      final Ivy ivy, final ResolveReport resolveReport, final IntellijModuleDependencies moduleDependencies) {
     final String[] resolvedConfigurations = resolveReport.getConfigurations();
-    for (String resolvedConfiguration : resolvedConfigurations) {
-      ConfigurationResolveReport configurationReport =
+    for (final String resolvedConfiguration : resolvedConfigurations) {
+      final ConfigurationResolveReport configurationReport =
           resolveReport.getConfigurationReport(resolvedConfiguration);
 
       // TODO: Refactor this a bit
       registerProblems(configurationReport, moduleDependencies);
 
-      @SuppressWarnings({"unchecked"})
-      Set<ModuleRevisionId> dependencies =
+      @SuppressWarnings("unchecked") final Set<ModuleRevisionId> dependencies =
           configurationReport.getModuleRevisionIds();
-      for (ModuleRevisionId dependency : dependencies) {
+      for (final ModuleRevisionId dependency : dependencies) {
         if (moduleDependencies.isInternalIntellijModuleDependency(dependency.getModuleId())) {
           resolvedDependencies.add(
               new InternalDependency(
@@ -111,7 +111,7 @@ class DependencyResolver {
           final Project project = moduleDependencies.getModule().getProject();
           final ArtifactDownloadReport[] artifactDownloadReports =
               configurationReport.getDownloadReports(dependency);
-          for (ArtifactDownloadReport artifactDownloadReport : artifactDownloadReports) {
+          for (final ArtifactDownloadReport artifactDownloadReport : artifactDownloadReports) {
             final Artifact artifact = artifactDownloadReport.getArtifact();
             final File artifactFile = artifactDownloadReport.getLocalFile();
             addExternalDependency(artifact, artifactFile, resolvedConfiguration, project);
@@ -122,13 +122,15 @@ class DependencyResolver {
           // This means that dependencies in ivy.xml don't need to explicitly include configurations
           // for javadoc or sources, just to ensure that the plugin can see them. The plugin will
           // get all javadocs and sources it can find for each dependency.
-          final boolean attachSources = IvyIdeaConfigHelper.alwaysAttachSources(project);
-          final boolean attachJavadocs = IvyIdeaConfigHelper.alwaysAttachJavadocs(project);
+          final boolean attachSources = project.getComponent(IvyIdeaProjectComponent.class)
+              .getState().isAlwaysAttachSources();
+          final boolean attachJavadocs = project.getComponent(IvyIdeaProjectComponent.class)
+              .getState().isAlwaysAttachJavadocs();
           if (attachSources || attachJavadocs) {
             final IvyNode node = configurationReport.getDependency(dependency);
             final ModuleDescriptor md = node.getDescriptor();
             final Artifact[] artifacts = md.getAllArtifacts();
-            for (Artifact artifact : artifacts) {
+            for (final Artifact artifact : artifacts) {
               // TODO: if sources are found, don't bother attaching javadoc?
               // That way, IDEA will generate the javadoc and resolve links to other javadocs
               if ((attachSources && isSource(project, artifact))
@@ -138,7 +140,7 @@ class DependencyResolver {
                 }
 
                 // try to download
-                ArtifactDownloadReport adr =
+                final ArtifactDownloadReport adr =
                     ivy.getResolveEngine().download(artifact, new DownloadOptions());
                 addExternalDependency(artifact, adr.getLocalFile(), resolvedConfiguration, project);
               }
@@ -150,8 +152,8 @@ class DependencyResolver {
   }
 
   private void addExternalDependency(
-      Artifact artifact, File artifactFile, String resolvedConfiguration, Project project) {
-    ExternalDependency externalDependency =
+      final Artifact artifact, final File artifactFile, final String resolvedConfiguration, final Project project) {
+    final ExternalDependency externalDependency =
         ExternalDependencyFactory
             .createExternalDependency(artifact, artifactFile, project, resolvedConfiguration);
     if (externalDependency == null) {
@@ -176,20 +178,20 @@ class DependencyResolver {
     }
   }
 
-  private static boolean isSource(Project project, Artifact artifact) {
+  private static boolean isSource(final Project project, final Artifact artifact) {
     return ArtifactTypeSettings.DependencyCategory.Sources
         == ExternalDependencyFactory.determineCategory(project, artifact);
   }
 
-  private static boolean isJavadoc(Project project, Artifact artifact) {
+  private static boolean isJavadoc(final Project project, final Artifact artifact) {
     return ArtifactTypeSettings.DependencyCategory.Javadoc
         == ExternalDependencyFactory.determineCategory(project, artifact);
   }
 
   private void registerProblems(
-      ConfigurationResolveReport configurationReport,
-      IntellijModuleDependencies moduleDependencies) {
-    for (IvyNode unresolvedDependency : configurationReport.getUnresolvedDependencies()) {
+      final ConfigurationResolveReport configurationReport,
+      final IntellijModuleDependencies moduleDependencies) {
+    for (final IvyNode unresolvedDependency : configurationReport.getUnresolvedDependencies()) {
       if (moduleDependencies.isInternalIntellijModuleDependency(
           unresolvedDependency.getModuleId())) {
         // centralize  this!

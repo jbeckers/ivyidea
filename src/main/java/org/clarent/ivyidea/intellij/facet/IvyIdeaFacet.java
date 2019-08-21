@@ -37,15 +37,15 @@ public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
   }
 
   public IvyIdeaFacet(
-      @NotNull Module module,
-      @NotNull FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> facetType,
-      String name,
-      @NotNull IvyIdeaFacetConfiguration configuration,
-      @SuppressWarnings("rawtypes") Facet underlyingFacet) {
+      @NotNull final Module module,
+      @NotNull final FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> facetType,
+      final String name,
+      @NotNull final IvyIdeaFacetConfiguration configuration,
+      @SuppressWarnings("rawtypes") final Facet underlyingFacet) {
     super(facetType, module, name, configuration, underlyingFacet);
   }
 
-  public IvyIdeaFacet(@NotNull Module module) {
+  public IvyIdeaFacet(@NotNull final Module module) {
     this(
         module, FacetTypeRegistry.getInstance().findFacetType(IvyIdeaFacetType.ID),
         "IvyIdeaFacet",

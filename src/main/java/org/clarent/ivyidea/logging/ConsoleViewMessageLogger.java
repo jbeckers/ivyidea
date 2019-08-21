@@ -1,5 +1,7 @@
 /*
  * Copyright 2010 Guy Mahieu
+ * Copyright 2011 Maarten Coene
+ * Copyright 2019 Joachim Beckers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +25,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import org.apache.ivy.util.AbstractMessageLogger;
-import org.clarent.ivyidea.config.IvyIdeaConfigHelper;
+import org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent;
 
 public class ConsoleViewMessageLogger extends AbstractMessageLogger {
 
@@ -32,7 +34,9 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
 
   public ConsoleViewMessageLogger(final Project project, final ConsoleView consoleView) {
     this.consoleView = consoleView;
-    threshold = IvyIdeaConfigHelper.getIvyLoggingThreshold(project);
+    final String ivyLogLevelThreshold = project.getComponent(IvyIdeaProjectComponent.class)
+        .getState().getIvyLogLevelThreshold();
+    threshold = IvyLogLevel.fromName(ivyLogLevelThreshold);
   }
 
   @Override
