@@ -34,63 +34,6 @@ For a more detailed guide with screenshots, see [Getting started](getting-starte
   * Intellisense in Ivy files (known organisations, artifacts, ...)
   * Any remarks/suggestions of your own? [Just send an e-mail!](mailto:guy.mahieu@gmail.com)
 
-## Changelog
-
-  * IvyIDEA-1.0.10 released
-    
-    This release fixes a compatibility problem with IntelliJ IDEA 13.1.
-
-  * IvyIDEA-1.0.9 released
-    
-    This release contains Apache Ivy 2.4.0-RC1 and has improved source/javadoc handling.
-
-  * IvyIDEA-1.0.8 released
-    
-    This release fixes a compatibility problem with IntelliJ IDEA 13.0.2 EAP (build 133.609).
-
-  * IvyIDEA-1.0.6 released
-    
-    This is a bugfix release with improved compatibility with IntelliJ IDEA 13 beta1.
-
-  * IvyIDEA-1.0.3 released
-    
-    This release contains Apache Ivy 2.3.0-RC2.
-
-  * IvyIDEA-1.0.2 released
-    
-    This release contains Apache Ivy 2.3.0-RC1.
-
-  * IvyIDEA-1.0 released
-    
-    This release fixes some compatibility issues with IntelliJ IDEA 11.
-
-  * IvyIDEA-0.9-beta6 released
-    
-    This release fixes some bugs introduced in beta4.
-
-  * IvyIDEA-0.9-beta4 released
-   
-    This release adds some new features:
-    * The module library created by IvyIDEA can now contain the module and configuration names (based on a patch submitted by wajiii)
-    * The raw ivy output can now be logged to the IvyIDEA console for better analysis of problems (config UI based on a patch submitted by wajiii)
-    * Dependencies are now added to the module library with relative path names.
-    * Several small fixes and improvements.
-    Known issue: exception when there are unresolved dependencies in some cases, compatibility with IntelliJ 8 broken - (will be fixed).
-
-  * IvyIDEA-0.9-beta2 released
-    
-    This release does not introduce much new functionality but should resolve a few annoying issues from 0.9-beta1
-
-  * IvyIDEA-0.9-beta1 released
-         
-    This release adds some new features:
-    * Upgraded internal ivy to 2.0.0 (including dependencies)
-    * Support for using ${} style properties in ivy and ivysettings files
-    * Improved lookup method for artifacts; now useOrigin="true" will also be supported
-    * Resolved config names are now listed in the IvyIDEA console
-    * Several small fixes and improvements
-
-
 ## Getting started
 
 ### Module Settings
