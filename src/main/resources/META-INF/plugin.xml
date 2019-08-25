@@ -55,8 +55,11 @@
       serviceImplementation="org.clarent.ivyidea.intellij.extension.IvyIdeaPlugin"/>
     <projectService
       serviceImplementation="org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent"/>
-    <projectService
-      serviceImplementation="org.clarent.ivyidea.intellij.extension.ToolWindowRegistrationComponent"/>
+    <toolWindow
+      id="IvyIDEA"
+      icon="/ivyidea13.png"
+      anchor="bottom"
+      factoryClass="org.clarent.ivyidea.intellij.extension.IvyIdeaToolWindowFactory"/>
     <facetType
       implementation="org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType"/>
     <framework.detector

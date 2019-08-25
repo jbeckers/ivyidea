@@ -18,8 +18,6 @@
 
 package org.clarent.ivyidea.intellij.task;
 
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
@@ -31,14 +29,19 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.content.Content;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.swing.JComponent;
+import org.clarent.ivyidea.IvyIdeaConstants;
 import org.clarent.ivyidea.exception.IvyFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
-import org.clarent.ivyidea.intellij.extension.ToolWindowRegistrationComponent;
+import org.clarent.ivyidea.intellij.extension.IvyIdeaToolWindowFactory.IvyIdeaToolWindow;
 import org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType;
 import org.clarent.ivyidea.intellij.extension.settings.IvyIdeaProjectSettingsComponent;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
@@ -68,10 +71,17 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
     ApplicationManager.getApplication()
         .invokeLater(
             () -> {
-              final ConsoleView console =
-                  project.getComponent(ToolWindowRegistrationComponent.class).getConsole();
-              if (console != null) {
-                console.clear();
+              final ToolWindow toolWindow =
+                  ToolWindowManager.getInstance(project)
+                      .getToolWindow(IvyIdeaConstants.TOOLWINDOW_ID);
+              if (toolWindow != null) {
+                final Content content = toolWindow.getContentManager().getSelectedContent();
+                if (content != null) {
+                  JComponent component = content.getComponent();
+                  if (component instanceof IvyIdeaToolWindow) {
+                    ((IvyIdeaToolWindow) component).getConsoleView().clear();
+                  }
+                }
               }
             });
   }
@@ -98,52 +108,52 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
               final IvyIdeaFacetConfiguration ivyIdeaFacetConfiguration =
                   IvyIdeaFacetConfiguration.getInstance(module);
               if (ivyIdeaFacetConfiguration == null) {
-                throw new RuntimeException(
-                    "Internal error: module "
-                        + module.getName()
-                        + " does not seem to be have an IvyIDEA facet, but was included in the resolve process anyway.");
-              }
-              final ConsoleView consoleView =
-                  module
-                      .getProject()
-                      .getComponent(ToolWindowRegistrationComponent.class)
-                      .getConsole();
-              final String configsForModule;
-              if (ivyIdeaFacetConfiguration.isOnlyResolveSelectedConfigs()) {
-                final Set<String> configs = ivyIdeaFacetConfiguration.getConfigsToResolve();
-                if (configs == null || configs.isEmpty()) {
-                  configsForModule = "[No configurations selected!]";
+                Notifications.Bus.notify(
+                    new Notification(
+                        IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
+                        "Internal Error",
+                        "Internal error: module "
+                            + module.getName()
+                            + " does not seem to be have an IvyIDEA facet, but was included in the resolve process anyway.",
+                        NotificationType.ERROR));
+              } else {
+                final String configsForModule;
+                if (ivyIdeaFacetConfiguration.isOnlyResolveSelectedConfigs()) {
+                  final Set<String> configs = ivyIdeaFacetConfiguration.getConfigsToResolve();
+                  if (configs == null || configs.isEmpty()) {
+                    configsForModule = "[No configurations selected!]";
+                  } else {
+                    configsForModule = configs.toString();
+                  }
                 } else {
-                  configsForModule = configs.toString();
+                  configsForModule = "[All configurations]";
                 }
-              } else {
-                configsForModule = "[All configurations]";
-              }
-              if (problems.isEmpty()) {
-                consoleView.print(
-                    "No problems detected during resolve for module '"
-                        + module.getName()
-                        + "' "
-                        + configsForModule
-                        + ".\n",
-                    ConsoleViewContentType.NORMAL_OUTPUT);
-              } else {
-                consoleView.print(
-                    "Problems for module '"
-                        + module.getName()
-                        + " "
-                        + configsForModule
-                        + "':"
-                        + '\n',
-                    ConsoleViewContentType.NORMAL_OUTPUT);
-                for (final ResolveProblem resolveProblem : problems) {
-                  consoleView.print(
-                      "\t" + resolveProblem + '\n', ConsoleViewContentType.ERROR_OUTPUT);
+                if (problems.isEmpty()) {
+                  Notifications.Bus.notify(
+                      new Notification(
+                          IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
+                          "Resolve Finished Successfully",
+                          "No problems occurred during resolve for module '"
+                              + module.getName()
+                              + "' "
+                              + configsForModule
+                              + ".",
+                          NotificationType.INFORMATION));
+                } else {
+                  Notifications.Bus.notify(
+                      new Notification(
+                          IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
+                          "Resolve Failed",
+                          "Problems occurred for module '"
+                              + module.getName()
+                              + " "
+                              + configsForModule
+                              + "':"
+                              + problems.stream()
+                              .map(ResolveProblem::toString)
+                              .collect(Collectors.joining("n")),
+                          NotificationType.WARNING));
                 }
-                // Make sure the toolwindow becomes visible if there were problems
-                ToolWindowManager.getInstance(module.getProject())
-                    .getToolWindow(ToolWindowRegistrationComponent.TOOLWINDOW_ID)
-                    .show(null);
               }
             });
   }
@@ -151,34 +161,29 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
   private static void notifyIvyFileRead(final IvyFileReadException e) {
     Notifications.Bus.notify(
         new Notification(
-            "IvyIDEA",
-            "Could not read Ivy file",
-            e.getMessage(),
-            NotificationType.ERROR));
+            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID, "Could not read Ivy file",
+            e.getMessage(), NotificationType.ERROR));
   }
 
   private static void notifyIvySettingsFileRead(final IvySettingsFileReadException e) {
     Notifications.Bus.notify(
         new Notification(
-            "IvyIDEA",
-            "Could not read Ivy settings file",
-            e.getMessage(),
-            NotificationType.ERROR));
+            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID, "Could not read Ivy settings file",
+            e.getMessage(), NotificationType.ERROR));
   }
 
-  private static void notifyIvySettingsNotFound(final Project project,
-      final IvySettingsNotFoundException e) {
+  private static void notifyIvySettingsNotFound(
+      final Project project, final IvySettingsNotFoundException e) {
     final Notification notification =
         new Notification(
-            "IvyIDEA",
-            "Could not find Ivy settings",
-            e.getMessage(),
-            NotificationType.ERROR);
+            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID, "Could not find Ivy settings",
+            e.getMessage(), NotificationType.ERROR);
     notification.addAction(
         NotificationAction.createSimple(
             "Open Ivy settings",
-            () -> ShowSettingsUtil.getInstance()
-                .showSettingsDialog(project, IvyIdeaProjectSettingsComponent.class)));
+            () ->
+                ShowSettingsUtil.getInstance()
+                    .showSettingsDialog(project, IvyIdeaProjectSettingsComponent.class)));
     Notifications.Bus.notify(notification);
   }
 

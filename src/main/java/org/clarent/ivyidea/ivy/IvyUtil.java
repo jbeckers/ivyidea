@@ -19,7 +19,6 @@
 package org.clarent.ivyidea.ivy;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -38,7 +37,6 @@ import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.trigger.Trigger;
-import org.clarent.ivyidea.intellij.extension.ToolWindowRegistrationComponent;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.logging.ConsoleViewMessageLogger;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +69,6 @@ public final class IvyUtil {
 
     final String ivyFile = configuration.getIvyFile();
     return ivyFile.isEmpty() ? null : new File(ivyFile);
-
   }
 
   /**
@@ -110,15 +107,14 @@ public final class IvyUtil {
    *     not exist or is a directory, no exception will be thrown
    */
   @Nullable
-  public static Set<Configuration> loadConfigurations(@NotNull final String ivyFileName, @NotNull final Ivy ivy)
-      throws ParseException {
+  public static Set<Configuration> loadConfigurations(
+      @NotNull final String ivyFileName, @NotNull final Ivy ivy) throws ParseException {
     try {
       final File file = new File(ivyFileName);
       if (file.exists() && !file.isDirectory()) {
         final ModuleDescriptor md = parseIvyFile(file, ivy);
         final Set<Configuration> result =
-            new TreeSet<>(
-                (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+            new TreeSet<>((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         result.addAll(Arrays.asList(md.getConfigurations()));
         return result;
       } else {
@@ -135,6 +131,7 @@ public final class IvyUtil {
     }
   }
 
+  @NotNull
   public static Ivy createConfiguredIvyEngine(final Module module, final IvySettings ivySettings) {
     final Ivy ivy = Ivy.newInstance(ivySettings);
 
@@ -142,11 +139,12 @@ public final class IvyUtil {
     // so we have to execute the same code ourselfs
     postConfigure(ivy);
 
-    registerConsoleLogger(ivy, module.getProject());
+    ivy.getLoggerEngine().pushLogger(new ConsoleViewMessageLogger(module.getProject()));
+
     return ivy;
   }
 
-  private static void postConfigure(final Ivy ivy) {
+  private static void postConfigure(@NotNull final Ivy ivy) {
     final EventManager eventManager = ivy.getEventManager();
     final Collection<Trigger> triggers = ivy.getSettings().getTriggers();
     for (final Trigger trigger : triggers) {
@@ -158,11 +156,5 @@ public final class IvyUtil {
         ((AbstractResolver) resolver).setEventManager(eventManager);
       }
     }
-  }
-
-  private static void registerConsoleLogger(final Ivy ivy, final Project project) {
-    ivy.getLoggerEngine()
-        .pushLogger(new ConsoleViewMessageLogger(project,
-            project.getComponent(ToolWindowRegistrationComponent.class).getConsole()));
   }
 }

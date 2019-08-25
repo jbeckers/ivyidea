@@ -18,25 +18,50 @@
 
 package org.clarent.ivyidea.logging;
 
-import static com.intellij.execution.ui.ConsoleViewContentType.SYSTEM_OUTPUT;
+import static com.intellij.execution.ui.ConsoleViewContentType.LOG_VERBOSE_OUTPUT;
 
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.content.Content;
+import javax.swing.JComponent;
 import org.apache.ivy.util.AbstractMessageLogger;
+import org.clarent.ivyidea.IvyIdeaConstants;
 import org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent;
+import org.clarent.ivyidea.intellij.extension.IvyIdeaToolWindowFactory.IvyIdeaToolWindow;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ConsoleViewMessageLogger extends AbstractMessageLogger {
 
+  @Nullable
   private final ConsoleView consoleView;
+  @NotNull
   private final IvyLogLevel threshold;
 
-  public ConsoleViewMessageLogger(final Project project, final ConsoleView consoleView) {
-    this.consoleView = consoleView;
-    final String ivyLogLevelThreshold = project.getComponent(IvyIdeaProjectComponent.class)
-        .getState().getIvyLogLevelThreshold();
-    threshold = IvyLogLevel.fromName(ivyLogLevelThreshold);
+  public ConsoleViewMessageLogger(@NotNull final Project project) {
+    final Content toolWindowContent =
+        ToolWindowManager.getInstance(project)
+            .getToolWindow(IvyIdeaConstants.TOOLWINDOW_ID)
+            .getContentManager()
+            .getSelectedContent();
+    if (toolWindowContent != null) {
+      final JComponent toolWindowComponent = toolWindowContent.getComponent();
+      if (toolWindowComponent instanceof IvyIdeaToolWindow) {
+        consoleView = ((IvyIdeaToolWindow) toolWindowComponent).getConsoleView();
+      } else {
+        consoleView = null;
+      }
+    } else {
+      consoleView = null;
+    }
+    threshold =
+        IvyLogLevel.fromName(
+            project
+                .getComponent(IvyIdeaProjectComponent.class)
+                .getState()
+                .getIvyLogLevelThreshold());
   }
 
   @Override
@@ -46,28 +71,30 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
 
   @Override
   public void rawlog(final String msg, final int level) {
-    rawlog(msg, IvyLogLevel.fromLevelCode(level));
-  }
-
-  public void rawlog(final String message, final IvyLogLevel logLevelForMessage) {
-    if (threshold.isMoreVerboseThan(logLevelForMessage)) {
-      logToConsoleView(message + "\n", logLevelForMessage.getContentType());
+    if (consoleView != null && threshold.isMoreVerboseThan(IvyLogLevel.fromLevelCode(level))) {
+      ApplicationManager.getApplication()
+          .invokeLater(
+              () ->
+                  consoleView.print(msg + '\n', IvyLogLevel.fromLevelCode(level).getContentType()));
     }
   }
 
   @Override
   protected void doProgress() {
-    logToConsoleView(".", SYSTEM_OUTPUT);
+    ApplicationManager.getApplication()
+        .invokeLater(
+            () -> {
+              if (consoleView != null) {
+                consoleView.print(".", LOG_VERBOSE_OUTPUT);
+              }
+            });
   }
 
   @Override
   protected void doEndProgress(final String msg) {
-    logToConsoleView(msg + '\n', SYSTEM_OUTPUT);
-  }
-
-  private void logToConsoleView(final String message, final ConsoleViewContentType contentType) {
-    ApplicationManager.getApplication()
-        .invokeLater(
-            () -> consoleView.print(message, contentType));
+    if (consoleView != null) {
+      ApplicationManager.getApplication()
+          .invokeLater(() -> consoleView.print(msg + '\n', LOG_VERBOSE_OUTPUT));
+    }
   }
 }

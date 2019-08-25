@@ -42,7 +42,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.DocumentEvent;
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.settings.IvySettings;
 import org.clarent.ivyidea.config.IvyIdeaConfigHelper;
@@ -194,20 +193,14 @@ public class BasicSettingsTab extends FacetEditorTab {
   @Nullable
   private Set<Configuration> loadConfigurations()
       throws IvySettingsNotFoundException, IvySettingsFileReadException, ParseException {
-    return IvyUtil.loadConfigurations(
-        txtIvyFile.getText(), createIvyEngineForCurrentSettingsInUI());
-  }
-
-  @NotNull
-  private Ivy createIvyEngineForCurrentSettingsInUI()
-      throws IvySettingsNotFoundException, IvySettingsFileReadException {
     final Module module = this.editorContext.getModule();
     final IvySettings ivySettings =
         IvyIdeaConfigHelper.createConfiguredIvySettings(
             module,
             this.getIvySettingsFileNameForCurrentSettingsInUI(),
             getPropertiesForCurrentSettingsInUI());
-    return IvyUtil.createConfiguredIvyEngine(module, ivySettings);
+    return IvyUtil.loadConfigurations(
+        txtIvyFile.getText(), IvyUtil.createConfiguredIvyEngine(module, ivySettings));
   }
 
   @Nullable
