@@ -18,7 +18,11 @@
 
 package org.clarent.ivyidea.logging;
 
-import static com.intellij.execution.ui.ConsoleViewContentType.ERROR_OUTPUT;
+import static com.intellij.execution.ui.ConsoleViewContentType.LOG_DEBUG_OUTPUT;
+import static com.intellij.execution.ui.ConsoleViewContentType.LOG_ERROR_OUTPUT;
+import static com.intellij.execution.ui.ConsoleViewContentType.LOG_INFO_OUTPUT;
+import static com.intellij.execution.ui.ConsoleViewContentType.LOG_VERBOSE_OUTPUT;
+import static com.intellij.execution.ui.ConsoleViewContentType.LOG_WARNING_OUTPUT;
 import static com.intellij.execution.ui.ConsoleViewContentType.SYSTEM_OUTPUT;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -30,11 +34,11 @@ import org.apache.ivy.util.Message;
 @SuppressWarnings("ImmutableEnumChecker")
 public enum IvyLogLevel {
   None(Integer.MIN_VALUE, SYSTEM_OUTPUT),
-  Error(Message.MSG_ERR, ERROR_OUTPUT),
-  Warning(Message.MSG_WARN, SYSTEM_OUTPUT),
-  Info(Message.MSG_INFO, SYSTEM_OUTPUT),
-  Verbose(Message.MSG_VERBOSE, SYSTEM_OUTPUT),
-  Debug(Message.MSG_DEBUG, SYSTEM_OUTPUT),
+  Error(Message.MSG_ERR, LOG_ERROR_OUTPUT),
+  Warning(Message.MSG_WARN, LOG_WARNING_OUTPUT),
+  Info(Message.MSG_INFO, LOG_INFO_OUTPUT),
+  Verbose(Message.MSG_VERBOSE, LOG_VERBOSE_OUTPUT),
+  Debug(Message.MSG_DEBUG, LOG_DEBUG_OUTPUT),
   All(Integer.MAX_VALUE, SYSTEM_OUTPUT);
 
   private static final Map<Integer, IvyLogLevel> loglevels;
