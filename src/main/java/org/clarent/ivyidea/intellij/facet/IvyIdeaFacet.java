@@ -37,7 +37,7 @@ public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
   }
 
   @Override
-  public final IvyIdeaFacet clone() throws AssertionError {
+  public final IvyIdeaFacet clone() {
     throw new AssertionError();
   }
 }
