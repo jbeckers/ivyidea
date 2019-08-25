@@ -69,7 +69,7 @@ tasks {
 //    options.compilerArgs.addAll(arrayOf("-Werror"))
         options.errorprone.disableWarningsInGeneratedCode.set(true)
         options.errorprone.allDisabledChecksAsWarnings.set(true)
-        options.errorprone.disable("Var", "StaticOrDefaultInterfaceMethod", "MissingSummary")
+        options.errorprone.disable("Var", "StaticOrDefaultInterfaceMethod", "MissingSummary", "AndroidJdkLibsChecker", "Java7ApiChecker")
     }
 
     getByName<PatchPluginXmlTask>("patchPluginXml") {
