@@ -21,7 +21,7 @@
         <option name="sourcesTypes" value="source, src, sources, srcs" />
       </ArtifactTypeSettings>
     </option>
-    <option name="ivyLogLevelThreshold" value="Warning" />
+    <option name="ivyLogLevelThreshold" value="All" />
     <option name="ivySettingsFile" value="D:\Development\ivyidea\sample\untitled\ivy-settings.xml" />
     <option name="libraryNameIncludesConfiguration" value="true" />
     <option name="libraryNameIncludesModule" value="true" />

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/core.iml" filepath="$PROJECT_DIR$/core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/extensions/extensions.iml" filepath="$PROJECT_DIR$/extensions/extensions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clarent-untitled-plugin-test-core.iml" filepath="$PROJECT_DIR$/clarent-untitled-plugin-test-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/clarent-untitled-plugin-test-extensions.iml" filepath="$PROJECT_DIR$/extensions/clarent-untitled-plugin-test-extensions.iml" />
     </modules>
   </component>
 </project>
