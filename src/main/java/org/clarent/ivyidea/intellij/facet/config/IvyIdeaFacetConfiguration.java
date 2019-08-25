@@ -19,6 +19,7 @@
 package org.clarent.ivyidea.intellij.facet.config;
 
 import com.intellij.facet.FacetConfiguration;
+import com.intellij.facet.FacetManager;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+import org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType;
 import org.clarent.ivyidea.intellij.facet.IvyIdeaFacet;
 import org.clarent.ivyidea.intellij.facet.ui.BasicSettingsTab;
 import org.clarent.ivyidea.intellij.facet.ui.PropertiesSettingsTab;
@@ -54,7 +56,8 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
 
   @Nullable
   public static IvyIdeaFacetConfiguration getInstance(final Module module) {
-    final IvyIdeaFacet ivyIdeaFacet = IvyIdeaFacet.getInstance(module);
+    final IvyIdeaFacet ivyIdeaFacet =
+        FacetManager.getInstance(module).getFacetByType(IvyIdeaFacetType.ID);
     if (ivyIdeaFacet != null) {
       return ivyIdeaFacet.getConfiguration();
     } else {
@@ -158,8 +161,8 @@ public class IvyIdeaFacetConfiguration implements FacetConfiguration {
     final Element configsToResolveElement = element.getChild("configsToResolve");
     if (configsToResolveElement != null) {
       final Set<String> configsToResolve = new TreeSet<>();
-      @SuppressWarnings("unchecked") final List<Element> configElements =
-          configsToResolveElement.getChildren("config");
+      @SuppressWarnings("unchecked") final List<Element> configElements = configsToResolveElement
+          .getChildren("config");
       for (final Element configElement : configElements) {
         configsToResolve.add(configElement.getTextTrim());
       }

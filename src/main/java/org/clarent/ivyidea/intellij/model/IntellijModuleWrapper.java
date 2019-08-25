@@ -132,7 +132,7 @@ public final class IntellijModuleWrapper implements Closeable {
     final LibraryTable libraryTable = intellijModule.getModuleLibraryTable();
     for (final Library library : libraryTable.getLibraries()) {
       final String libraryName = library.getName();
-      if (IvyIdeaConfigHelper.isCreatedLibraryName(libraryName)
+      if (libraryName != null && libraryName.startsWith(IvyIdeaConfigHelper.RESOLVED_LIB_NAME_ROOT)
           && !librariesInUse.contains(libraryName)) {
         libraryTable.removeLibrary(library);
       }

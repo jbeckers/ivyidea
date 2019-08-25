@@ -19,6 +19,7 @@
 package org.clarent.ivyidea.intellij.extension.facet;
 
 import com.intellij.facet.Facet;
+import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.openapi.module.Module;
@@ -42,6 +43,10 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
 
   public IvyIdeaFacetType() {
     super(ID, "IvyIDEA", "IvyIDEA");
+  }
+
+  public static boolean isIvyModule(@Nullable final Module module) {
+    return module != null && FacetManager.getInstance(module).getFacetByType(ID) != null;
   }
 
   @Override

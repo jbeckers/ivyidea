@@ -54,7 +54,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class IvyIdeaConfigHelper {
 
-  private static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
+  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
 
   private IvyIdeaConfigHelper() {
   }
@@ -73,10 +73,6 @@ public final class IvyIdeaConfigHelper {
       libraryName += "-" + configName;
     }
     return libraryName;
-  }
-
-  public static boolean isCreatedLibraryName(final String libraryName) {
-    return libraryName != null && libraryName.startsWith(RESOLVED_LIB_NAME_ROOT);
   }
 
   @NotNull

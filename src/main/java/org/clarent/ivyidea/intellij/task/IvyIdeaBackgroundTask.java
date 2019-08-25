@@ -20,39 +20,23 @@ package org.clarent.ivyidea.intellij.task;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import org.clarent.ivyidea.intellij.extension.IvyIdeaProjectComponent;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
 public abstract class IvyIdeaBackgroundTask extends Task.Backgroundable {
 
-  private static class IvyIdeaPerformInBackgroundOption implements PerformInBackgroundOption {
-
-    private final Project project;
-
-    public IvyIdeaPerformInBackgroundOption(final Project project) {
-      this.project = project;
-    }
-
-    @Override
-    public boolean shouldStartInBackground() {
-      return project.getComponent(IvyIdeaProjectComponent.class).getState().isResolveInBackground();
-    }
-
-    @Override
-    public void processSentToBackground() {}
-
-    public void processRestoredToForeground() {}
-  }
-
-  public IvyIdeaBackgroundTask(final AnActionEvent event) {
+  protected IvyIdeaBackgroundTask(@NotNull final AnActionEvent event) {
     super(
-        CommonDataKeys.PROJECT.getData(event.getDataContext()),
+        event.getData(CommonDataKeys.PROJECT),
         "IvyIDEA " + event.getPresentation().getText(),
         true,
-        new IvyIdeaPerformInBackgroundOption(
-            CommonDataKeys.PROJECT.getData(event.getDataContext())));
+        () -> {
+          final Project project = event.getData(CommonDataKeys.PROJECT);
+          return project != null && project.getComponent(IvyIdeaProjectComponent.class).getState()
+              .isResolveInBackground();
+        });
   }
 }

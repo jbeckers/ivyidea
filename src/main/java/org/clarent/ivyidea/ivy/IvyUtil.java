@@ -38,7 +38,7 @@ import org.apache.ivy.plugins.resolver.AbstractResolver;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.trigger.Trigger;
-import org.clarent.ivyidea.intellij.IntellijUtils;
+import org.clarent.ivyidea.intellij.extension.ToolWindowRegistrationComponent;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.logging.ConsoleViewMessageLogger;
 import org.jetbrains.annotations.NotNull;
@@ -162,6 +162,7 @@ public final class IvyUtil {
 
   private static void registerConsoleLogger(final Ivy ivy, final Project project) {
     ivy.getLoggerEngine()
-        .pushLogger(new ConsoleViewMessageLogger(project, IntellijUtils.getConsoleView(project)));
+        .pushLogger(new ConsoleViewMessageLogger(project,
+            project.getComponent(ToolWindowRegistrationComponent.class).getConsole()));
   }
 }

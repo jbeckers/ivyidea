@@ -21,20 +21,22 @@ package org.clarent.ivyidea.intellij.action;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 import org.clarent.ivyidea.config.IvyIdeaConfigHelper;
-import org.clarent.ivyidea.intellij.IntellijUtils;
+import org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType;
 import org.clarent.ivyidea.intellij.task.IvyIdeaBackgroundTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Action to remove all module libraries that match the name of the IvyIDEA-resolved module.
@@ -44,46 +46,54 @@ import org.jetbrains.annotations.NotNull;
 public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
 
   @Override
-  public void actionPerformed(final AnActionEvent e) {
-    final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-    ProgressManager.getInstance()
-        .run(
-            new IvyIdeaBackgroundTask(e) {
-              @Override
-              public void run(@NotNull final ProgressIndicator indicator) {
-                final Module[] facet = IntellijUtils.getAllModulesWithIvyIdeaFacet(project);
-                indicator.setIndeterminate(false);
-                for (final Module module : facet) {
-                  indicator.setText2("Removing for module " + module.getName());
-                  ApplicationManager.getApplication()
-                      .invokeAndWait(
-                          () -> ApplicationManager.getApplication()
-                              .runWriteAction(
-                                  () -> {
-                                    final ModifiableRootModel model =
-                                        ModuleRootManager.getInstance(module)
-                                            .getModifiableModel();
-                                    final LibraryTable moduleLibraryTable =
-                                        model.getModuleLibraryTable();
-                                    final Library[] libraries =
-                                        moduleLibraryTable.getLibraries();
-                                    boolean found = false;
-                                    for (final Library library : libraries) {
-                                      if (IvyIdeaConfigHelper.isCreatedLibraryName(
-                                          library.getName())) {
-                                        found = true;
-                                        moduleLibraryTable.removeLibrary(library);
-                                      }
-                                    }
-                                    if (found) {
-                                      model.commit();
-                                    } else {
-                                      model.dispose();
-                                    }
-                                  }),
-                          ModalityState.NON_MODAL);
-                }
-              }
-            });
+  public void actionPerformed(@NotNull final AnActionEvent e) {
+    ProgressManager.getInstance().run(new BackgroundTask(e));
+  }
+
+  private static class BackgroundTask extends IvyIdeaBackgroundTask {
+
+    private final Project project;
+
+    BackgroundTask(final AnActionEvent e) {
+      super(e);
+      this.project = e.getData(CommonDataKeys.PROJECT);
+    }
+
+    @NotNull
+    private static Stream<Module> getModules(@Nullable final Project project) {
+      return project == null
+          ? Stream.empty()
+          : Arrays.stream(ModuleManager.getInstance(project).getModules()).filter(Objects::nonNull);
+    }
+
+    @NotNull
+    private static Stream<Library> getLibraries(final ModifiableRootModel model) {
+      return Arrays.stream(model.getModuleLibraryTable().getLibraries())
+          .filter(Objects::nonNull);
+    }
+
+    private static boolean isIvyResolvedLibrary(@NotNull final Library library) {
+      return library.getName() != null
+          && library.getName().startsWith(IvyIdeaConfigHelper.RESOLVED_LIB_NAME_ROOT);
+    }
+
+    @Override
+    public void run(@NotNull final ProgressIndicator indicator) {
+      indicator.setIndeterminate(false);
+
+      getModules(project)
+          .filter(IvyIdeaFacetType::isIvyModule)
+          .forEach(
+              module -> {
+                indicator.setText2("Removing for module " + module.getName());
+                ModuleRootModificationUtil.updateModel(
+                    module,
+                    model -> {
+                      getLibraries(model)
+                          .filter(BackgroundTask::isIvyResolvedLibrary)
+                          .forEach(library -> model.getModuleLibraryTable().removeLibrary(library));
+                    });
+              });
+    }
   }
 }

@@ -18,22 +18,18 @@
 
 package org.clarent.ivyidea.intellij.action;
 
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.clarent.ivyidea.exception.IvyFileReadException;
-import org.clarent.ivyidea.exception.IvySettingsFileReadException;
-import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
-import org.clarent.ivyidea.intellij.IntellijUtils;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 import org.clarent.ivyidea.intellij.task.IvyIdeaResolveBackgroundTask;
-import org.clarent.ivyidea.ivy.IvyManager;
-import org.clarent.ivyidea.resolve.IntellijDependencyResolver;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -41,45 +37,36 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Guy Mahieu
  */
-public class ResolveForAllModulesAction extends AbstractResolveAction {
+public class ResolveForAllModulesAction extends AnAction {
+
+  public ResolveForAllModulesAction() {
+    super("Resolve for All Modules", "Resolve dependencies for all modules", null);
+  }
 
   @Override
-  public void actionPerformed(final AnActionEvent e) {
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-    ProgressManager.getInstance()
-        .run(
-            new IvyIdeaResolveBackgroundTask(project, e) {
-              @Override
-              public void doResolve(@NotNull final ProgressIndicator indicator)
-                  throws IvySettingsNotFoundException, IvyFileReadException,
-                      IvySettingsFileReadException {
-                clearConsole(myProject);
+    ProgressManager.getInstance().run(new BackgroundTask(e));
+  }
 
-                final IvyManager ivyManager = new IvyManager();
+  private static class BackgroundTask extends IvyIdeaResolveBackgroundTask {
 
-                final Collection<IntellijDependencyResolver> resolvers =
-                    new ArrayList<>();
-                for (final Module module : IntellijUtils.getAllModulesWithIvyIdeaFacet(project)) {
-                  getProgressMonitorThread().setIvy(ivyManager.getIvy(module));
-                  indicator.setText2("Resolving for module " + module.getName());
-                  final IntellijDependencyResolver resolver =
-                      new IntellijDependencyResolver(ivyManager);
-                  resolver.resolve(module);
-                  resolvers.add(resolver);
+    static final Module[] ZERO_LENGTH_MODULES = new Module[0];
 
-                  if (indicator.isCanceled()) {
-                    return;
-                  }
-                }
+    private final Module[] modules;
 
-                for (final IntellijDependencyResolver resolver : resolvers) {
-                  final Module module = resolver.getModule();
-                  updateIntellijModel(module, resolver.getDependencies());
-                  reportProblems(module, resolver.getProblems());
-                }
-              }
-            });
+    BackgroundTask(final AnActionEvent e) {
+      super(e);
+      final Project project = e.getData(CommonDataKeys.PROJECT);
+      modules =
+          project == null ? ZERO_LENGTH_MODULES : ModuleManager.getInstance(project).getModules();
+    }
+
+    @Override
+    @NotNull
+    protected Stream<Module> getModules() {
+      return Arrays.stream(modules).filter(Objects::nonNull);
+    }
   }
 }

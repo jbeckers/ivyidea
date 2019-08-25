@@ -19,16 +19,19 @@
 package org.clarent.ivyidea.resolve;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
-import org.clarent.ivyidea.intellij.IntellijUtils;
+import org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType;
 import org.clarent.ivyidea.ivy.IvyManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +47,7 @@ class IntellijModuleDependencies {
   private final Module module;
   private final Map<ModuleId, Module> moduleDependencies = new HashMap<>();
 
-  public IntellijModuleDependencies(final Module module, final IvyManager ivyManager)
+  IntellijModuleDependencies(final Module module, final IvyManager ivyManager)
       throws IvySettingsNotFoundException, IvySettingsFileReadException {
     this.module = module;
     this.ivyManager = ivyManager;
@@ -55,11 +58,11 @@ class IntellijModuleDependencies {
     return module;
   }
 
-  public boolean isInternalIntellijModuleDependency(final ModuleId moduleId) {
+  boolean isInternalIntellijModuleDependency(final ModuleId moduleId) {
     return moduleDependencies.containsKey(moduleId);
   }
 
-  public Module getModuleDependency(final ModuleId moduleId) {
+  Module getModuleDependency(final ModuleId moduleId) {
     return moduleDependencies.get(moduleId);
   }
 
@@ -69,7 +72,10 @@ class IntellijModuleDependencies {
     if (descriptor != null) {
       final DependencyDescriptor[] ivyDependencies = descriptor.getDependencies();
       for (final Module dependencyModule :
-          IntellijUtils.getAllModulesWithIvyIdeaFacet(module.getProject())) {
+          Arrays.stream(ModuleManager.getInstance(module.getProject()).getModules())
+              .filter(IvyIdeaFacetType::isIvyModule)
+              .collect(Collectors.toList())) {
+
         if (!module.equals(dependencyModule)) {
           for (final DependencyDescriptor ivyDependency : ivyDependencies) {
             final ModuleId ivyDependencyId = ivyDependency.getDependencyId();

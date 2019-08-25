@@ -18,17 +18,35 @@
 
 package org.clarent.ivyidea.intellij.task;
 
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationAction;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindowManager;
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.clarent.ivyidea.exception.IvyFileReadException;
-import org.clarent.ivyidea.exception.IvyIdeaException;
 import org.clarent.ivyidea.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.exception.IvySettingsNotFoundException;
-import org.clarent.ivyidea.exception.ui.IvyIdeaExceptionDialog;
-import org.clarent.ivyidea.exception.ui.LinkBehavior;
+import org.clarent.ivyidea.intellij.extension.ToolWindowRegistrationComponent;
+import org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType;
 import org.clarent.ivyidea.intellij.extension.settings.IvyIdeaProjectSettingsComponent;
+import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
+import org.clarent.ivyidea.intellij.model.IntellijModuleWrapper;
+import org.clarent.ivyidea.ivy.IvyManager;
+import org.clarent.ivyidea.resolve.IntellijDependencyResolver;
+import org.clarent.ivyidea.resolve.dependency.ResolvedDependency;
+import org.clarent.ivyidea.resolve.problem.ResolveProblem;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,36 +56,137 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask {
 
-  private IvyIdeaException exception;
   private final Project project;
-  private ProgressMonitorThread monitorThread;
+  private ProgressMonitorThread monitorThread = null;
 
-  /**
-   * Implementations should perform the resolve process inside this method.
-   *
-   * @param progressIndicator the progress indicator for this backgroundtask
-   * @throws IvySettingsNotFoundException if no settings file was configured or the configured file
-   *     was not found
-   * @throws IvySettingsFileReadException if there was a problem opening or parsing the ivy settings
-   *     file
-   * @throws IvyFileReadException if there was a problem opening or parsing the ivy file
-   */
-  public abstract void doResolve(@NotNull ProgressIndicator progressIndicator)
-      throws IvySettingsNotFoundException, IvyFileReadException, IvySettingsFileReadException;
-
-  protected IvyIdeaResolveBackgroundTask(final Project project, final AnActionEvent event) {
+  protected IvyIdeaResolveBackgroundTask(final AnActionEvent event) {
     super(event);
-    this.project = project;
+    this.project = event.getProject();
   }
 
-  protected ProgressMonitorThread getProgressMonitorThread() {
-    return monitorThread;
+  private static void clearConsole(final Project project) {
+    ApplicationManager.getApplication()
+        .invokeLater(
+            () -> {
+              final ConsoleView console =
+                  project.getComponent(ToolWindowRegistrationComponent.class).getConsole();
+              if (console != null) {
+                console.clear();
+              }
+            });
   }
+
+  private static void updateIntellijModel(
+      final Module module, final Collection<ResolvedDependency> dependencies) {
+    ApplicationManager.getApplication()
+        .invokeLater(
+            () ->
+                WriteAction.run(
+                    () -> {
+                      try (final IntellijModuleWrapper wrapper =
+                          IntellijModuleWrapper.forModule(module)) {
+                        wrapper.updateDependencies(dependencies);
+                      }
+                    }));
+  }
+
+  private static void reportProblems(
+      final Module module, final Collection<? extends ResolveProblem> problems) {
+    ApplicationManager.getApplication()
+        .invokeLater(
+            () -> {
+              final IvyIdeaFacetConfiguration ivyIdeaFacetConfiguration =
+                  IvyIdeaFacetConfiguration.getInstance(module);
+              if (ivyIdeaFacetConfiguration == null) {
+                throw new RuntimeException(
+                    "Internal error: module "
+                        + module.getName()
+                        + " does not seem to be have an IvyIDEA facet, but was included in the resolve process anyway.");
+              }
+              final ConsoleView consoleView =
+                  module
+                      .getProject()
+                      .getComponent(ToolWindowRegistrationComponent.class)
+                      .getConsole();
+              final String configsForModule;
+              if (ivyIdeaFacetConfiguration.isOnlyResolveSelectedConfigs()) {
+                final Set<String> configs = ivyIdeaFacetConfiguration.getConfigsToResolve();
+                if (configs == null || configs.isEmpty()) {
+                  configsForModule = "[No configurations selected!]";
+                } else {
+                  configsForModule = configs.toString();
+                }
+              } else {
+                configsForModule = "[All configurations]";
+              }
+              if (problems.isEmpty()) {
+                consoleView.print(
+                    "No problems detected during resolve for module '"
+                        + module.getName()
+                        + "' "
+                        + configsForModule
+                        + ".\n",
+                    ConsoleViewContentType.NORMAL_OUTPUT);
+              } else {
+                consoleView.print(
+                    "Problems for module '"
+                        + module.getName()
+                        + " "
+                        + configsForModule
+                        + "':"
+                        + '\n',
+                    ConsoleViewContentType.NORMAL_OUTPUT);
+                for (final ResolveProblem resolveProblem : problems) {
+                  consoleView.print(
+                      "\t" + resolveProblem + '\n', ConsoleViewContentType.ERROR_OUTPUT);
+                }
+                // Make sure the toolwindow becomes visible if there were problems
+                ToolWindowManager.getInstance(module.getProject())
+                    .getToolWindow(ToolWindowRegistrationComponent.TOOLWINDOW_ID)
+                    .show(null);
+              }
+            });
+  }
+
+  private static void notifyIvyFileRead(final IvyFileReadException e) {
+    Notifications.Bus.notify(
+        new Notification(
+            "IvyIDEA",
+            "Could not read Ivy file",
+            e.getMessage(),
+            NotificationType.ERROR));
+  }
+
+  private static void notifyIvySettingsFileRead(final IvySettingsFileReadException e) {
+    Notifications.Bus.notify(
+        new Notification(
+            "IvyIDEA",
+            "Could not read Ivy settings file",
+            e.getMessage(),
+            NotificationType.ERROR));
+  }
+
+  private static void notifyIvySettingsNotFound(final Project project,
+      final IvySettingsNotFoundException e) {
+    final Notification notification =
+        new Notification(
+            "IvyIDEA",
+            "Could not find Ivy settings",
+            e.getMessage(),
+            NotificationType.ERROR);
+    notification.addAction(
+        NotificationAction.createSimple(
+            "Open Ivy settings",
+            () -> ShowSettingsUtil.getInstance()
+                .showSettingsDialog(project, IvyIdeaProjectSettingsComponent.class)));
+    Notifications.Bus.notify(notification);
+  }
+
+  protected abstract Stream<Module> getModules();
 
   @Override
   public final void run(@NotNull final ProgressIndicator indicator) {
-    final Thread resolveThread = Thread.currentThread();
-    monitorThread = new ProgressMonitorThread(indicator, resolveThread);
+    monitorThread = new ProgressMonitorThread(indicator, Thread.currentThread());
     monitorThread.start();
 
     try {
@@ -78,57 +197,46 @@ public abstract class IvyIdeaResolveBackgroundTask extends IvyIdeaBackgroundTask
           IntellijProxyURLHandler.setupHttpProxy();
       */
       // Start the actual resolve process
-      doResolve(indicator);
-    } catch (final IvyIdeaException e) {
-      exception = e;
-      indicator.cancel();
+      clearConsole(project);
+
+      final IvyManager ivyManager = new IvyManager();
+
+      getModules()
+          .filter(IvyIdeaFacetType::isIvyModule)
+          .map(
+              module -> {
+                try {
+                  monitorThread.setIvy(ivyManager.getIvy(module));
+                } catch (final IvySettingsNotFoundException e) {
+                  notifyIvySettingsNotFound(project, e);
+                } catch (final IvySettingsFileReadException e) {
+                  notifyIvySettingsFileRead(e);
+                }
+                indicator.setText2("Resolving for module " + module.getName());
+                final IntellijDependencyResolver resolver =
+                    new IntellijDependencyResolver(ivyManager);
+                try {
+                  resolver.resolve(module);
+                } catch (final IvySettingsNotFoundException e) {
+                  notifyIvySettingsNotFound(project, e);
+                } catch (final IvySettingsFileReadException e) {
+                  notifyIvySettingsFileRead(e);
+                } catch (final IvyFileReadException e) {
+                  notifyIvyFileRead(e);
+                }
+                return resolver;
+              })
+          .forEach(
+              resolver -> {
+                if (!indicator.isCanceled()) {
+                  updateIntellijModel(resolver.getModule(), resolver.getDependencies());
+                  reportProblems(resolver.getModule(), resolver.getProblems());
+                }
+              });
     } catch (final RuntimeException e) {
       if (!indicator.isCanceled()) {
         throw e;
       }
     }
-  }
-
-  @Override
-  public void onCancel() {
-    super.onCancel();
-    if (exception != null) {
-      handle(exception);
-    }
-  }
-
-  private void handle(final IvyIdeaException exception) {
-    if (exception instanceof IvyFileReadException) {
-      showSimpleErrorDialog("Ivy File Error", exception);
-    } else if (exception instanceof IvySettingsFileReadException) {
-      showSimpleErrorDialog("Ivy Settings File Error", exception);
-    } else if (exception instanceof IvySettingsNotFoundException) {
-      showIvySettingsNotFoundErrorDialog((IvySettingsNotFoundException) exception);
-    }
-  }
-
-  private void showSimpleErrorDialog(final String title, final IvyIdeaException exception) {
-    IvyIdeaExceptionDialog.showModalDialog(title, exception, myProject);
-  }
-
-  private void showIvySettingsNotFoundErrorDialog(final IvySettingsNotFoundException exception) {
-    LinkBehavior<?> linkBehavior = null;
-    // TODO: For now I can only activate the link on project settings errors...
-    //       Currently I don't know how to open the facet setting from the code...
-    //       if only the facet config was a Configurable instance!
-    if (exception.getConfigLocation() == IvySettingsNotFoundException.ConfigLocation.Project) {
-      linkBehavior =
-          new LinkBehavior<>(
-              "Open "
-                  + exception.getConfigLocation()
-                  + " settings for "
-                  + exception.getConfigName()
-                  + "...",
-              (linkLabel, o) -> ShowSettingsUtil.getInstance()
-                  .showSettingsDialog(project, IvyIdeaProjectSettingsComponent.class),
-              null);
-    }
-    IvyIdeaExceptionDialog.showModalDialog(
-        "Ivy Settings Error", exception, myProject, linkBehavior);
   }
 }

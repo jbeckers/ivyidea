@@ -19,22 +19,13 @@
 package org.clarent.ivyidea.intellij.facet;
 
 import com.intellij.facet.Facet;
-import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetType;
-import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.openapi.module.Module;
-import org.clarent.ivyidea.intellij.extension.facet.IvyIdeaFacetType;
 import org.clarent.ivyidea.intellij.facet.config.IvyIdeaFacetConfiguration;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
-
-  @Nullable
-  public static IvyIdeaFacet getInstance(@NotNull final Module module) {
-    return FacetManager.getInstance(module).getFacetByType(IvyIdeaFacetType.ID);
-  }
 
   public IvyIdeaFacet(
       @NotNull final Module module,
@@ -45,11 +36,8 @@ public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
     super(facetType, module, name, configuration, underlyingFacet);
   }
 
-  public IvyIdeaFacet(@NotNull final Module module) {
-    this(
-        module, FacetTypeRegistry.getInstance().findFacetType(IvyIdeaFacetType.ID),
-        "IvyIdeaFacet",
-        new IvyIdeaFacetConfiguration(),
-        null);
+  @Override
+  public final IvyIdeaFacet clone() throws AssertionError {
+    throw new AssertionError();
   }
 }
