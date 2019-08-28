@@ -28,7 +28,8 @@ repositories {
 }
 
 dependencies {
-    compile("org.apache.ivy", "ivy", "2.5.0-rc1")
+    implementation("org.apache.ivy", "ivy", "2.5.0-rc1")
+    implementation("io.vavr", "vavr", "0.10.2")
     runtimeOnly("org.apache.httpcomponents", "httpclient", "4.5.9") // optional httpclient for better http handling
     runtimeOnly("oro", "oro", "2.0.8") // to use optional glob matcher
     runtimeOnly("org.apache.commons", "commons-vfs2", "2.4") // optional VirtualFileSystem(VFS) support
@@ -40,7 +41,7 @@ dependencies {
     runtimeOnly("org.bouncycastle", "bcprov-jdk15on", "1.62") // optional
     errorprone("com.google.errorprone", "error_prone_core", "2.3.3")
     errorproneJavac("com.google.errorprone", "javac", "9+181-r4173-1")
-    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.5.1")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.5.1")
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.5.1")
 }
 
