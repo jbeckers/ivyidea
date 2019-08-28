@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 /** @author Guy Mahieu */
 public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
 
-  public IvyIdeaFacet(
+  IvyIdeaFacet(
       @NotNull final Module module,
       @NotNull final FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> facetType,
       @NotNull final String name,

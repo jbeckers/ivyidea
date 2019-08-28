@@ -59,7 +59,9 @@
       id="IvyIDEA"
       icon="/ivyidea13.png"
       anchor="bottom"
-      factoryClass="org.clarent.ivyidea.toolwindow.IvyIdeaToolWindowFactory"/>
+      secondary="true"
+      factoryClass="org.clarent.ivyidea.toolwindow.IvyIdeaToolWindowFactory"
+      conditionClass="org.clarent.ivyidea.toolwindow.IvyIdeaToolWindowFactory$Condition"/>
     <facetType
       implementation="org.clarent.ivyidea.facet.IvyIdeaFacetType"/>
     <framework.detector

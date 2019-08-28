@@ -21,6 +21,8 @@ package org.clarent.ivyidea.toolwindow;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
@@ -28,20 +30,23 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import java.awt.BorderLayout;
+import java.util.Arrays;
 import javax.swing.JPanel;
+import org.clarent.ivyidea.facet.IvyIdeaFacetType;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Guy Mahieu
  */
-public class IvyIdeaToolWindowFactory implements ToolWindowFactory {
+public class IvyIdeaToolWindowFactory implements ToolWindowFactory, DumbAware {
 
   @Override
   public void createToolWindowContent(
       @NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-    final ConsoleView consoleView = ServiceManager.getService(TextConsoleBuilderFactory.class)
-        .createBuilder(project)
-        .getConsole();
+    final ConsoleView consoleView =
+        ServiceManager.getService(TextConsoleBuilderFactory.class)
+            .createBuilder(project)
+            .getConsole();
     final Content content =
         ServiceManager.getService(ContentFactory.class)
             .createContent(new IvyIdeaToolWindow(consoleView), "Console", true);
@@ -65,6 +70,15 @@ public class IvyIdeaToolWindowFactory implements ToolWindowFactory {
     @NotNull
     public ConsoleView getConsoleView() {
       return consoleView;
+    }
+  }
+
+  public static final class Condition implements com.intellij.openapi.util.Condition<Project> {
+
+    @Override
+    public boolean value(final Project project) {
+      return Arrays.stream(ModuleManager.getInstance(project).getModules())
+          .anyMatch(IvyIdeaFacetType::isIvyModule);
     }
   }
 }
