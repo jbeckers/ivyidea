@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import org.clarent.ivyidea.action.resolve.IvyIdeaResolveBackgroundTask;
 import org.clarent.ivyidea.facet.IvyIdeaFacetType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Action to resolve the dependencies for all modules that have an IvyIDEA facet configured.
@@ -54,6 +55,7 @@ public class ResolveForAllModulesAction extends AnAction {
 
     static final Module[] ZERO_LENGTH_MODULES = new Module[0];
 
+    @Nullable
     private final Project project;
 
     BackgroundTask(final AnActionEvent e) {

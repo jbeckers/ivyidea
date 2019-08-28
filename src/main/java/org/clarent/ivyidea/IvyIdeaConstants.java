@@ -23,16 +23,18 @@ import org.clarent.ivyidea.facet.IvyIdeaFacet;
 
 public final class IvyIdeaConstants {
 
-  public static final String TOOLWINDOW_ID = "IvyIDEA";
+  private static final String IVY_IDEA = "IvyIDEA";
 
-  public static final String NOTIFICATION_GROUP_DISPLAY_ID = "IvyIDEA";
+  public static final String TOOLWINDOW_ID = IVY_IDEA;
 
-  public static final String PROJECT_STATE_NAME = "IvyIDEA.ProjectSettings";
+  public static final String NOTIFICATION_GROUP_DISPLAY_ID = IVY_IDEA;
 
-  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
+  public static final String PROJECT_STATE_NAME = IVY_IDEA + ".ProjectSettings";
 
-  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>("IvyIDEA");
-  public static final String FACET_STRING_ID = "IvyIDEA";
+  public static final String RESOLVED_LIB_NAME_ROOT = IVY_IDEA;
+
+  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>(IVY_IDEA);
+  public static final String FACET_STRING_ID = IVY_IDEA;
 
   private IvyIdeaConstants() {
   }
