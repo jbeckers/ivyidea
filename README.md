@@ -1,6 +1,7 @@
 # IvyIDEA
 
 [![Build Status](https://travis-ci.org/jbeckers/ivyidea.svg?branch=master)](https://travis-ci.org/jbeckers/ivyidea)
+[![codecov](https://codecov.io/gh/jbeckers/ivyidea/branch/master/graph/badge.svg)](https://codecov.io/gh/jbeckers/ivyidea)
 
 An [Intellij IDEA](https://www.jetbrains.com/idea/) plugin to resolve module dependencies through  [Apache Ivy](https://ant.apache.org/ivy/).
 
