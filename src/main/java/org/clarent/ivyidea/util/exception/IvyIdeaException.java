@@ -16,24 +16,28 @@
  * limitations under the License.
  */
 
-package org.clarent.ivyidea;
+package org.clarent.ivyidea.util.exception;
 
-import com.intellij.facet.FacetTypeId;
-import org.clarent.ivyidea.facet.IvyIdeaFacet;
+/**
+ * Abstract base class for all checked exceptions thrown by IvyIDEA.
+ *
+ * @author Guy Mahieu
+ */
+public abstract class IvyIdeaException extends Exception {
 
-public final class IvyIdeaConstants {
+  private static final long serialVersionUID = -363635444913966963L;
 
-  public static final String TOOLWINDOW_ID = "IvyIDEA";
+  protected IvyIdeaException() {}
 
-  public static final String NOTIFICATION_GROUP_DISPLAY_ID = "IvyIDEA";
+  protected IvyIdeaException(final String message) {
+    super(message);
+  }
 
-  public static final String PROJECT_STATE_NAME = "IvyIDEA.ProjectSettings";
+  protected IvyIdeaException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
-  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
-
-  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>("IvyIDEA");
-  public static final String FACET_STRING_ID = "IvyIDEA";
-
-  private IvyIdeaConstants() {
+  protected IvyIdeaException(final Throwable cause) {
+    super(cause);
   }
 }

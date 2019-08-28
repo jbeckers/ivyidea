@@ -16,24 +16,27 @@
  * limitations under the License.
  */
 
-package org.clarent.ivyidea;
+package org.clarent.ivyidea.model.dependency;
 
-import com.intellij.facet.FacetTypeId;
-import org.clarent.ivyidea.facet.IvyIdeaFacet;
+import com.intellij.openapi.roots.OrderRootType;
+import java.io.File;
+import org.apache.ivy.core.module.descriptor.Artifact;
 
-public final class IvyIdeaConstants {
+/** @author Guy Mahieu */
+public class ExternalSourceDependency extends ExternalDependency {
 
-  public static final String TOOLWINDOW_ID = "IvyIDEA";
+  public ExternalSourceDependency(
+      final Artifact artifact, final File externalArtifact, final String configurationName) {
+    super(artifact, externalArtifact, configurationName);
+  }
 
-  public static final String NOTIFICATION_GROUP_DISPLAY_ID = "IvyIDEA";
+  @Override
+  protected String getTypeName() {
+    return "sources";
+  }
 
-  public static final String PROJECT_STATE_NAME = "IvyIDEA.ProjectSettings";
-
-  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
-
-  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>("IvyIDEA");
-  public static final String FACET_STRING_ID = "IvyIDEA";
-
-  private IvyIdeaConstants() {
+  @Override
+  public OrderRootType getType() {
+    return OrderRootType.SOURCES;
   }
 }

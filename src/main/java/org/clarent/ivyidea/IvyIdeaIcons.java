@@ -18,22 +18,25 @@
 
 package org.clarent.ivyidea;
 
-import com.intellij.facet.FacetTypeId;
-import org.clarent.ivyidea.facet.IvyIdeaFacet;
+import com.intellij.openapi.util.IconLoader;
+import javax.swing.Icon;
+import org.jetbrains.annotations.Nullable;
 
-public final class IvyIdeaConstants {
+/**
+ * Helper interface for easy access to icons used in IvyIDEA.
+ *
+ * @author Guy Mahieu
+ */
+public final class IvyIdeaIcons {
 
-  public static final String TOOLWINDOW_ID = "IvyIDEA";
+  @Nullable
+  public static final Icon MAIN_ICON_SMALL = IconLoader.findIcon("/ivyidea13.png");
+  @Nullable
+  public static final Icon MAIN_ICON = IconLoader.findIcon("/ivyidea32.png");
 
-  public static final String NOTIFICATION_GROUP_DISPLAY_ID = "IvyIDEA";
-
-  public static final String PROJECT_STATE_NAME = "IvyIDEA.ProjectSettings";
-
-  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
-
-  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>("IvyIDEA");
-  public static final String FACET_STRING_ID = "IvyIDEA";
-
-  private IvyIdeaConstants() {
+  private IvyIdeaIcons() {
   }
+
+  //    public static final Icon ERROR_ICON = IconLoader.findIcon("/compiler/error.png");
+
 }

@@ -16,24 +16,12 @@
  * limitations under the License.
  */
 
-package org.clarent.ivyidea;
+package org.clarent.ivyidea.model.dependency;
 
-import com.intellij.facet.FacetTypeId;
-import org.clarent.ivyidea.facet.IvyIdeaFacet;
+import org.clarent.ivyidea.model.ModifiableRootModelWrapper;
 
-public final class IvyIdeaConstants {
+/** @author Guy Mahieu */
+public interface ResolvedDependency {
 
-  public static final String TOOLWINDOW_ID = "IvyIDEA";
-
-  public static final String NOTIFICATION_GROUP_DISPLAY_ID = "IvyIDEA";
-
-  public static final String PROJECT_STATE_NAME = "IvyIDEA.ProjectSettings";
-
-  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
-
-  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>("IvyIDEA");
-  public static final String FACET_STRING_ID = "IvyIDEA";
-
-  private IvyIdeaConstants() {
-  }
+  void addTo(ModifiableRootModelWrapper modifiableRootModelWrapper);
 }

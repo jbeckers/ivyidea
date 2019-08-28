@@ -16,24 +16,27 @@
  * limitations under the License.
  */
 
-package org.clarent.ivyidea;
+package org.clarent.ivyidea.settings.ui.propertieseditor;
 
-import com.intellij.facet.FacetTypeId;
-import org.clarent.ivyidea.facet.IvyIdeaFacet;
+/** @author Guy Mahieu */
+public class Property {
 
-public final class IvyIdeaConstants {
+  private String key;
+  private String value;
 
-  public static final String TOOLWINDOW_ID = "IvyIDEA";
+  public String getValue() {
+    return value;
+  }
 
-  public static final String NOTIFICATION_GROUP_DISPLAY_ID = "IvyIDEA";
+  public void setKey(final String key) {
+    this.key = key;
+  }
 
-  public static final String PROJECT_STATE_NAME = "IvyIDEA.ProjectSettings";
+  public void setValue(final String value) {
+    this.value = value;
+  }
 
-  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
-
-  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>("IvyIDEA");
-  public static final String FACET_STRING_ID = "IvyIDEA";
-
-  private IvyIdeaConstants() {
+  public String getKey() {
+    return key;
   }
 }

@@ -18,22 +18,13 @@
 
 package org.clarent.ivyidea;
 
-import com.intellij.facet.FacetTypeId;
-import org.clarent.ivyidea.facet.IvyIdeaFacet;
+import org.jetbrains.annotations.Contract;
 
-public final class IvyIdeaConstants {
+/** @author Guy Mahieu */
+public final class IvyIdeaPlugin {
 
-  public static final String TOOLWINDOW_ID = "IvyIDEA";
-
-  public static final String NOTIFICATION_GROUP_DISPLAY_ID = "IvyIDEA";
-
-  public static final String PROJECT_STATE_NAME = "IvyIDEA.ProjectSettings";
-
-  public static final String RESOLVED_LIB_NAME_ROOT = "IvyIDEA";
-
-  public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>("IvyIDEA");
-  public static final String FACET_STRING_ID = "IvyIDEA";
-
-  private IvyIdeaConstants() {
+  @Contract(pure = true)
+  private IvyIdeaPlugin() {
   }
+
 }
