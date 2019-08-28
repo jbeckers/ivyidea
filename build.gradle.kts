@@ -49,11 +49,16 @@ plugins {
     java
     id("org.jetbrains.intellij") version "0.4.10"
     id("net.ltgt.errorprone") version "0.8.1"
+    jacoco
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = "LATEST-EAP-SNAPSHOT"
+}
+
+jacoco {
+    toolVersion = "0.8.4"
 }
 
 configure<JavaPluginConvention> {
@@ -63,6 +68,15 @@ configure<JavaPluginConvention> {
 tasks {
     test {
         useJUnitPlatform()
+        finalizedBy("jacocoTestReport")
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.isEnabled = false
+            csv.isEnabled = false
+            html.destination = file("${buildDir}/jacocoHtml")
+        }
     }
 
     withType<JavaCompile>().configureEach {
