@@ -73,9 +73,11 @@ tasks {
 
     jacocoTestReport {
         reports {
-            xml.isEnabled = false
+            xml.isEnabled = true
+            xml.destination = file("${buildDir}/reports/jacoco/report.xml")
             csv.isEnabled = false
-            html.destination = file("${buildDir}/jacocoHtml")
+            html.isEnabled = true
+            html.destination = file("${buildDir}/reports/jacoco/report.html")
         }
     }
 
