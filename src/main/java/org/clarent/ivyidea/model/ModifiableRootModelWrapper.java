@@ -18,6 +18,7 @@
 
 package org.clarent.ivyidea.model;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -68,18 +69,12 @@ public final class ModifiableRootModelWrapper implements Closeable {
   private static String getCreatedLibraryName(
       final ModifiableRootModel model, final String configName) {
     String libraryName = IvyIdeaConstants.RESOLVED_LIB_NAME_ROOT;
-    if (model
-        .getProject()
-        .getComponent(IvyIdeaProjectStateComponent.class)
-        .getState()
-        .isLibraryNameIncludesModule()) {
+    if (ServiceManager.getService(model.getProject(), IvyIdeaProjectStateComponent.class)
+        .getState().libraryNameIncludesModule) {
       libraryName += "-" + model.getModule().getName();
     }
-    if (model
-        .getProject()
-        .getComponent(IvyIdeaProjectStateComponent.class)
-        .getState()
-        .isLibraryNameIncludesConfiguration()) {
+    if (ServiceManager.getService(model.getProject(), IvyIdeaProjectStateComponent.class)
+        .getState().libraryNameIncludesConfiguration) {
       libraryName += "-" + configName;
     }
     return libraryName;

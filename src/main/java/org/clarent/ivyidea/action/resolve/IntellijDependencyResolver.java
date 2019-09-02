@@ -18,10 +18,12 @@
 
 package org.clarent.ivyidea.action.resolve;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.io.File;
 import java.util.ArrayList;
@@ -44,7 +46,6 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.clarent.ivyidea.facet.IvyIdeaFacetType;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.model.dependency.ExternalDependency;
 import org.clarent.ivyidea.model.dependency.ExternalJarDependency;
@@ -54,7 +55,7 @@ import org.clarent.ivyidea.model.dependency.InternalDependency;
 import org.clarent.ivyidea.model.dependency.ResolvedDependency;
 import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
 import org.clarent.ivyidea.util.DependencyCategory;
-import org.clarent.ivyidea.util.IvyUtil;
+import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.clarent.ivyidea.util.exception.IvyFileReadException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -133,7 +134,7 @@ public class IntellijDependencyResolver {
     }
 
     public Try<Void> resolve(final IvyManager ivyManager, final Module module) {
-      final Try<File> ivyFile = IvyUtil.getIvyFile(module);
+      final Try<File> ivyFile = IvyIdeaFacetUtil.getIvyFile(module);
       if (!ivyFile.isSuccess()) {
         return Try.failure(new IvyFileReadException(null, module.getName(), null));
       }
@@ -142,19 +143,24 @@ public class IntellijDependencyResolver {
           .andThenTry(
               ivy -> {
                 final ResolveOptions options = new ResolveOptions();
-                module
-                    .getProject()
-                    .getComponent(IvyIdeaProjectStateComponent.class)
-                    .getState()
-                    .updateResolveOptions(options);
+                options.setValidate(ServiceManager
+                    .getService(module.getProject(), IvyIdeaProjectStateComponent.class)
+                    .getState().validateIvyFiles);
+                options.setTransitive(ServiceManager
+                    .getService(module.getProject(), IvyIdeaProjectStateComponent.class)
+                    .getState().resolveTransitively);
+                options.setUseCacheOnly(ServiceManager
+                    .getService(module.getProject(), IvyIdeaProjectStateComponent.class)
+                    .getState().resolveCacheOnly);
                 final Set<String> configsToResolve;
-                final IvyIdeaFacetConfiguration moduleConfiguration =
-                    IvyIdeaFacetConfiguration.getInstance(module);
-                if (moduleConfiguration != null
-                    && moduleConfiguration.isOnlyResolveSelectedConfigs()
-                    && moduleConfiguration.getConfigsToResolve() != null) {
+                final Option<IvyIdeaFacetConfiguration> moduleConfiguration =
+                    IvyIdeaFacetUtil.getConfiguration(module);
+                if (moduleConfiguration.isDefined()
+                    && moduleConfiguration.get().getState().onlyResolveSelectedConfigs
+                    && moduleConfiguration.get().getState().configsToResolve != null) {
                   configsToResolve =
-                      Collections.unmodifiableSet(moduleConfiguration.getConfigsToResolve());
+                      Collections
+                          .unmodifiableSet(moduleConfiguration.get().getState().configsToResolve);
                 } else {
                   configsToResolve = Collections.emptySet();
                 }
@@ -193,7 +199,7 @@ public class IntellijDependencyResolver {
               .onSuccess(
                   descriptor ->
                       Arrays.stream(ModuleManager.getInstance(module.getProject()).getModules())
-                          .filter(IvyIdeaFacetType::isIvyModule)
+                          .filter(IvyIdeaFacetUtil::isIvyModule)
                           .filter(intellijModule -> !module.equals(intellijModule))
                           .forEach(
                               intellijModule -> {
@@ -262,15 +268,11 @@ public class IntellijDependencyResolver {
                   // will
                   // get all javadocs and sources it can find for each dependency.
                   final boolean attachSources =
-                      project
-                          .getComponent(IvyIdeaProjectStateComponent.class)
-                          .getState()
-                          .isAlwaysAttachSources();
+                      ServiceManager.getService(project, IvyIdeaProjectStateComponent.class)
+                          .getState().alwaysAttachSources;
                   final boolean attachJavadocs =
-                      project
-                          .getComponent(IvyIdeaProjectStateComponent.class)
-                          .getState()
-                          .isAlwaysAttachJavadocs();
+                      ServiceManager.getService(project, IvyIdeaProjectStateComponent.class)
+                          .getState().alwaysAttachJavadocs;
                   if (attachSources || attachJavadocs) {
                     for (final Artifact artifact :
                         resolveReport

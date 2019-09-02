@@ -18,16 +18,15 @@
 
 package org.clarent.ivyidea.facet.ui;
 
-import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.UserActivityWatcher;
 import java.awt.BorderLayout;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
+import org.clarent.ivyidea.facet.IvyIdeaFacet;
 import org.clarent.ivyidea.settings.ui.orderedfilelist.OrderedFileList;
 import org.clarent.ivyidea.settings.ui.propertieseditor.PropertiesEditor;
 import org.jetbrains.annotations.Nls;
@@ -35,20 +34,24 @@ import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
 public class PropertiesSettingsTab extends FacetEditorTab {
+
+  private final FacetEditorContext editorContext;
+
+  @NotNull
+  private final OrderedFileList orderedFileList = new OrderedFileList();
+
   private JPanel pnlRoot;
   private JPanel pnlPropertiesFiles;
   private JPanel pnlAdditionalProperties;
   private JLabel lblAdditionalPropertiesDescription;
   private JLabel lblAdditionalProperties;
 
-  private final FacetEditorContext editorContext;
-  private OrderedFileList orderedFileList;
-  private PropertiesEditor additionalPropertiesEditor;
-  private boolean alreadyOpenedBefore;
-  private boolean modified;
+  private boolean alreadyOpenedBefore = false;
+  private boolean modified = false;
 
   public PropertiesSettingsTab(final FacetEditorContext editorContext) {
     this.editorContext = editorContext;
+    orderedFileList.setProject(editorContext.getProject());
 
     /* No additional properties support yet in this release */
     pnlAdditionalProperties.setVisible(false);
@@ -61,8 +64,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
 
   private void wireActivityWatcher() {
     final UserActivityWatcher watcher = new UserActivityWatcher();
-    watcher.addUserActivityListener(
-        () -> modified = true);
+    watcher.addUserActivityListener(() -> modified = true);
     watcher.register(pnlRoot);
   }
 
@@ -87,16 +89,18 @@ public class PropertiesSettingsTab extends FacetEditorTab {
     return alreadyOpenedBefore;
   }
 
-  public java.util.List<String> getFileNames() {
+  List<String> getFileNames() {
     return orderedFileList.getFileNames();
   }
 
   @Override
-  public void apply() throws ConfigurationException {
-    final Facet<?> facet = editorContext.getFacet();
-    final IvyIdeaFacetConfiguration configuration =
-        (IvyIdeaFacetConfiguration) facet.getConfiguration();
-    configuration.getPropertiesSettings().setPropertyFiles(orderedFileList.getFileNames());
+  public void apply() {
+    ((IvyIdeaFacet) editorContext.getFacet())
+        .getConfiguration()
+        .getState()
+        .propertiesSettings
+        .propertiesFiles =
+        orderedFileList.getFileNames();
   }
 
   @Override
@@ -107,23 +111,20 @@ public class PropertiesSettingsTab extends FacetEditorTab {
 
   @Override
   public void reset() {
-    final Facet<?> facet = editorContext.getFacet();
-    final IvyIdeaFacetConfiguration configuration =
-        (IvyIdeaFacetConfiguration) facet.getConfiguration();
-    orderedFileList.setFileNames(configuration.getPropertiesSettings().getPropertyFiles());
+    orderedFileList.setFileNames(
+        ((IvyIdeaFacet) editorContext.getFacet())
+            .getConfiguration()
+            .getState()
+            .propertiesSettings
+            .propertiesFiles);
   }
-
-  @Override
-  public void disposeUIResources() {}
 
   @SuppressWarnings("UnusedMethod")
   private void createUIComponents() {
     pnlPropertiesFiles = new JPanel(new BorderLayout());
-    orderedFileList = new OrderedFileList(editorContext.getProject());
     pnlPropertiesFiles.add(orderedFileList.getRootPanel(), BorderLayout.CENTER);
 
     pnlAdditionalProperties = new JPanel(new BorderLayout());
-    additionalPropertiesEditor = new PropertiesEditor();
-    pnlAdditionalProperties.add(additionalPropertiesEditor.getRootPanel(), BorderLayout.CENTER);
+    pnlAdditionalProperties.add(new PropertiesEditor().getRootPanel(), BorderLayout.CENTER);
   }
 }

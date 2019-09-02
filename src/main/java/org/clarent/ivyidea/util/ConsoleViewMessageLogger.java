@@ -28,6 +28,7 @@ import static com.intellij.execution.ui.ConsoleViewContentType.SYSTEM_OUTPUT;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
@@ -70,10 +71,8 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     }
     threshold =
         IvyLogLevel.fromName(
-            project
-                .getComponent(IvyIdeaProjectStateComponent.class)
-                .getState()
-                .getIvyLogLevelThreshold());
+            ServiceManager.getService(project, IvyIdeaProjectStateComponent.class)
+                .getState().ivyLogLevelThreshold);
   }
 
   @Override

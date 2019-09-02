@@ -18,6 +18,7 @@
 
 package org.clarent.ivyidea.action.resolve;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import io.vavr.control.Try;
@@ -27,11 +28,13 @@ import java.util.List;
 import java.util.Map;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.settings.IvySettings;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
-import org.clarent.ivyidea.util.IvyIdeaConfigHelper;
+import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState;
+import org.clarent.ivyidea.util.IvyIdeaConfigUtil;
+import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.clarent.ivyidea.util.IvyUtil;
+import org.clarent.ivyidea.util.ModuleDescriptorUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,51 +45,60 @@ class IvyManager {
   private static final Logger LOGGER =
       Logger.getInstance("#org.clarent.ivyidea.action.resolve.IvyManager");
 
-  private final Map<Module, Ivy> configuredIvyInstances = new HashMap<>();
+  private final Map<Module, Ivy> ivyEngines = new HashMap<>();
   private final Map<Module, ModuleDescriptor> moduleDescriptors = new HashMap<>();
 
-  IvyManager() {
+  IvyManager() {}
+
+  @NotNull
+  private static List<String> getPropertiesFiles(
+      @NotNull final IvyIdeaFacetConfiguration moduleFacetConfiguration,
+      @NotNull final IvyIdeaProjectState projectState) {
+    final List<String> propertiesFiles =
+        new ArrayList<>(moduleFacetConfiguration.getState().propertiesSettings.propertiesFiles);
+    if (moduleFacetConfiguration
+        .getState().propertiesSettings.propertiesFiles.includeProjectLevelPropertiesFiles) {
+      propertiesFiles.addAll(projectState.propertiesSettings.propertyFiles);
+    }
+    return propertiesFiles;
   }
 
   @NotNull
-  private static Try<IvySettings> createConfiguredIvySettings(@NotNull final Module module) {
-    final Try<String> setingsFile;
-    final IvyIdeaFacetConfiguration moduleConfiguration =
-        IvyIdeaFacetConfiguration.getInstance(module);
-    if (moduleConfiguration == null) {
-      return Try.failure(
-          new RuntimeException(
-              "Internal error: No IvyIDEA facet configured for module "
-                  + module.getName()
-                  + ", but an attempt was made to use it as such."));
-    }
-    if (moduleConfiguration.isUseProjectSettings()) {
-      setingsFile = IvyIdeaConfigHelper.getProjectIvySettingsFile(module.getProject());
-    } else {
-      setingsFile = IvyIdeaConfigHelper.getModuleIvySettingsFile(module, moduleConfiguration);
-    }
-    final List<String> propertiesFiles =
-        new ArrayList<>(moduleConfiguration.getPropertiesSettings().getPropertyFiles());
-    if (moduleConfiguration.getPropertiesSettings().isIncludeProjectLevelPropertiesFiles()) {
-      propertiesFiles.addAll(
-          module
-              .getProject()
-              .getComponent(IvyIdeaProjectStateComponent.class)
-              .getState()
-              .getPropertiesSettings()
-              .getPropertyFiles());
-    }
-    return IvyIdeaConfigHelper.createConfiguredIvySettings(
-        module, setingsFile, IvyIdeaConfigHelper.loadProperties(module, propertiesFiles));
+  private static Try<String> getSettingsFile(
+      @NotNull final Module module,
+      @NotNull final IvyIdeaFacetConfiguration moduleFacetConfiguration) {
+    return moduleFacetConfiguration.getState().useProjectSettings
+        ? IvyIdeaConfigUtil.getProjectIvySettingsFile(module.getProject())
+        : IvyIdeaConfigUtil.getModuleIvySettingsFile(module, moduleFacetConfiguration);
   }
 
   @NotNull
   Try<Ivy> getIvy(@NotNull final Module module) {
-    if (configuredIvyInstances.containsKey(module)) {
-      return Try.success(configuredIvyInstances.get(module));
+    if (ivyEngines.containsKey(module)) {
+      return Try.success(ivyEngines.get(module));
     }
-    return IvyUtil.createConfiguredIvyEngine(module, createConfiguredIvySettings(module))
-        .onSuccess(ivy -> configuredIvyInstances.put(module, ivy));
+    return IvyUtil.newInstance(
+        module,
+        IvyIdeaFacetUtil.getConfiguration(module)
+            .toTry(
+                () ->
+                    new RuntimeException(
+                        "Internal error: No IvyIDEA facet configured for module "
+                            + module.getName()
+                            + ", but an attempt was made to use it as such."))
+            .flatMapTry(
+                moduleFacetConfiguration ->
+                    IvyIdeaConfigUtil.createConfiguredIvySettings(
+                        module,
+                        getSettingsFile(module, moduleFacetConfiguration),
+                        IvyIdeaConfigUtil.loadProperties(
+                            module,
+                            getPropertiesFiles(
+                                moduleFacetConfiguration,
+                                ServiceManager.getService(
+                                    module.getProject(), IvyIdeaProjectStateComponent.class)
+                                    .getState())))))
+        .onSuccess(ivy -> ivyEngines.put(module, ivy));
   }
 
   @NotNull
@@ -95,11 +107,11 @@ class IvyManager {
       return Try.success(moduleDescriptors.get(module));
     }
 
-    return IvyUtil.getIvyFile(module)
+    return IvyIdeaFacetUtil.getIvyFile(module)
         .flatMapTry(
             file ->
                 getIvy(module)
-                    .flatMapTry(ivy -> IvyUtil.parseIvyFile(file, Try.success(ivy)))
+                    .flatMapTry(ivy -> ModuleDescriptorUtil.parseDescriptor(file, Try.success(ivy)))
                     .onSuccess(moduleDescriptor -> moduleDescriptors.put(module, moduleDescriptor))
                     .onFailure(
                         throwable ->

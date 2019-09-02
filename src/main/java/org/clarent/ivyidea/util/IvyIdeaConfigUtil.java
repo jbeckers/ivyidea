@@ -18,6 +18,7 @@
 
 package org.clarent.ivyidea.util;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.net.HttpConfigurable;
@@ -36,30 +37,28 @@ import java.util.Properties;
 import org.apache.ivy.core.settings.IvySettings;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.State;
+import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState;
 import org.clarent.ivyidea.util.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.util.exception.IvySettingsNotFoundException;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Handles retrieval of settings from the configuration.
  *
- * <p>TODO: This class has grown to become a monster - let's get rid of all the statics and
- * organize
- * it a bit better
- *
  * @author Guy Mahieu
  */
-public final class IvyIdeaConfigHelper {
+public final class IvyIdeaConfigUtil {
 
-  private IvyIdeaConfigHelper() {
+  @Contract(pure = true)
+  private IvyIdeaConfigUtil() {
   }
 
   @NotNull
   public static Try<String> getModuleIvySettingsFile(
       @NotNull final Module module, @NotNull final IvyIdeaFacetConfiguration moduleConfiguration) {
-    if (moduleConfiguration.isUseCustomIvySettings()) {
-      final String ivySettingsFile = moduleConfiguration.getIvySettingsFile().trim();
+    if (moduleConfiguration.getState().useCustomIvySettings) {
+      final String ivySettingsFile = moduleConfiguration.getState().ivySettingsFile.trim();
       if (ivySettingsFile.isEmpty()) {
         return Try.failure(
             new IvySettingsNotFoundException(
@@ -101,11 +100,10 @@ public final class IvyIdeaConfigHelper {
 
   @NotNull
   public static Try<String> getProjectIvySettingsFile(@NotNull final Project project) {
-    final IvyIdeaProjectStateComponent component =
-        project.getComponent(IvyIdeaProjectStateComponent.class);
-    final State state = component.getState();
-    if (state.isUseCustomIvySettings()) {
-      final String settingsFile = state.getIvySettingsFile().trim();
+    final IvyIdeaProjectState state =
+        ServiceManager.getService(project, IvyIdeaProjectStateComponent.class).getState();
+    if (state.useCustomIvySettings) {
+      final String settingsFile = state.ivySettingsFile.trim();
       if (settingsFile.isEmpty()) {
         return Try.failure(
             new IvySettingsNotFoundException(

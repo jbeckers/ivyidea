@@ -20,11 +20,13 @@ package org.clarent.ivyidea.util;
 
 import static java.util.Arrays.asList;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import java.util.Collections;
 import java.util.List;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +36,7 @@ public enum DependencyCategory {
   Javadoc("javadoc", "doc", "docs", "apidoc", "apidocs", "documentation", "documents"),
   Classes("jar", "mar", "sar", "war", "ear", "ejb", "bundle", "test-jar");
 
+  @NotNull
   private final List<String> defaultTypes;
 
   DependencyCategory(final String... types) {
@@ -43,13 +46,12 @@ public enum DependencyCategory {
   @Nullable
   public static DependencyCategory determineCategory(
       @NotNull final Project project, @NotNull final Artifact artifact) {
-    return project
-        .getComponent(IvyIdeaProjectStateComponent.class)
-        .getState()
-        .getArtifactTypeSettings()
-        .getCategoryForType(artifact.getType());
+    return ServiceManager.getService(project, IvyIdeaProjectStateComponent.class)
+        .getState().artifactTypeSettings.getManager().getCategoryForType(artifact.getType());
   }
 
+  @Contract(pure = true)
+  @NotNull
   public List<String> getDefaultTypes() {
     return defaultTypes;
   }

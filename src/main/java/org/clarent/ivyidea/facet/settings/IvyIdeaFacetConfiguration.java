@@ -19,183 +19,217 @@
 package org.clarent.ivyidea.facet.settings;
 
 import com.intellij.facet.FacetConfiguration;
-import com.intellij.facet.FacetManager;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.XCollection;
+import com.intellij.util.xmlb.annotations.XCollection.Style;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
-import org.clarent.ivyidea.IvyIdeaConstants;
-import org.clarent.ivyidea.facet.IvyIdeaFacet;
 import org.clarent.ivyidea.facet.ui.BasicSettingsTab;
 import org.clarent.ivyidea.facet.ui.PropertiesSettingsTab;
-import org.jdom.Element;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
-public class IvyIdeaFacetConfiguration implements FacetConfiguration {
-
-  private static final Logger LOGGER =
-      Logger.getInstance("#org.clarent.ivyidea.facet.config.IvyIdeaFacetConfiguration");
-
-  /*
-      Al the fields are initialized with a default value to avoid errors when adding a new IvyIDEA facet to an
-      existing module.
-  */
-  private String ivyFile = "";
-  private boolean useProjectSettings = true;
-  private boolean useCustomIvySettings = true;
-  private String ivySettingsFile = "";
-  private boolean onlyResolveSelectedConfigs = false;
-  private Set<String> configsToResolve = Collections.emptySet();
-  private FacetPropertiesSettings facetPropertiesSettings = new FacetPropertiesSettings();
-
-  @Nullable
-  public static IvyIdeaFacetConfiguration getInstance(final Module module) {
-    final IvyIdeaFacet ivyIdeaFacet =
-        FacetManager.getInstance(module).getFacetByType(IvyIdeaConstants.FACET_TYPE_ID);
-    if (ivyIdeaFacet != null) {
-      return ivyIdeaFacet.getConfiguration();
-    } else {
-      LOGGER.info(
-          "LOG00050: Module "
-              + module.getName()
-              + " does not have the IvyIDEA facet configured; ignoring.");
-      return null;
-    }
-  }
+@SuppressWarnings({
+    "NonFinalFieldReferenceInEquals",
+    "ObjectInstantiationInEqualsHashCode",
+    "NonFinalFieldReferencedInHashCode"
+})
+public class IvyIdeaFacetConfiguration
+    implements FacetConfiguration, PersistentStateComponent<IvyIdeaFacetConfiguration.State> {
 
   @NotNull
-  public String getIvyFile() {
-    return ivyFile.trim();
-  }
-
-  public void setIvyFile(@NotNull final String ivyFile) {
-    this.ivyFile = ivyFile;
-  }
-
-  public boolean isUseProjectSettings() {
-    return useProjectSettings;
-  }
-
-  public void setUseProjectSettings(final boolean useProjectSettings) {
-    this.useProjectSettings = useProjectSettings;
-  }
-
-  public boolean isUseCustomIvySettings() {
-    return useCustomIvySettings;
-  }
-
-  public void setUseCustomIvySettings(final boolean useCustomIvySettings) {
-    this.useCustomIvySettings = useCustomIvySettings;
-  }
-
-  public FacetPropertiesSettings getFacetPropertiesSettings() {
-    return facetPropertiesSettings;
-  }
-
-  public void setFacetPropertiesSettings(final FacetPropertiesSettings facetPropertiesSettings) {
-    this.facetPropertiesSettings = facetPropertiesSettings;
-  }
-
-  @NotNull
-  public String getIvySettingsFile() {
-    return ivySettingsFile;
-  }
-
-  public void setIvySettingsFile(@NotNull final String ivySettingsFile) {
-    this.ivySettingsFile = ivySettingsFile;
-  }
-
-  public boolean isOnlyResolveSelectedConfigs() {
-    return onlyResolveSelectedConfigs;
-  }
-
-  public void setOnlyResolveSelectedConfigs(final boolean onlyResolveSelectedConfigs) {
-    this.onlyResolveSelectedConfigs = onlyResolveSelectedConfigs;
-  }
-
-  public Set<String> getConfigsToResolve() {
-    return configsToResolve;
-  }
-
-  public void setConfigsToResolve(final Set<String> configsToResolve) {
-    this.configsToResolve = configsToResolve;
-  }
-
-  public FacetPropertiesSettings getPropertiesSettings() {
-    return facetPropertiesSettings;
-  }
+  private State state = new State();
 
   @Override
   public FacetEditorTab[] createEditorTabs(
       final FacetEditorContext editorContext, final FacetValidatorsManager validatorsManager) {
     final PropertiesSettingsTab propertiesSettingsTab = new PropertiesSettingsTab(editorContext);
-    final BasicSettingsTab basicSettingsTab =
-        new BasicSettingsTab(editorContext, propertiesSettingsTab);
-    return new FacetEditorTab[] {basicSettingsTab, propertiesSettingsTab};
+    return new FacetEditorTab[]{
+        new BasicSettingsTab(editorContext, propertiesSettingsTab), propertiesSettingsTab
+    };
+  }
+
+  @NotNull
+  @Override
+  public State getState() {
+    return state;
   }
 
   @Override
-  public void readExternal(final Element element) {
-    readBasicSettings(element);
-    final Element propertiesSettingsElement = element.getChild("propertiesSettings");
-    if (propertiesSettingsElement != null) {
-      facetPropertiesSettings.readExternal(propertiesSettingsElement);
-    }
+  public void loadState(@NotNull final State state) {
+    this.state = state;
   }
 
-  private void readBasicSettings(final Element element) {
-    setIvyFile(element.getAttributeValue("ivyFile", ""));
-    setUseCustomIvySettings(
-        Boolean.valueOf(
-            element.getAttributeValue("useCustomIvySettings", Boolean.TRUE.toString())));
-    setIvySettingsFile(element.getAttributeValue("ivySettingsFile", ""));
-    setOnlyResolveSelectedConfigs(
-        Boolean.valueOf(
-            element.getAttributeValue("onlyResolveSelectedConfigs", Boolean.FALSE.toString())));
-    setUseProjectSettings(
-        Boolean.valueOf(element.getAttributeValue("useProjectSettings", Boolean.TRUE.toString())));
-    final Element configsToResolveElement = element.getChild("configsToResolve");
-    if (configsToResolveElement != null) {
-      final Set<String> configsToResolve = new TreeSet<>();
-      @SuppressWarnings("unchecked") final List<Element> configElements = configsToResolveElement
-          .getChildren("config");
-      for (final Element configElement : configElements) {
-        configsToResolve.add(configElement.getTextTrim());
+  @SuppressWarnings({"unused", "WeakerAccess"})
+  public static class State {
+
+    @NotNull
+    @Attribute
+    public String ivyFile;
+
+    @NotNull
+    @Attribute
+    public Boolean useProjectSettings;
+
+    @NotNull
+    @Attribute
+    public Boolean useCustomIvySettings;
+
+    @NotNull
+    @Attribute
+    public String ivySettingsFile;
+
+    @NotNull
+    @Attribute
+    public Boolean onlyResolveSelectedConfigs;
+
+    @NotNull
+    @XCollection(style = Style.v2, elementName = "config", valueAttributeName = "")
+    public Set<String> configsToResolve;
+
+    @NotNull
+    public FacetPropertiesSettings propertiesSettings;
+
+    public State() {
+      ivyFile = "";
+      useProjectSettings = true;
+      useCustomIvySettings = true;
+      ivySettingsFile = "";
+      onlyResolveSelectedConfigs = false;
+      configsToResolve = Collections.emptySet();
+      propertiesSettings = new FacetPropertiesSettings();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) {
+        return true;
       }
-      setConfigsToResolve(configsToResolve);
-    }
-  }
-
-  @Override
-  public void writeExternal(final Element element) {
-    writeBasicSettings(element);
-    final Element propertiesSettingsElement = new Element("propertiesSettings");
-    if (facetPropertiesSettings != null) {
-      facetPropertiesSettings.writeExternal(propertiesSettingsElement);
-    }
-    element.addContent(propertiesSettingsElement);
-  }
-
-  private void writeBasicSettings(final Element element) {
-    element.setAttribute("ivyFile", ivyFile == null ? "" : ivyFile);
-    element.setAttribute("useProjectSettings", Boolean.toString(useProjectSettings));
-    element.setAttribute("useCustomIvySettings", Boolean.toString(useCustomIvySettings));
-    element.setAttribute("ivySettingsFile", ivySettingsFile == null ? "" : ivySettingsFile);
-    element.setAttribute(
-        "onlyResolveSelectedConfigs", Boolean.toString(onlyResolveSelectedConfigs));
-    if (configsToResolve != null && !configsToResolve.isEmpty()) {
-      final Element configsElement = new Element("configsToResolve");
-      for (final String configToResolve : configsToResolve) {
-        configsElement.addContent(new Element("config").setText(configToResolve));
+      if (!(o instanceof State)) {
+        return false;
       }
-      element.addContent(configsElement);
+      final State state = (State) o;
+      return Objects.equals(ivyFile, state.ivyFile)
+          && Objects.equals(useProjectSettings, state.useProjectSettings)
+          && Objects.equals(useCustomIvySettings, state.useCustomIvySettings)
+          && Objects.equals(ivySettingsFile, state.ivySettingsFile)
+          && Objects.equals(onlyResolveSelectedConfigs, state.onlyResolveSelectedConfigs)
+          && Objects.equals(configsToResolve, state.configsToResolve)
+          && Objects.equals(propertiesSettings, state.propertiesSettings);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          ivyFile,
+          useProjectSettings,
+          useCustomIvySettings,
+          ivySettingsFile,
+          onlyResolveSelectedConfigs,
+          configsToResolve,
+          propertiesSettings);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static class FacetPropertiesSettings {
+
+      @NotNull
+      @XCollection(style = Style.v2, elementName = "fileName", valueAttributeName = "")
+      public FacetPropertiesFilesList propertiesFiles;
+
+      @Contract(pure = true)
+      public FacetPropertiesSettings() {
+        propertiesFiles = new FacetPropertiesFilesList();
+      }
+
+      @Override
+      public boolean equals(final Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof FacetPropertiesSettings)) {
+          return false;
+        }
+        final FacetPropertiesSettings that = (FacetPropertiesSettings) o;
+        return Objects.equals(propertiesFiles, that.propertiesFiles);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(propertiesFiles);
+      }
+
+      @SuppressWarnings({"WeakerAccess", "unused", "ClassExtendsConcreteCollection"})
+      public static class FacetPropertiesFilesList extends ArrayList<String> {
+
+        private static final long serialVersionUID = 4240068708636271273L;
+
+        @NotNull
+        @Attribute
+        public Boolean includeProjectLevelPropertiesFiles;
+
+        @NotNull
+        @Attribute
+        public Boolean includeProjectLevelAdditionalProperties;
+
+        @Contract(pure = true)
+        public FacetPropertiesFilesList() {
+          includeProjectLevelPropertiesFiles = true;
+          includeProjectLevelAdditionalProperties = true;
+        }
+
+        public FacetPropertiesFilesList(final Collection<String> items) {
+          super(items);
+          includeProjectLevelPropertiesFiles = true;
+          includeProjectLevelAdditionalProperties = true;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+          if (this == o) {
+            return true;
+          }
+          if (!(o instanceof FacetPropertiesFilesList)) {
+            return false;
+          }
+          if (!super.equals(o)) {
+            return false;
+          }
+          final FacetPropertiesFilesList strings = (FacetPropertiesFilesList) o;
+          return Objects.equals(
+              includeProjectLevelPropertiesFiles, strings.includeProjectLevelPropertiesFiles)
+              && Objects.equals(
+              includeProjectLevelAdditionalProperties,
+              strings.includeProjectLevelAdditionalProperties);
+        }
+
+        @Override
+        public int hashCode() {
+          return Objects.hash(
+              super.hashCode(),
+              includeProjectLevelPropertiesFiles,
+              includeProjectLevelAdditionalProperties);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public final FacetPropertiesFilesList clone() {
+          final Object clone = super.clone();
+          if (clone instanceof Collection<?>) {
+            return new FacetPropertiesFilesList((Collection<String>) clone);
+          } else {
+            throw new InternalError("ArrayList.clone() went wrong!");
+          }
+        }
+      }
     }
   }
 }

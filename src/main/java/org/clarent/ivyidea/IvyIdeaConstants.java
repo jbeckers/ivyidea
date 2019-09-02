@@ -23,7 +23,7 @@ import org.clarent.ivyidea.facet.IvyIdeaFacet;
 
 public final class IvyIdeaConstants {
 
-  private static final String IVY_IDEA = "IvyIDEA";
+  public static final String IVY_IDEA = "IvyIDEA";
 
   public static final String TOOLWINDOW_ID = IVY_IDEA;
 
@@ -35,6 +35,7 @@ public final class IvyIdeaConstants {
 
   public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>(IVY_IDEA);
   public static final String FACET_STRING_ID = IVY_IDEA;
+  public static final String FACET_DETECTOR_ID = IVY_IDEA;
 
   private IvyIdeaConstants() {
   }

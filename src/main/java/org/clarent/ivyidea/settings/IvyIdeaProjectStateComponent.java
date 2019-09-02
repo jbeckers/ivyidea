@@ -23,358 +23,245 @@ import static org.clarent.ivyidea.util.DependencyCategory.Javadoc;
 import static org.clarent.ivyidea.util.DependencyCategory.Sources;
 
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.intellij.util.xmlb.annotations.OptionTag;
+import com.intellij.util.xmlb.annotations.Transient;
+import com.intellij.util.xmlb.annotations.XCollection;
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import org.apache.ivy.core.resolve.ResolveOptions;
+import java.util.Objects;
 import org.clarent.ivyidea.IvyIdeaConstants;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.State;
+import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState;
 import org.clarent.ivyidea.util.ConsoleViewMessageLogger.IvyLogLevel;
-import org.clarent.ivyidea.util.DependencyCategory;
+import org.clarent.ivyidea.util.DependencyCategoryManager;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Guy Mahieu
  */
-@com.intellij.openapi.components.State(name = IvyIdeaConstants.PROJECT_STATE_NAME)
-public class IvyIdeaProjectStateComponent implements PersistentStateComponent<State> {
+@State(name = IvyIdeaConstants.PROJECT_STATE_NAME)
+public class IvyIdeaProjectStateComponent implements PersistentStateComponent<IvyIdeaProjectState> {
 
-  private final State internalState;
+  @NotNull
+  private IvyIdeaProjectState state = new IvyIdeaProjectState();
 
+  @Contract(pure = true)
   public IvyIdeaProjectStateComponent(final Project project) {
-    this.internalState = new State();
   }
 
   @Override
   @NotNull
-  public State getState() {
-    return internalState;
+  public IvyIdeaProjectState getState() {
+    return state;
   }
 
   @Override
-  public void loadState(@NotNull final State state) {
-    XmlSerializerUtil.copyBean(state, this.internalState);
+  public void loadState(@NotNull final IvyIdeaProjectState state) {
+    this.state = state;
   }
 
-  /**
-   * @author Guy Mahieu
-   */
-  public static class State {
+  @SuppressWarnings({
+      "WeakerAccess",
+      "NonFinalFieldReferenceInEquals",
+      "ObjectInstantiationInEqualsHashCode",
+      "NonFinalFieldReferencedInHashCode"
+  })
+  public static class IvyIdeaProjectState {
 
     @NotNull
-    private Boolean useCustomIvySettings = true;
-    @NotNull
-    private String ivySettingsFile = "";
-    @NotNull
-    private Boolean validateIvyFiles = false;
-    @NotNull
-    private Boolean resolveTransitively = true;
-    @NotNull
-    private Boolean resolveCacheOnly = false;
-    @NotNull
-    private Boolean resolveInBackground = false;
-    @NotNull
-    private Boolean alwaysAttachSources = true;
-    @NotNull
-    private Boolean alwaysAttachJavadocs = true;
-    @NotNull
-    private Boolean libraryNameIncludesModule = false;
-    @NotNull
-    private Boolean libraryNameIncludesConfiguration = false;
-    @NotNull
-    private String ivyLogLevelThreshold = IvyLogLevel.None.name();
-    @NotNull
-    private ArtifactTypeSettings artifactTypeSettings = new ArtifactTypeSettings();
-    @NotNull
-    private PropertiesSettings propertiesSettings = new PropertiesSettings();
+    @Transient
+    public Boolean useCustomIvySettings;
 
     @NotNull
-    public String getIvySettingsFile() {
-      return ivySettingsFile;
-    }
-
-    void setIvySettingsFile(@NotNull final String ivySettingsFile) {
-      this.ivySettingsFile = ivySettingsFile;
-    }
-
+    @OptionTag
+    public String ivySettingsFile;
     @NotNull
-    Boolean isValidateIvyFiles() {
-      return validateIvyFiles;
-    }
-
-    void setValidateIvyFiles(@NotNull final Boolean validateIvyFiles) {
-      this.validateIvyFiles = validateIvyFiles;
-    }
-
+    @OptionTag
+    public Boolean validateIvyFiles;
     @NotNull
-    Boolean isResolveTransitively() {
-      return resolveTransitively;
-    }
-
-    void setResolveTransitively(@NotNull final Boolean resolveTransitively) {
-      this.resolveTransitively = resolveTransitively;
-    }
-
+    @OptionTag
+    public Boolean resolveTransitively;
     @NotNull
-    Boolean isResolveCacheOnly() {
-      return resolveCacheOnly;
-    }
-
-    void setResolveCacheOnly(@NotNull final Boolean resolveCacheOnly) {
-      this.resolveCacheOnly = resolveCacheOnly;
-    }
-
+    @OptionTag
+    public Boolean resolveCacheOnly;
     @NotNull
-    public Boolean isResolveInBackground() {
-      return resolveInBackground;
-    }
-
-    void setResolveInBackground(@NotNull final Boolean resolveInBackground) {
-      this.resolveInBackground = resolveInBackground;
-    }
-
+    @OptionTag
+    public Boolean resolveInBackground;
     @NotNull
-    public Boolean isAlwaysAttachSources() {
-      return alwaysAttachSources;
-    }
-
-    void setAlwaysAttachSources(@NotNull final Boolean alwaysAttachSources) {
-      this.alwaysAttachSources = alwaysAttachSources;
-    }
-
+    @OptionTag
+    public Boolean alwaysAttachSources;
     @NotNull
-    public Boolean isAlwaysAttachJavadocs() {
-      return alwaysAttachJavadocs;
-    }
-
-    void setAlwaysAttachJavadocs(@NotNull final Boolean alwaysAttachJavadocs) {
-      this.alwaysAttachJavadocs = alwaysAttachJavadocs;
-    }
-
+    @OptionTag
+    public Boolean alwaysAttachJavadocs;
     @NotNull
-    public Boolean isUseCustomIvySettings() {
-      return useCustomIvySettings;
-    }
-
-    void setUseCustomIvySettings(@NotNull final Boolean useCustomIvySettings) {
-      this.useCustomIvySettings = useCustomIvySettings;
-    }
-
+    @OptionTag
+    public Boolean libraryNameIncludesModule;
     @NotNull
-    public PropertiesSettings getPropertiesSettings() {
-      return propertiesSettings;
-    }
-
-    void setPropertiesSettings(@NotNull final PropertiesSettings propertiesSettings) {
-      this.propertiesSettings = propertiesSettings;
-    }
-
+    @OptionTag
+    public Boolean libraryNameIncludesConfiguration;
     @NotNull
-    public Boolean isLibraryNameIncludesModule() {
-      return libraryNameIncludesModule;
-    }
-
-    void setLibraryNameIncludesModule(@NotNull final Boolean libraryNameIncludesModule) {
-      this.libraryNameIncludesModule = libraryNameIncludesModule;
-    }
-
+    @OptionTag
+    public String ivyLogLevelThreshold;
     @NotNull
-    public Boolean isLibraryNameIncludesConfiguration() {
-      return libraryNameIncludesConfiguration;
-    }
-
-    void setLibraryNameIncludesConfiguration(
-        @NotNull final Boolean libraryNameIncludesConfiguration) {
-      this.libraryNameIncludesConfiguration = libraryNameIncludesConfiguration;
-    }
-
+    @OptionTag
+    public ArtifactTypeSettings artifactTypeSettings;
     @NotNull
-    public String getIvyLogLevelThreshold() {
-      return ivyLogLevelThreshold;
-    }
-
-    void setIvyLogLevelThreshold(@NotNull final String ivyLogLevelThreshold) {
-      this.ivyLogLevelThreshold = ivyLogLevelThreshold;
-    }
-
-    @NotNull
-    public ArtifactTypeSettings getArtifactTypeSettings() {
-      return artifactTypeSettings;
-    }
-
-    public void setArtifactTypeSettings(@NotNull final ArtifactTypeSettings artifactTypeSettings) {
-      this.artifactTypeSettings = artifactTypeSettings;
-    }
-
-    public void updateResolveOptions(final ResolveOptions options) {
-      options.setValidate(validateIvyFiles);
-      options.setTransitive(resolveTransitively);
-      options.setUseCacheOnly(resolveCacheOnly);
-    }
+    @OptionTag
+    public PropertiesSettings propertiesSettings;
 
     /**
-     * @author Guy Mahieu
+     * Default State
      */
+    public IvyIdeaProjectState() {
+      useCustomIvySettings = true;
+      ivySettingsFile = "";
+      validateIvyFiles = false;
+      resolveTransitively = true;
+      resolveCacheOnly = false;
+      resolveInBackground = false;
+      alwaysAttachSources = true;
+      alwaysAttachJavadocs = true;
+      libraryNameIncludesModule = false;
+      libraryNameIncludesConfiguration = false;
+      ivyLogLevelThreshold = IvyLogLevel.None.name();
+      artifactTypeSettings = new ArtifactTypeSettings();
+      propertiesSettings = new PropertiesSettings();
+    }
+
+    @Contract(value = "null -> false", pure = true)
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof IvyIdeaProjectState)) {
+        return false;
+      }
+      final IvyIdeaProjectState that = (IvyIdeaProjectState) o;
+      return Objects.equals(useCustomIvySettings, that.useCustomIvySettings)
+          && Objects.equals(ivySettingsFile, that.ivySettingsFile)
+          && Objects.equals(validateIvyFiles, that.validateIvyFiles)
+          && Objects.equals(resolveTransitively, that.resolveTransitively)
+          && Objects.equals(resolveCacheOnly, that.resolveCacheOnly)
+          && Objects.equals(resolveInBackground, that.resolveInBackground)
+          && Objects.equals(alwaysAttachSources, that.alwaysAttachSources)
+          && Objects.equals(alwaysAttachJavadocs, that.alwaysAttachJavadocs)
+          && Objects.equals(libraryNameIncludesModule, that.libraryNameIncludesModule)
+          && Objects.equals(libraryNameIncludesConfiguration, that.libraryNameIncludesConfiguration)
+          && Objects.equals(ivyLogLevelThreshold, that.ivyLogLevelThreshold)
+          && Objects.equals(artifactTypeSettings, that.artifactTypeSettings)
+          && Objects.equals(propertiesSettings, that.propertiesSettings);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          useCustomIvySettings,
+          ivySettingsFile,
+          validateIvyFiles,
+          resolveTransitively,
+          resolveCacheOnly,
+          resolveInBackground,
+          alwaysAttachSources,
+          alwaysAttachJavadocs,
+          libraryNameIncludesModule,
+          libraryNameIncludesConfiguration,
+          ivyLogLevelThreshold,
+          artifactTypeSettings,
+          propertiesSettings);
+    }
+
+    @SuppressWarnings("unused")
+    public static class ArtifactTypeSettings {
+
+      @NotNull
+      @Transient
+      private final DependencyCategoryManager manager = new DependencyCategoryManager();
+
+      @Contract(value = "null -> false", pure = true)
+      @Override
+      public boolean equals(final Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof ArtifactTypeSettings)) {
+          return false;
+        }
+        final ArtifactTypeSettings that = (ArtifactTypeSettings) o;
+        return Objects.equals(getClassesTypes(), that.getClassesTypes())
+            && Objects.equals(getSourcesTypes(), that.getSourcesTypes())
+            && Objects.equals(getJavadocTypes(), that.getJavadocTypes());
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(getClassesTypes(), getSourcesTypes(), getJavadocTypes());
+      }
+
+      @NotNull
+      public String getSourcesTypes() {
+        return manager.getTypes(Sources);
+      }
+
+      public void setSourcesTypes(@NotNull final String types) {
+        manager.setTypesForCategory(Sources, types);
+      }
+
+      @NotNull
+      public String getClassesTypes() {
+        return manager.getTypes(Classes);
+      }
+
+      public void setClassesTypes(@NotNull final String types) {
+        manager.setTypesForCategory(Classes, types);
+      }
+
+      @NotNull
+      public String getJavadocTypes() {
+        return manager.getTypes(Javadoc);
+      }
+
+      public void setJavadocTypes(@NotNull final String types) {
+        manager.setTypesForCategory(Javadoc, types);
+      }
+
+      @NotNull
+      @Transient
+      public DependencyCategoryManager getManager() {
+        return manager;
+      }
+    }
+
+    /** @author Guy Mahieu */
     public static class PropertiesSettings {
 
+      @XCollection // TODO
       @NotNull
-      private List<String> propertyFiles = new ArrayList<>();
+      public List<String> propertyFiles;
 
-      @NotNull
-      public static PropertiesSettings copyDataFrom(
-          @NotNull final PropertiesSettings propertiesSettings) {
-        final PropertiesSettings result = new PropertiesSettings();
-        result.propertyFiles = new ArrayList<>(propertiesSettings.propertyFiles);
-        return result;
+      @Contract(pure = true)
+      public PropertiesSettings() {
+        propertyFiles = new ArrayList<>();
       }
 
-      @NotNull
-      public List<String> getPropertyFiles() {
-        return propertyFiles;
-      }
-
-      void setPropertyFiles(@NotNull final List<String> propertyFiles) {
-        this.propertyFiles = propertyFiles;
-      }
-    }
-
-    /**
-     * @author Guy Mahieu
-     */
-    public static class ArtifactTypeSettings
-        implements PersistentStateComponent<ArtifactTypeSettings> {
-
-      private final Map<DependencyCategory, Set<String>> typesPerCategory =
-          new EnumMap<>(DependencyCategory.class);
-
-      @Nullable
-      public DependencyCategory getCategoryForType(@NotNull final String type) {
-        if (isConfigurationEmpty()) {
-          for (final DependencyCategory category : DependencyCategory.values()) {
-            String result = "";
-            final Iterable<String> artifactTypes = category.getDefaultTypes();
-            if (artifactTypes != null) {
-              final StringBuilder sb = new StringBuilder();
-              String separator = "";
-              for (final String artifactType : artifactTypes) {
-                sb.append(separator).append(artifactType);
-                separator = ", ";
-              }
-              result = sb.toString();
-            }
-            setTypesForCategory(category, result);
-          }
+      @Contract(value = "null -> false", pure = true)
+      @Override
+      public boolean equals(final Object o) {
+        if (this == o) {
+          return true;
         }
-        for (final Entry<DependencyCategory, Set<String>> entry : typesPerCategory.entrySet()) {
-          final Set<String> types = entry.getValue();
-          if (types != null && types.contains(type.trim().toLowerCase())) {
-            return entry.getKey();
-          }
+        if (!(o instanceof PropertiesSettings)) {
+          return false;
         }
-        return null;
-      }
-
-      @SuppressWarnings("StringSplitter")
-      public void setTypesForCategory(
-          @NotNull final DependencyCategory category, final String types) {
-        if (types != null) {
-          final Set<String> result = new LinkedHashSet<>();
-          for (final String type : types.split(",")) {
-            final String typeToAdd = type.trim().toLowerCase();
-            if (!typeToAdd.isEmpty()) {
-              result.add(typeToAdd);
-            }
-          }
-          typesPerCategory.put(category, result);
-        }
-      }
-
-      public String getTypesStringForCategory(@NotNull final DependencyCategory category) {
-        if (isConfigurationEmpty()) {
-          // nothing is configured for any category --> use defaults
-          final Iterable<String> artifactTypes = category.getDefaultTypes();
-          if (artifactTypes == null) {
-            return "";
-          }
-          final StringBuilder sb = new StringBuilder();
-          String separator = "";
-          for (final String artifactType : artifactTypes) {
-            sb.append(separator).append(artifactType);
-            separator = ", ";
-          }
-          return sb.toString();
-        }
-        return getTypes(category);
-      }
-
-      public boolean isConfigurationEmpty() {
-        boolean configFound = false;
-        for (final DependencyCategory dependencyCategory : DependencyCategory.values()) {
-          final Set<String> types = typesPerCategory.get(dependencyCategory);
-          configFound = types != null && !types.isEmpty();
-          if (configFound) {
-            break;
-          }
-        }
-        return !configFound;
+        final PropertiesSettings that = (PropertiesSettings) o;
+        return Objects.equals(propertyFiles, that.propertyFiles);
       }
 
       @Override
-      public ArtifactTypeSettings getState() {
-        return this;
-      }
-
-      @Override
-      public void loadState(@NotNull final ArtifactTypeSettings state) {
-        XmlSerializerUtil.copyBean(state, this);
-      }
-
-      // Getters and setters needed for intellij settings serialization
-
-      public String getSourcesTypes() {
-        return getTypes(Sources);
-      }
-
-      public void setSourcesTypes(final String types) {
-        setTypesForCategory(Sources, types);
-      }
-
-      public String getClassesTypes() {
-        return getTypes(Classes);
-      }
-
-      public void setClassesTypes(final String types) {
-        setTypesForCategory(Classes, types);
-      }
-
-      public String getJavadocTypes() {
-        return getTypes(Javadoc);
-      }
-
-      @NotNull
-      private String getTypes(final DependencyCategory dependencyCategory) {
-        final Iterable<String> artifactTypes = typesPerCategory.get(dependencyCategory);
-        if (artifactTypes == null) {
-          return "";
-        }
-        final StringBuilder sb = new StringBuilder();
-        String separator = "";
-        for (final String artifactType : artifactTypes) {
-          sb.append(separator).append(artifactType);
-          separator = ", ";
-        }
-        return sb.toString();
-      }
-
-      public void setJavadocTypes(final String types) {
-        setTypesForCategory(Javadoc, types);
+      public int hashCode() {
+        return Objects.hash(propertyFiles);
       }
     }
   }

@@ -24,18 +24,22 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityWatcher;
-import java.util.List;
+import java.util.Collection;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration.State.FacetPropertiesSettings.FacetPropertiesFilesList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 public class OrderedFileList {
 
-  private final Project project;
+  @Nullable
+  private Project project = null;
 
   private JPanel pnlRoot;
   private JButton btnUp;
@@ -45,8 +49,7 @@ public class OrderedFileList {
   private JList<String> lstFileNames;
   private boolean modified = false;
 
-  public OrderedFileList(final Project project) {
-    this.project = project;
+  public OrderedFileList() {
 
     wireFileList();
     wireAddButton();
@@ -59,10 +62,13 @@ public class OrderedFileList {
     installActivityListener();
   }
 
+  public void setProject(@NotNull final Project project) {
+    this.project = project;
+  }
+
   private void installActivityListener() {
     final UserActivityWatcher watcher = new UserActivityWatcher();
-    watcher.addUserActivityListener(
-        () -> modified = true);
+    watcher.addUserActivityListener(() -> modified = true);
     watcher.register(pnlRoot);
   }
 
@@ -70,10 +76,7 @@ public class OrderedFileList {
     lstFileNames.setModel(new OrderedFileListModel());
     // TODO: implement multi select
     lstFileNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    lstFileNames
-        .getSelectionModel()
-        .addListSelectionListener(
-            e -> updateButtonStates());
+    lstFileNames.getSelectionModel().addListSelectionListener(e -> updateButtonStates());
     lstFileNames
         .getModel()
         .addListDataListener(
@@ -134,8 +137,7 @@ public class OrderedFileList {
           final FileChooserDescriptor fcDescriptor =
               FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor();
           fcDescriptor.setTitle("Select Properties File(S)");
-          final VirtualFile[] files =
-              FileChooser.chooseFiles(fcDescriptor, pnlRoot, project, null);
+          final VirtualFile[] files = FileChooser.chooseFiles(fcDescriptor, pnlRoot, project, null);
           for (final VirtualFile file : files) {
             addFilenameToList(file.getPresentableUrl());
           }
@@ -143,18 +145,15 @@ public class OrderedFileList {
   }
 
   private void wireRemoveButton() {
-    btnRemove.addActionListener(
-        e -> removeSelectedItemFromList());
+    btnRemove.addActionListener(e -> removeSelectedItemFromList());
   }
 
   private void wireMoveUpButton() {
-    btnUp.addActionListener(
-        e -> moveSelectedItemUp());
+    btnUp.addActionListener(e -> moveSelectedItemUp());
   }
 
   private void wireMoveDownButton() {
-    btnDown.addActionListener(
-        e -> moveSelectedItemDown());
+    btnDown.addActionListener(e -> moveSelectedItemDown());
   }
 
   private void addFilenameToList(final String fileName) {
@@ -197,18 +196,18 @@ public class OrderedFileList {
   }
 
   private OrderedFileListModel getFileListModel() {
-    return ((OrderedFileListModel) lstFileNames.getModel());
+    return (OrderedFileListModel) lstFileNames.getModel();
   }
 
   public boolean isModified() {
     return modified;
   }
 
-  public List<String> getFileNames() {
+  public FacetPropertiesFilesList getFileNames() {
     return getFileListModel().getAllItems();
   }
 
-  public void setFileNames(final List<String> items) {
+  public void setFileNames(final Collection<String> items) {
     getFileListModel().setItems(items);
   }
 

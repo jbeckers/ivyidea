@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.clarent.ivyidea.action.resolve.IvyIdeaResolveBackgroundTask;
-import org.clarent.ivyidea.facet.IvyIdeaFacetType;
+import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +71,7 @@ public class ResolveForAllModulesAction extends AnAction {
               ? ZERO_LENGTH_MODULES
               : ModuleManager.getInstance(project).getModules())
           .filter(Objects::nonNull)
-          .filter(IvyIdeaFacetType::isIvyModule);
+          .filter(IvyIdeaFacetUtil::isIvyModule);
     }
   }
 }

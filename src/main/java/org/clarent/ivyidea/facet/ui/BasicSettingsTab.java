@@ -18,12 +18,11 @@
 
 package org.clarent.ivyidea.facet.ui;
 
-import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.UserActivityWatcher;
@@ -31,6 +30,8 @@ import io.vavr.control.Try;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -42,13 +43,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.DocumentEvent;
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
-import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.clarent.ivyidea.facet.IvyIdeaFacet;
+import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration.State;
 import org.clarent.ivyidea.facet.ui.components.ConfigurationSelectionTable;
 import org.clarent.ivyidea.facet.ui.components.ConfigurationSelectionTableModel;
 import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
-import org.clarent.ivyidea.util.IvyIdeaConfigHelper;
+import org.clarent.ivyidea.util.IvyIdeaConfigUtil;
 import org.clarent.ivyidea.util.IvyUtil;
+import org.clarent.ivyidea.util.ModuleDescriptorUtil;
 import org.clarent.ivyidea.util.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.util.exception.IvySettingsNotFoundException;
 import org.jetbrains.annotations.Nls;
@@ -62,7 +67,7 @@ public class BasicSettingsTab extends FacetEditorTab {
 
   private final FacetEditorContext editorContext;
   private final PropertiesSettingsTab propertiesSettingsTab;
-  private com.intellij.openapi.ui.TextFieldWithBrowseButton txtIvyFile;
+  private TextFieldWithBrowseButton txtIvyFile;
   private JPanel pnlRoot;
   private JCheckBox chkOverrideProjectIvySettings;
   private TextFieldWithBrowseButton txtIvySettingsFile;
@@ -71,7 +76,7 @@ public class BasicSettingsTab extends FacetEditorTab {
   private JLabel lblIvyFileMessage;
   private JRadioButton rbnUseDefaultIvySettings;
   private JRadioButton rbnUseCustomIvySettings;
-  private boolean modified;
+  private boolean modified = false;
   private boolean foundConfigsBefore = false;
 
   private Set<Configuration> selectedConfigurations = new HashSet<>();
@@ -116,12 +121,50 @@ public class BasicSettingsTab extends FacetEditorTab {
   }
 
   @NotNull
-  private static Set<String> getNames(@NotNull final Set<Configuration> selectedConfigurations) {
+  private static Set<String> getNames(
+      @NotNull final Iterable<? extends Configuration> selectedConfigurations) {
     final Set<String> result = new TreeSet<>();
     for (final Configuration selectedConfiguration : selectedConfigurations) {
       result.add(selectedConfiguration.getName());
     }
     return result;
+  }
+
+  /**
+   * Gives a set of configurations defined in the given ivyFileName. Will never throw an exception,
+   * if something goes wrong, null is returned
+   *
+   * @param ivyFileName the name of the ivy file to parse
+   * @param ivy         the Ivy engine to use, configured with the appropriate settings
+   * @return a set of configurations, null if anything went wrong parsing the ivy file
+   */
+  @NotNull
+  private static Try<Set<Configuration>> loadConfigurations(
+      @NotNull final String ivyFileName, @NotNull final Try<? extends Ivy> ivy) {
+    try {
+      final File file = new File(ivyFileName);
+      if (file.exists() && !file.isDirectory()) {
+        final Try<ModuleDescriptor> md = ModuleDescriptorUtil.parseDescriptor(file, ivy);
+        return md.mapTry(
+            moduleDescriptor -> {
+              final Set<Configuration> result =
+                  new TreeSet<>((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+              result.addAll(Arrays.asList(moduleDescriptor.getConfigurations()));
+              return result;
+            });
+      } else {
+        return Try.success(Collections.emptySet());
+      }
+    } catch (final RuntimeException e) {
+      // Not able to parse module descriptor; no problem here...
+      LOGGER.info(
+          "LOG00180: Error while parsing ivy file during attempt to load configurations from it: "
+              + e);
+      if (e.getCause() instanceof ParseException) {
+        return Try.failure(e.getCause());
+      }
+      return Try.success(Collections.emptySet());
+    }
   }
 
   private void updateUI() {
@@ -152,11 +195,11 @@ public class BasicSettingsTab extends FacetEditorTab {
   }
 
   private void reloadIvyFile() {
-    IvyUtil.loadConfigurations(
+    loadConfigurations(
         txtIvyFile.getText(),
-        IvyUtil.createConfiguredIvyEngine(
+        IvyUtil.newInstance(
             this.editorContext.getModule(),
-            IvyIdeaConfigHelper.createConfiguredIvySettings(
+            IvyIdeaConfigUtil.createConfiguredIvySettings(
                 this.editorContext.getModule(),
                 this.getIvySettingsFileNameForCurrentSettingsInUI(),
                 getPropertiesForCurrentSettingsInUI())))
@@ -214,7 +257,7 @@ public class BasicSettingsTab extends FacetEditorTab {
         return Try.success(null);
       }
     } else {
-      return IvyIdeaConfigHelper.getProjectIvySettingsFile(editorContext.getProject());
+      return IvyIdeaConfigUtil.getProjectIvySettingsFile(editorContext.getProject());
     }
   }
 
@@ -227,14 +270,11 @@ public class BasicSettingsTab extends FacetEditorTab {
     //noinspection ConstantConditions
     if (includeProjectProperties) {
       propertiesFiles.addAll(
-          editorContext
-              .getProject()
-              .getComponent(IvyIdeaProjectStateComponent.class)
-              .getState()
-              .getPropertiesSettings()
-              .getPropertyFiles());
+          ServiceManager.getService(editorContext.getProject(), IvyIdeaProjectStateComponent.class)
+              .getState().propertiesSettings
+              .propertyFiles);
     }
-    return IvyIdeaConfigHelper.loadProperties(editorContext.getModule(), propertiesFiles);
+    return IvyIdeaConfigUtil.loadProperties(editorContext.getModule(), propertiesFiles);
   }
 
   @Override
@@ -255,40 +295,38 @@ public class BasicSettingsTab extends FacetEditorTab {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
-    final Facet<?> facet = editorContext.getFacet();
-    final IvyIdeaFacetConfiguration configuration =
-        (IvyIdeaFacetConfiguration) facet.getConfiguration();
-    configuration.setUseProjectSettings(!chkOverrideProjectIvySettings.isSelected());
-    configuration.setUseCustomIvySettings(rbnUseCustomIvySettings.isSelected());
-    configuration.setIvySettingsFile(txtIvySettingsFile.getText());
-    configuration.setOnlyResolveSelectedConfigs(chkOnlyResolveSpecificConfigs.isSelected());
-    configuration.setConfigsToResolve(
-        getNames(tblConfigurationSelection.getSelectedConfigurations()));
-    configuration.setIvyFile(txtIvyFile.getText());
+  public void apply() {
+    final State configuration =
+        ((IvyIdeaFacet) editorContext.getFacet()).getConfiguration().getState();
+    configuration.useProjectSettings = !chkOverrideProjectIvySettings.isSelected();
+    configuration.useCustomIvySettings = rbnUseCustomIvySettings.isSelected();
+    configuration.ivySettingsFile = txtIvySettingsFile.getText();
+    configuration.onlyResolveSelectedConfigs = chkOnlyResolveSpecificConfigs.isSelected();
+    configuration.configsToResolve =
+        getNames(tblConfigurationSelection.getSelectedConfigurations());
+    configuration.ivyFile = txtIvyFile.getText();
   }
 
   @Override
   public void reset() {
-    final Facet<?> facet = editorContext.getFacet();
-    final IvyIdeaFacetConfiguration configuration =
-        (IvyIdeaFacetConfiguration) facet.getConfiguration();
-    txtIvyFile.setText(configuration.getIvyFile());
-    chkOverrideProjectIvySettings.setSelected(!configuration.isUseProjectSettings());
-    txtIvySettingsFile.setText(configuration.getIvySettingsFile());
-    chkOnlyResolveSpecificConfigs.setSelected(configuration.isOnlyResolveSelectedConfigs());
-    rbnUseCustomIvySettings.setSelected(configuration.isUseCustomIvySettings());
-    rbnUseDefaultIvySettings.setSelected(!configuration.isUseCustomIvySettings());
+    final State configuration =
+        ((IvyIdeaFacet) editorContext.getFacet()).getConfiguration().getState();
+    txtIvyFile.setText(configuration.ivyFile);
+    chkOverrideProjectIvySettings.setSelected(!configuration.useProjectSettings);
+    txtIvySettingsFile.setText(configuration.ivySettingsFile);
+    chkOnlyResolveSpecificConfigs.setSelected(configuration.onlyResolveSelectedConfigs);
+    rbnUseCustomIvySettings.setSelected(configuration.useCustomIvySettings);
+    rbnUseDefaultIvySettings.setSelected(!configuration.useCustomIvySettings);
     final Try<Set<Configuration>> allConfigurations =
-        IvyUtil.loadConfigurations(
+        loadConfigurations(
             txtIvyFile.getText(),
-            IvyUtil.createConfiguredIvyEngine(
+            IvyUtil.newInstance(
                 this.editorContext.getModule(),
-                IvyIdeaConfigHelper.createConfiguredIvySettings(
+                IvyIdeaConfigUtil.createConfiguredIvySettings(
                     this.editorContext.getModule(),
                     this.getIvySettingsFileNameForCurrentSettingsInUI(),
                     getPropertiesForCurrentSettingsInUI())));
-    if (configuration.getIvyFile().isEmpty()) {
+    if (configuration.ivyFile.isEmpty()) {
       tblConfigurationSelection.setModel(new ConfigurationSelectionTableModel());
       selectedConfigurations = new HashSet<>();
       tblConfigurationSelection.setEditable(false);
@@ -298,7 +336,7 @@ public class BasicSettingsTab extends FacetEditorTab {
               configurations ->
                   tblConfigurationSelection.setModel(
                       new ConfigurationSelectionTableModel(
-                          configurations, configuration.getConfigsToResolve())))
+                          configurations, configuration.configsToResolve)))
           .onFailure(
               throwable ->
                   tblConfigurationSelection.setModel(new ConfigurationSelectionTableModel()));

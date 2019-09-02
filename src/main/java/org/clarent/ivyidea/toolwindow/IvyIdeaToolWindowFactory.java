@@ -32,7 +32,7 @@ import com.intellij.ui.content.ContentFactory;
 import java.awt.BorderLayout;
 import java.util.Arrays;
 import javax.swing.JPanel;
-import org.clarent.ivyidea.facet.IvyIdeaFacetType;
+import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -78,7 +78,7 @@ public class IvyIdeaToolWindowFactory implements ToolWindowFactory, DumbAware {
     @Override
     public boolean value(final Project project) {
       return Arrays.stream(ModuleManager.getInstance(project).getModules())
-          .anyMatch(IvyIdeaFacetType::isIvyModule);
+          .anyMatch(IvyIdeaFacetUtil::isIvyModule);
     }
   }
 }

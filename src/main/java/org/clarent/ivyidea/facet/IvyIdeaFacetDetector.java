@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.util.indexing.FileContent;
 import java.util.Collection;
+import org.clarent.ivyidea.IvyIdeaConstants;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,13 +37,13 @@ public class IvyIdeaFacetDetector
     extends FacetBasedFrameworkDetector<IvyIdeaFacet, IvyIdeaFacetConfiguration> {
 
   public IvyIdeaFacetDetector() {
-    super("IvyIDEA");
+    super(IvyIdeaConstants.FACET_DETECTOR_ID);
   }
 
   @NotNull
   @Override
   public FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> getFacetType() {
-    return IvyIdeaFacetType.getInstance();
+    return FacetType.findInstance(IvyIdeaFacetType.class);
   }
 
   @Override
@@ -63,7 +64,7 @@ public class IvyIdeaFacetDetector
     final IvyIdeaFacetConfiguration result = super.createConfiguration(files);
 
     if (result != null && !files.isEmpty()) {
-      result.setIvyFile(files.iterator().next().getPath());
+      result.getState().ivyFile = files.iterator().next().getPath();
     }
 
     return result;

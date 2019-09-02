@@ -27,7 +27,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import java.text.MessageFormat;
 import java.util.stream.Stream;
 import org.clarent.ivyidea.action.resolve.IvyIdeaResolveBackgroundTask;
-import org.clarent.ivyidea.facet.IvyIdeaFacetType;
+import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,13 +59,13 @@ public class ResolveForActiveModuleAction extends AnAction {
       e.getPresentation().setDescription(null);
     } else {
 
-      e.getPresentation().setEnabled(IvyIdeaFacetType.isIvyModule(module));
-      e.getPresentation().setVisible(IvyIdeaFacetType.isIvyModule(module));
+      e.getPresentation().setEnabled(IvyIdeaFacetUtil.isIvyModule(module));
+      e.getPresentation().setVisible(IvyIdeaFacetUtil.isIvyModule(module));
       e.getPresentation()
           .setText(
               MessageFormat.format(
                   "Resolve for {0} module",
-                  IvyIdeaFacetType.isIvyModule(module) ? module.getName() : "Active"));
+                  IvyIdeaFacetUtil.isIvyModule(module) ? module.getName() : "Active"));
     }
   }
 
@@ -81,7 +81,7 @@ public class ResolveForActiveModuleAction extends AnAction {
 
     @Override
     protected Stream<Module> getModules() {
-      return IvyIdeaFacetType.isIvyModule(module) ? Stream.of(module) : Stream.empty();
+      return IvyIdeaFacetUtil.isIvyModule(module) ? Stream.of(module) : Stream.empty();
     }
   }
 }
