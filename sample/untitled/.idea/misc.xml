@@ -25,6 +25,18 @@
     <option name="ivySettingsFile" value="D:\Development\ivyidea\sample\untitled\ivy-settings.xml" />
     <option name="libraryNameIncludesConfiguration" value="true" />
     <option name="libraryNameIncludesModule" value="true" />
+    <option name="propertiesSettings">
+      <PropertiesSettings>
+        <option name="propertyFiles">
+          <list>
+            <option value="D:\Development\ivyidea\sample\untitled\versions.project.properties" />
+          </list>
+        </option>
+      </PropertiesSettings>
+    </option>
+    <option name="resolveCacheOnly" value="true" />
+    <option name="resolveInBackground" value="true" />
+    <option name="validateIvyFiles" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

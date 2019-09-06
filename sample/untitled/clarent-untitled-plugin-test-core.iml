@@ -8,7 +8,7 @@
         </configsToResolve>
         <propertiesSettings>
           <propertiesFiles includeProjectLevelPropertiesFiles="true">
-            <fileName>D:\Development\ivyidea\sample\untitled\versions.properties</fileName>
+            <fileName>D:\Development\ivyidea\sample\untitled\versions.facet.properties</fileName>
           </propertiesFiles>
         </propertiesSettings>
       </configuration>
@@ -17,6 +17,8 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/extensions" />
       <excludeFolder url="file://$MODULE_DIR$/ivycache" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
       <excludeFolder url="file://$MODULE_DIR$/repository" />
