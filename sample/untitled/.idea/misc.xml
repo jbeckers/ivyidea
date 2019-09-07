@@ -22,7 +22,7 @@
       </ArtifactTypeSettings>
     </option>
     <option name="ivyLogLevelThreshold" value="All" />
-    <option name="ivySettingsFile" value="D:\Development\ivyidea\sample\untitled\ivy-settings.xml" />
+    <option name="ivySettingsFile" value="D:\Development\ivyidea\sample\untitled\ivy-settings.project.xml" />
     <option name="libraryNameIncludesConfiguration" value="true" />
     <option name="libraryNameIncludesModule" value="true" />
     <option name="propertiesSettings">
