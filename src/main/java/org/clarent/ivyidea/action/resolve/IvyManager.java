@@ -29,8 +29,7 @@ import java.util.Map;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.clarent.ivyidea.util.IvyIdeaConfigUtil;
 import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.clarent.ivyidea.util.IvyUtil;
@@ -42,10 +41,13 @@ import org.jetbrains.annotations.NotNull;
  */
 class IvyManager {
 
+  @NotNull
   private static final Logger LOGGER =
       Logger.getInstance("#org.clarent.ivyidea.action.resolve.IvyManager");
 
+  @NotNull
   private final Map<Module, Ivy> ivyEngines = new HashMap<>();
+  @NotNull
   private final Map<Module, ModuleDescriptor> moduleDescriptors = new HashMap<>();
 
   IvyManager() {}
@@ -55,10 +57,11 @@ class IvyManager {
       @NotNull final IvyIdeaFacetConfiguration moduleFacetConfiguration,
       @NotNull final IvyIdeaProjectState projectState) {
     final List<String> propertiesFiles =
-        new ArrayList<>(moduleFacetConfiguration.getState().propertiesSettings.propertiesFiles);
+        new ArrayList<>(
+            moduleFacetConfiguration.getState().propertiesSettings.propertiesFiles.propertiesFiles);
     if (moduleFacetConfiguration
         .getState().propertiesSettings.propertiesFiles.includeProjectLevelPropertiesFiles) {
-      propertiesFiles.addAll(projectState.propertiesSettings.propertyFiles);
+      propertiesFiles.addAll(projectState.propertiesSettings.propertyFiles.propertyFiles);
     }
     return propertiesFiles;
   }
@@ -96,7 +99,7 @@ class IvyManager {
                             getPropertiesFiles(
                                 moduleFacetConfiguration,
                                 ServiceManager.getService(
-                                    module.getProject(), IvyIdeaProjectStateComponent.class)
+                                    module.getProject(), IvyIdeaProjectState.class)
                                     .getState())))))
         .onSuccess(ivy -> ivyEngines.put(module, ivy));
   }

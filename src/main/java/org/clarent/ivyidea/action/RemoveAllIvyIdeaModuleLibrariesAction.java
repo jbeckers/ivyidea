@@ -20,7 +20,6 @@ package org.clarent.ivyidea.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -34,7 +33,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.clarent.ivyidea.IvyIdeaConstants;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,8 +63,7 @@ public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
           () -> {
             final Project eventProject = event.getProject();
             return eventProject != null
-                && ServiceManager.getService(eventProject, IvyIdeaProjectStateComponent.class)
-                .getState().resolveInBackground;
+                && IvyIdeaProjectState.getInstance(eventProject).resolveInBackground;
           });
       this.project = event.getProject();
     }

@@ -19,9 +19,11 @@
 package org.clarent.ivyidea.model.dependency;
 
 import org.clarent.ivyidea.model.ModifiableRootModelWrapper;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
+@FunctionalInterface
 public interface ResolvedDependency {
 
-  void addTo(ModifiableRootModelWrapper modifiableRootModelWrapper);
+  void addTo(@NotNull ModifiableRootModelWrapper modifiableRootModelWrapper);
 }

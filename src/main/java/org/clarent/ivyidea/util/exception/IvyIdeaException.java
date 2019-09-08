@@ -18,26 +18,35 @@
 
 package org.clarent.ivyidea.util.exception;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Abstract base class for all checked exceptions thrown by IvyIDEA.
  *
  * @author Guy Mahieu
  */
-public abstract class IvyIdeaException extends Exception {
+@SuppressWarnings({
+    "AbstractClassExtendsConcreteClass",
+    "AbstractClassWithoutAbstractMethods",
+    "unused"
+})
+abstract class IvyIdeaException extends Exception {
 
   private static final long serialVersionUID = -363635444913966963L;
 
-  protected IvyIdeaException() {}
+  IvyIdeaException() {
+  }
 
-  protected IvyIdeaException(final String message) {
+  IvyIdeaException(@NotNull final String message) {
     super(message);
   }
 
-  protected IvyIdeaException(final String message, final Throwable cause) {
+  IvyIdeaException(@NotNull final String message, @Nullable final Throwable cause) {
     super(message, cause);
   }
 
-  protected IvyIdeaException(final Throwable cause) {
+  IvyIdeaException(@Nullable final Throwable cause) {
     super(cause);
   }
 }

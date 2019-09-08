@@ -20,11 +20,15 @@ package org.clarent.ivyidea.model.dependency;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.PathUtil;
 import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.clarent.ivyidea.model.ModifiableRootModelWrapper;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a dependency to an external artifact somewhere on the filesystem.
@@ -33,34 +37,44 @@ import org.clarent.ivyidea.model.ModifiableRootModelWrapper;
  */
 public abstract class ExternalDependency implements ResolvedDependency {
 
+  @NotNull
   private static final Logger LOGGER =
       Logger.getInstance("#org.clarent.ivyidea.model.dependency.ExternalDependency");
 
+  @NotNull
   private final Artifact artifact;
+  @NotNull
   private final String configurationName;
+  @Nullable
   private final File localFile;
 
+  @Contract(pure = true)
   ExternalDependency(
-      final Artifact artifact, final File localFile, final String configurationName) {
+      @NotNull final Artifact artifact,
+      @Nullable final File localFile,
+      @NotNull final String configurationName) {
     this.artifact = artifact;
     this.localFile = localFile;
     this.configurationName = configurationName;
   }
 
+  @Nullable
   public File getLocalFile() {
     return localFile;
   }
 
+  @Nullable
   public String getUrlForLibraryRoot() {
-    return VfsUtil.getUrlForLibraryRoot(localFile);
+    return localFile == null ? null : VfsUtil.getUrlForLibraryRoot(localFile);
   }
 
+  @NotNull
   public String getConfigurationName() {
     return configurationName;
   }
 
   @Override
-  public void addTo(final ModifiableRootModelWrapper modifiableRootModelWrapper) {
+  public void addTo(@NotNull final ModifiableRootModelWrapper modifiableRootModelWrapper) {
     if (localFile == null) {
       LOGGER.warn(
           "LOG00240: Not registering external "
@@ -71,7 +85,7 @@ public abstract class ExternalDependency implements ResolvedDependency {
       return;
     }
     final String artifactPath = localFile.getAbsolutePath();
-    if (isMissing()) {
+    if (!new File(localFile.getAbsolutePath()).exists()) {
       LOGGER.warn(
           "LOG00210: Not registering external "
               + getTypeName()
@@ -93,20 +107,14 @@ public abstract class ExternalDependency implements ResolvedDependency {
     modifiableRootModelWrapper.addExternalDependency(this);
   }
 
-  public boolean isMissing() {
-    return localFile != null && !new File(localFile.getAbsolutePath()).exists();
+  public boolean isSameDependency(@NotNull final String url) {
+    return localFile != null
+        && FileUtil.filesEqual(localFile, new File(PathUtil.toPresentableUrl(url)));
   }
 
-  public boolean isSameDependency(final String url) {
-    if (localFile == null) {
-      return false;
-    }
-
-    final String path = PathUtil.toPresentableUrl(url);
-    return localFile.equals(new File(path));
-  }
-
+  @NotNull
   public abstract OrderRootType getType();
 
+  @NotNull
   protected abstract String getTypeName();
 }

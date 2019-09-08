@@ -18,7 +18,6 @@
 
 package org.clarent.ivyidea.util;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.net.HttpConfigurable;
@@ -36,8 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.ivy.core.settings.IvySettings;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.clarent.ivyidea.util.exception.IvySettingsFileReadException;
 import org.clarent.ivyidea.util.exception.IvySettingsNotFoundException;
 import org.jetbrains.annotations.Contract;
@@ -100,8 +98,7 @@ public final class IvyIdeaConfigUtil {
 
   @NotNull
   public static Try<String> getProjectIvySettingsFile(@NotNull final Project project) {
-    final IvyIdeaProjectState state =
-        ServiceManager.getService(project, IvyIdeaProjectStateComponent.class).getState();
+    final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(project);
     if (state.useCustomIvySettings) {
       final String settingsFile = state.ivySettingsFile.trim();
       if (settingsFile.isEmpty()) {
@@ -143,11 +140,10 @@ public final class IvyIdeaConfigUtil {
   public static Try<Properties> loadProperties(
       @NotNull final Module module, @NotNull final List<String> propertiesFiles) {
     // Go over the files in reverse order --> files listed first should have priority and loading
-    // properties
-    // overwrited previously loaded ones.
-    final Properties properties = new Properties();
+    // properties overwritten previously loaded ones.
     final List<String> result1 = new ArrayList<>(propertiesFiles); // avoid changing the input
     Collections.reverse(result1);
+    final Properties properties = new Properties();
     for (final String propertiesFile : result1) {
       if (propertiesFile != null) {
         final File result = new File(propertiesFile);

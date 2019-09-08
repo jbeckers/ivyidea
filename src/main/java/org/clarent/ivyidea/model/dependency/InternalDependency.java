@@ -21,35 +21,40 @@ package org.clarent.ivyidea.model.dependency;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import org.clarent.ivyidea.model.ModifiableRootModelWrapper;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
 public class InternalDependency implements ResolvedDependency {
 
+  @NotNull
   private static final Logger LOGGER =
       Logger.getInstance("#org.clarent.ivyidea.model.dependency.InternalDependency");
 
+  @NotNull
   private final Module module;
 
-  public InternalDependency(final Module module) {
+  @Contract(pure = true)
+  public InternalDependency(@NotNull final Module module) {
     this.module = module;
   }
 
   @Override
-  public void addTo(final ModifiableRootModelWrapper modifiableRootModelWrapper) {
-    if (!modifiableRootModelWrapper.alreadyHasDependencyOnModule(module)) {
-      LOGGER.info(
-          "LOG00150: Registering module dependency from "
-              + modifiableRootModelWrapper.getModuleName()
-              + " on module "
-              + module.getName());
-      modifiableRootModelWrapper.addModuleDependency(module);
-    } else {
+  public void addTo(@NotNull final ModifiableRootModelWrapper modifiableRootModelWrapper) {
+    if (modifiableRootModelWrapper.alreadyHasDependencyOnModule(module)) {
       LOGGER.info(
           "LOG00230: Dependency from "
               + modifiableRootModelWrapper.getModuleName()
               + " on module "
               + module.getName()
               + " was already present; not reregistring");
+    } else {
+      LOGGER.info(
+          "LOG00150: Registering module dependency from "
+              + modifiableRootModelWrapper.getModuleName()
+              + " on module "
+              + module.getName());
+      modifiableRootModelWrapper.addModuleDependency(module);
     }
   }
 }

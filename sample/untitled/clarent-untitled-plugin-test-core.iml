@@ -7,7 +7,7 @@
           <config>default</config>
         </configsToResolve>
         <propertiesSettings>
-          <propertiesFiles includeProjectLevelPropertiesFiles="true">
+          <propertiesFiles>
             <fileName>D:\Development\ivyidea\sample\untitled\versions.facet.properties</fileName>
           </propertiesFiles>
         </propertiesSettings>

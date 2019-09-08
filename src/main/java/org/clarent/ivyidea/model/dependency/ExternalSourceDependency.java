@@ -21,20 +21,25 @@ package org.clarent.ivyidea.model.dependency;
 import com.intellij.openapi.roots.OrderRootType;
 import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 public class ExternalSourceDependency extends ExternalDependency {
 
   public ExternalSourceDependency(
-      final Artifact artifact, final File externalArtifact, final String configurationName) {
+      @NotNull final Artifact artifact, @Nullable final File externalArtifact,
+      @NotNull final String configurationName) {
     super(artifact, externalArtifact, configurationName);
   }
 
+  @NotNull
   @Override
   protected String getTypeName() {
     return "sources";
   }
 
+  @NotNull
   @Override
   public OrderRootType getType() {
     return OrderRootType.SOURCES;

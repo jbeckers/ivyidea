@@ -25,13 +25,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityWatcher;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration.State.FacetPropertiesSettings.FacetPropertiesFilesList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,11 +41,17 @@ public class OrderedFileList {
   @Nullable
   private Project project = null;
 
+  @NotNull
   private JPanel pnlRoot;
+  @NotNull
   private JButton btnUp;
+  @NotNull
   private JButton btnRemove;
+  @NotNull
   private JButton btnDown;
+  @NotNull
   private JButton btnAdd;
+  @NotNull
   private JList<String> lstFileNames;
   private boolean modified = false;
 
@@ -82,53 +88,30 @@ public class OrderedFileList {
         .addListDataListener(
             new ListDataListener() {
               @Override
-              public void intervalAdded(final ListDataEvent e) {
+              public void intervalAdded(@NotNull final ListDataEvent e) {
                 updateButtonStates();
               }
 
               @Override
-              public void intervalRemoved(final ListDataEvent e) {
+              public void intervalRemoved(@NotNull final ListDataEvent e) {
                 updateButtonStates();
               }
 
               @Override
-              public void contentsChanged(final ListDataEvent e) {
+              public void contentsChanged(@NotNull final ListDataEvent e) {
                 updateButtonStates();
               }
             });
   }
 
   private void updateButtonStates() {
-    updateRemoveButtonState();
-    updateMoveUpButtonState();
-    updateMoveDownButtonState();
-  }
-
-  private void updateRemoveButtonState() {
-    btnRemove.setEnabled(isRemoveAllowed());
-  }
-
-  private void updateMoveUpButtonState() {
-    btnUp.setEnabled(isMoveUpAllowed());
-  }
-
-  private void updateMoveDownButtonState() {
-    btnDown.setEnabled(isMoveDownAllowed());
-  }
-
-  private boolean isRemoveAllowed() {
-    return lstFileNames.getModel().getSize() > 0 && lstFileNames.getSelectedIndex() > -1;
-  }
-
-  private boolean isMoveUpAllowed() {
-    final int size = lstFileNames.getModel().getSize();
-    return size > 1 && lstFileNames.getSelectedIndex() > 0;
-  }
-
-  private boolean isMoveDownAllowed() {
-    final int size = lstFileNames.getModel().getSize();
-    final int selectedIndex = lstFileNames.getSelectedIndex();
-    return size > 1 && selectedIndex >= 0 && selectedIndex < size - 1;
+    btnRemove.setEnabled(
+        lstFileNames.getModel().getSize() > 0 && lstFileNames.getSelectedIndex() > -1);
+    btnUp.setEnabled(lstFileNames.getModel().getSize() > 1 && lstFileNames.getSelectedIndex() > 0);
+    btnDown.setEnabled(
+        lstFileNames.getModel().getSize() > 1
+            && lstFileNames.getSelectedIndex() >= 0
+            && lstFileNames.getSelectedIndex() < lstFileNames.getModel().getSize() - 1);
   }
 
   private void wireAddButton() {
@@ -139,47 +122,37 @@ public class OrderedFileList {
           fcDescriptor.setTitle("Select Properties File(S)");
           final VirtualFile[] files = FileChooser.chooseFiles(fcDescriptor, pnlRoot, project, null);
           for (final VirtualFile file : files) {
-            addFilenameToList(file.getPresentableUrl());
+            getFileListModel().add(file.getPresentableUrl());
+            modified = true;
           }
         });
   }
 
   private void wireRemoveButton() {
-    btnRemove.addActionListener(e -> removeSelectedItemFromList());
+    btnRemove.addActionListener(e -> {
+      final int selectedIndex = lstFileNames.getSelectedIndex();
+      getFileListModel().removeItemAt(selectedIndex);
+      updateListSelection(selectedIndex);
+      modified = true;
+    });
   }
 
   private void wireMoveUpButton() {
-    btnUp.addActionListener(e -> moveSelectedItemUp());
+    btnUp.addActionListener(e -> {
+      final int selectedIndex = lstFileNames.getSelectedIndex();
+      getFileListModel().moveItemUp(selectedIndex);
+      updateListSelection(selectedIndex - 1);
+      modified = true;
+    });
   }
 
   private void wireMoveDownButton() {
-    btnDown.addActionListener(e -> moveSelectedItemDown());
-  }
-
-  private void addFilenameToList(final String fileName) {
-    getFileListModel().add(fileName);
-    modified = true;
-  }
-
-  private void removeSelectedItemFromList() {
-    final int selectedIndex = lstFileNames.getSelectedIndex();
-    getFileListModel().removeItemAt(selectedIndex);
-    updateListSelection(selectedIndex);
-    modified = true;
-  }
-
-  private void moveSelectedItemUp() {
-    final int selectedIndex = lstFileNames.getSelectedIndex();
-    getFileListModel().moveItemUp(selectedIndex);
-    updateListSelection(selectedIndex - 1);
-    modified = true;
-  }
-
-  private void moveSelectedItemDown() {
-    final int selectedIndex = lstFileNames.getSelectedIndex();
-    getFileListModel().moveItemDown(selectedIndex);
-    updateListSelection(selectedIndex + 1);
-    modified = true;
+    btnDown.addActionListener(e -> {
+      final int selectedIndex = lstFileNames.getSelectedIndex();
+      getFileListModel().moveItemDown(selectedIndex);
+      updateListSelection(selectedIndex + 1);
+      modified = true;
+    });
   }
 
   private void updateListSelection(final int indexToSelect) {
@@ -195,6 +168,7 @@ public class OrderedFileList {
     }
   }
 
+  @NotNull
   private OrderedFileListModel getFileListModel() {
     return (OrderedFileListModel) lstFileNames.getModel();
   }
@@ -203,14 +177,16 @@ public class OrderedFileList {
     return modified;
   }
 
-  public FacetPropertiesFilesList getFileNames() {
+  @NotNull
+  public List<String> getFileNames() {
     return getFileListModel().getAllItems();
   }
 
-  public void setFileNames(final Collection<String> items) {
+  public void setFileNames(@Nullable final Collection<String> items) {
     getFileListModel().setItems(items);
   }
 
+  @NotNull
   public JPanel getRootPanel() {
     return pnlRoot;
   }

@@ -24,7 +24,6 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -40,7 +39,7 @@ import javax.swing.JComponent;
 import org.clarent.ivyidea.IvyIdeaConstants;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.model.ModifiableRootModelWrapper;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.clarent.ivyidea.toolwindow.IvyIdeaToolWindowFactory.IvyIdeaToolWindow;
 import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
 import org.jetbrains.annotations.NotNull;
@@ -66,8 +65,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
         () -> {
           final Project eventProject = event.getProject();
           return eventProject != null
-              && ServiceManager.getService(eventProject, IvyIdeaProjectStateComponent.class)
-              .getState().resolveInBackground;
+              && IvyIdeaProjectState.getInstance(eventProject).resolveInBackground;
         });
     this.project = event.getProject();
   }
@@ -111,9 +109,9 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
               } else {
                 final String configsForModule;
                 if (ivyIdeaFacetConfiguration.get().getState().onlyResolveSelectedConfigs) {
-                  final Set<String> configs = ivyIdeaFacetConfiguration.get()
-                      .getState().configsToResolve;
-                  if (configs == null || configs.isEmpty()) {
+                  final Set<String> configs =
+                      ivyIdeaFacetConfiguration.get().getState().configsToResolve;
+                  if (configs.isEmpty()) {
                     configsForModule = "[No configurations selected!]";
                   } else {
                     configsForModule = configs.toString();
@@ -155,42 +153,43 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
     // TODO
   }
 
-// TODO
-//  private static void notifyException(final IvyFileReadException e) {
-//    Notifications.Bus.notify(
-//        new Notification(
-//            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
-//            "Could not read Ivy file",
-//            e.getMessage(),
-//            NotificationType.ERROR));
-//  }
-//
-// TODO
-//  private static void notifyException(final IvySettingsFileReadException e) {
-//    Notifications.Bus.notify(
-//        new Notification(
-//            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
-//            "Could not read Ivy settings file",
-//            e.getMessage(),
-//            NotificationType.ERROR));
-//  }
-//
-// TODO
-//  private static void notifyException(final IvySettingsNotFoundException e, final Project project) {
-//    final Notification notification =
-//        new Notification(
-//            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
-//            "Could not find Ivy settings",
-//            e.getMessage(),
-//            NotificationType.ERROR);
-//    notification.addAction(
-//        NotificationAction.createSimple(
-//            "Open Ivy settings",
-//            () ->
-//                ShowSettingsUtil.getInstance()
-//                    .showSettingsDialog(project, IvyIdeaProjectConfigurable.class)));
-//    Notifications.Bus.notify(notification);
-//  }
+  // TODO
+  //  private static void notifyException(final IvyFileReadException e) {
+  //    Notifications.Bus.notify(
+  //        new Notification(
+  //            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
+  //            "Could not read Ivy file",
+  //            e.getMessage(),
+  //            NotificationType.ERROR));
+  //  }
+  //
+  // TODO
+  //  private static void notifyException(final IvySettingsFileReadException e) {
+  //    Notifications.Bus.notify(
+  //        new Notification(
+  //            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
+  //            "Could not read Ivy settings file",
+  //            e.getMessage(),
+  //            NotificationType.ERROR));
+  //  }
+  //
+  // TODO
+  //  private static void notifyException(final IvySettingsNotFoundException e, final Project
+  // project) {
+  //    final Notification notification =
+  //        new Notification(
+  //            IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
+  //            "Could not find Ivy settings",
+  //            e.getMessage(),
+  //            NotificationType.ERROR);
+  //    notification.addAction(
+  //        NotificationAction.createSimple(
+  //            "Open Ivy settings",
+  //            () ->
+  //                ShowSettingsUtil.getInstance()
+  //                    .showSettingsDialog(project, IvyIdeaProjectConfigurable.class)));
+  //    Notifications.Bus.notify(notification);
+  //  }
 
   protected abstract Stream<Module> getModules();
 

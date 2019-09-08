@@ -25,8 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState.ArtifactTypeSettings;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState.ArtifactTypeSettings;
 import org.clarent.ivyidea.util.DependencyCategory;
 import org.junit.jupiter.api.Test;
 

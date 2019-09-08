@@ -18,33 +18,45 @@
 
 package org.clarent.ivyidea.util.exception;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Thrown when there was a problem while reading (accessing/parsing/...) the ivy xml file for a
  * module.
  *
  * @author Guy Mahieu
  */
+@SuppressWarnings("unused")
 public class IvyFileReadException extends IvyIdeaException {
 
   private static final long serialVersionUID = 2569486467585035102L;
 
+  @Nullable
   private final String fileName;
+  @NotNull
   private final String moduleName;
 
-  public IvyFileReadException(final String fileName, final String moduleName, final Throwable cause) {
+  public IvyFileReadException(
+      @Nullable final String fileName,
+      @NotNull final String moduleName,
+      @Nullable final Throwable cause) {
     super(cause);
     this.fileName = fileName;
     this.moduleName = moduleName;
   }
 
+  @Nullable
   public String getFileName() {
     return fileName;
   }
 
+  @NotNull
   public String getModuleName() {
     return moduleName;
   }
 
+  @NotNull
   @Override
   public String getMessage() {
     if (fileName == null) {

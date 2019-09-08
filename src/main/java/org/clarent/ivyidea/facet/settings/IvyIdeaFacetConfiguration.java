@@ -23,14 +23,18 @@ import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
 import com.intellij.util.xmlb.annotations.XCollection;
 import com.intellij.util.xmlb.annotations.XCollection.Style;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.clarent.ivyidea.facet.IvyIdeaFacet;
 import org.clarent.ivyidea.facet.ui.BasicSettingsTab;
 import org.clarent.ivyidea.facet.ui.PropertiesSettingsTab;
 import org.jetbrains.annotations.Contract;
@@ -40,17 +44,48 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({
     "NonFinalFieldReferenceInEquals",
     "ObjectInstantiationInEqualsHashCode",
-    "NonFinalFieldReferencedInHashCode"
+    "NonFinalFieldReferencedInHashCode",
+    "unused",
+    "WeakerAccess"
 })
 public class IvyIdeaFacetConfiguration
-    implements FacetConfiguration, PersistentStateComponent<IvyIdeaFacetConfiguration.State> {
+    implements FacetConfiguration, PersistentStateComponent<IvyIdeaFacetConfiguration> {
 
   @NotNull
-  private State state = new State();
+  @Attribute
+  public String ivyFile = "";
+  @Attribute
+  public boolean useProjectSettings = true;
+  @Attribute
+  public boolean useCustomIvySettings = true;
+  @NotNull
+  @Attribute
+  public String ivySettingsFile = "";
+  @Attribute
+  public boolean onlyResolveSelectedConfigs = false;
 
+  @NotNull
+  @XCollection(style = Style.v2, elementName = "config", valueAttributeName = "")
+  public Set<String> configsToResolve = Collections.emptySet();
+
+  @NotNull
+  @Property(surroundWithTag = false)
+  public FacetPropertiesSettings propertiesSettings = new FacetPropertiesSettings();
+
+  public IvyIdeaFacetConfiguration() {
+  }
+
+  @NotNull
+  public static IvyIdeaFacetConfiguration getInstance(@NotNull final IvyIdeaFacet facet) {
+    return facet.getConfiguration().getState();
+  }
+
+  @NotNull
   @Override
+  @SuppressWarnings("NullableProblems")
   public FacetEditorTab[] createEditorTabs(
-      final FacetEditorContext editorContext, final FacetValidatorsManager validatorsManager) {
+      @NotNull final FacetEditorContext editorContext,
+      @NotNull final FacetValidatorsManager validatorsManager) {
     final PropertiesSettingsTab propertiesSettingsTab = new PropertiesSettingsTab(editorContext);
     return new FacetEditorTab[]{
         new BasicSettingsTab(editorContext, propertiesSettingsTab), propertiesSettingsTab
@@ -59,176 +94,124 @@ public class IvyIdeaFacetConfiguration
 
   @NotNull
   @Override
-  public State getState() {
-    return state;
+  public IvyIdeaFacetConfiguration getState() {
+    return this;
   }
 
   @Override
-  public void loadState(@NotNull final State state) {
-    this.state = state;
+  public void loadState(@NotNull final IvyIdeaFacetConfiguration state) {
+    XmlSerializerUtil.copyBean(state, this);
   }
 
-  @SuppressWarnings({"unused", "WeakerAccess"})
-  public static class State {
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof IvyIdeaFacetConfiguration)) {
+      return false;
+    }
+    final IvyIdeaFacetConfiguration state = (IvyIdeaFacetConfiguration) o;
+    return Objects.equals(ivyFile, state.ivyFile)
+        && Objects.equals(useProjectSettings, state.useProjectSettings)
+        && Objects.equals(useCustomIvySettings, state.useCustomIvySettings)
+        && Objects.equals(ivySettingsFile, state.ivySettingsFile)
+        && Objects.equals(onlyResolveSelectedConfigs, state.onlyResolveSelectedConfigs)
+        && Objects.equals(configsToResolve, state.configsToResolve)
+        && Objects.equals(propertiesSettings, state.propertiesSettings);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        ivyFile,
+        useProjectSettings,
+        useCustomIvySettings,
+        ivySettingsFile,
+        onlyResolveSelectedConfigs,
+        configsToResolve,
+        propertiesSettings);
+  }
+
+  @SuppressWarnings({"WeakerAccess", "unused"})
+  @Tag("propertiesSettings")
+  public static class FacetPropertiesSettings {
 
     @NotNull
-    @Attribute
-    public String ivyFile;
+    @Property(surroundWithTag = false)
+    public FacetPropertiesFiles propertiesFiles = new FacetPropertiesFiles();
 
-    @NotNull
-    @Attribute
-    public Boolean useProjectSettings;
-
-    @NotNull
-    @Attribute
-    public Boolean useCustomIvySettings;
-
-    @NotNull
-    @Attribute
-    public String ivySettingsFile;
-
-    @NotNull
-    @Attribute
-    public Boolean onlyResolveSelectedConfigs;
-
-    @NotNull
-    @XCollection(style = Style.v2, elementName = "config", valueAttributeName = "")
-    public Set<String> configsToResolve;
-
-    @NotNull
-    public FacetPropertiesSettings propertiesSettings;
-
-    public State() {
-      ivyFile = "";
-      useProjectSettings = true;
-      useCustomIvySettings = true;
-      ivySettingsFile = "";
-      onlyResolveSelectedConfigs = false;
-      configsToResolve = Collections.emptySet();
-      propertiesSettings = new FacetPropertiesSettings();
+    @Contract(pure = true)
+    public FacetPropertiesSettings() {
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(final Object o) {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof State)) {
+      if (!(o instanceof FacetPropertiesSettings)) {
         return false;
       }
-      final State state = (State) o;
-      return Objects.equals(ivyFile, state.ivyFile)
-          && Objects.equals(useProjectSettings, state.useProjectSettings)
-          && Objects.equals(useCustomIvySettings, state.useCustomIvySettings)
-          && Objects.equals(ivySettingsFile, state.ivySettingsFile)
-          && Objects.equals(onlyResolveSelectedConfigs, state.onlyResolveSelectedConfigs)
-          && Objects.equals(configsToResolve, state.configsToResolve)
-          && Objects.equals(propertiesSettings, state.propertiesSettings);
+      final FacetPropertiesSettings that = (FacetPropertiesSettings) o;
+      return Objects.equals(propertiesFiles, that.propertiesFiles);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          ivyFile,
-          useProjectSettings,
-          useCustomIvySettings,
-          ivySettingsFile,
-          onlyResolveSelectedConfigs,
-          configsToResolve,
-          propertiesSettings);
+      return Objects.hash(propertiesFiles);
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    public static class FacetPropertiesSettings {
+    @Tag("propertiesFiles")
+    public static class FacetPropertiesFiles {
+
+      private static final long serialVersionUID = 4240068708636271273L;
+
+      @Attribute
+      public boolean includeProjectLevelPropertiesFiles = true;
+      @Attribute
+      public boolean includeProjectLevelAdditionalProperties = true;
 
       @NotNull
+      @Property(surroundWithTag = false)
       @XCollection(style = Style.v2, elementName = "fileName", valueAttributeName = "")
-      public FacetPropertiesFilesList propertiesFiles;
+      public List<String> propertiesFiles = new ArrayList<>();
 
       @Contract(pure = true)
-      public FacetPropertiesSettings() {
-        propertiesFiles = new FacetPropertiesFilesList();
+      public FacetPropertiesFiles() {
       }
 
+      @Contract(value = "null -> false", pure = true)
       @Override
       public boolean equals(final Object o) {
         if (this == o) {
           return true;
         }
-        if (!(o instanceof FacetPropertiesSettings)) {
+        if (!(o instanceof FacetPropertiesFiles)) {
           return false;
         }
-        final FacetPropertiesSettings that = (FacetPropertiesSettings) o;
-        return Objects.equals(propertiesFiles, that.propertiesFiles);
+        if (!super.equals(o)) {
+          return false;
+        }
+        final FacetPropertiesFiles facetPropertiesFiles = (FacetPropertiesFiles) o;
+        return Objects.equals(
+            includeProjectLevelPropertiesFiles,
+            facetPropertiesFiles.includeProjectLevelPropertiesFiles)
+            && Objects.equals(
+            includeProjectLevelAdditionalProperties,
+            facetPropertiesFiles.includeProjectLevelAdditionalProperties)
+            && Objects.equals(this.propertiesFiles, facetPropertiesFiles.propertiesFiles);
       }
 
       @Override
       public int hashCode() {
-        return Objects.hash(propertiesFiles);
-      }
-
-      @SuppressWarnings({"WeakerAccess", "unused", "ClassExtendsConcreteCollection"})
-      public static class FacetPropertiesFilesList extends ArrayList<String> {
-
-        private static final long serialVersionUID = 4240068708636271273L;
-
-        @NotNull
-        @Attribute
-        public Boolean includeProjectLevelPropertiesFiles;
-
-        @NotNull
-        @Attribute
-        public Boolean includeProjectLevelAdditionalProperties;
-
-        @Contract(pure = true)
-        public FacetPropertiesFilesList() {
-          includeProjectLevelPropertiesFiles = true;
-          includeProjectLevelAdditionalProperties = true;
-        }
-
-        public FacetPropertiesFilesList(final Collection<String> items) {
-          super(items);
-          includeProjectLevelPropertiesFiles = true;
-          includeProjectLevelAdditionalProperties = true;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-          if (this == o) {
-            return true;
-          }
-          if (!(o instanceof FacetPropertiesFilesList)) {
-            return false;
-          }
-          if (!super.equals(o)) {
-            return false;
-          }
-          final FacetPropertiesFilesList strings = (FacetPropertiesFilesList) o;
-          return Objects.equals(
-              includeProjectLevelPropertiesFiles, strings.includeProjectLevelPropertiesFiles)
-              && Objects.equals(
-              includeProjectLevelAdditionalProperties,
-              strings.includeProjectLevelAdditionalProperties);
-        }
-
-        @Override
-        public int hashCode() {
-          return Objects.hash(
-              super.hashCode(),
-              includeProjectLevelPropertiesFiles,
-              includeProjectLevelAdditionalProperties);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public final FacetPropertiesFilesList clone() {
-          final Object clone = super.clone();
-          if (clone instanceof Collection<?>) {
-            return new FacetPropertiesFilesList((Collection<String>) clone);
-          } else {
-            throw new InternalError("ArrayList.clone() went wrong!");
-          }
-        }
+        return Objects.hash(
+            super.hashCode(),
+            includeProjectLevelPropertiesFiles,
+            includeProjectLevelAdditionalProperties,
+            propertiesFiles);
       }
     }
   }

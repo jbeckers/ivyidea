@@ -54,7 +54,7 @@
     <applicationService
       serviceImplementation="org.clarent.ivyidea.IvyIdeaPlugin"/>
     <projectService
-      serviceImplementation="org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent"/>
+      serviceImplementation="org.clarent.ivyidea.settings.IvyIdeaProjectState"/>
     <toolWindow
       id="IvyIDEA"
       icon="/ivyidea13.png"

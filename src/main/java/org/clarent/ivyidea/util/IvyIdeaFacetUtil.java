@@ -48,7 +48,7 @@ public final class IvyIdeaFacetUtil {
    * @throws RuntimeException if the given module does not have an IvyIDEA facet configured.
    */
   @NotNull
-  public static Try<File> getIvyFile(final Module module) {
+  public static Try<File> getIvyFile(@NotNull final Module module) {
     return getConfiguration(module)
         .toTry(
             () ->

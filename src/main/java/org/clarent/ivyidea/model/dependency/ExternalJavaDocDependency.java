@@ -22,20 +22,25 @@ import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 public class ExternalJavaDocDependency extends ExternalDependency {
 
   public ExternalJavaDocDependency(
-      final Artifact artifact, final File externalArtifact, final String configurationName) {
+      @NotNull final Artifact artifact, @Nullable final File externalArtifact,
+      @NotNull final String configurationName) {
     super(artifact, externalArtifact, configurationName);
   }
 
+  @NotNull
   @Override
   protected String getTypeName() {
     return "javadoc";
   }
 
+  @NotNull
   @Override
   public OrderRootType getType() {
     return JavadocOrderRootType.getInstance();

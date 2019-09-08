@@ -18,7 +18,6 @@
 
 package org.clarent.ivyidea.model;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -37,23 +36,29 @@ import java.util.stream.StreamSupport;
 import org.clarent.ivyidea.IvyIdeaConstants;
 import org.clarent.ivyidea.model.dependency.ExternalDependency;
 import org.clarent.ivyidea.model.dependency.ResolvedDependency;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public final class ModifiableRootModelWrapper implements Closeable {
 
+  @NotNull
   private static final Logger LOGGER =
       Logger.getInstance("#org.clarent.ivyidea.model.ModifiableRootModelWrapper");
 
+  @NotNull
   private final ModifiableRootModel intellijModule;
 
+  @NotNull
   private final ConcurrentMap<String, ModifiableModel> libraryModels = new ConcurrentHashMap<>();
 
-  private ModifiableRootModelWrapper(final ModifiableRootModel model) {
+  private ModifiableRootModelWrapper(@NotNull final ModifiableRootModel model) {
     this.intellijModule = model;
   }
 
-  public static ModifiableRootModelWrapper forModule(final Module module) {
+  @NotNull
+  @Contract("_ -> new")
+  public static ModifiableRootModelWrapper forModule(@NotNull final Module module) {
     ModifiableRootModel modifiableModel = null;
     try {
       modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
@@ -66,15 +71,15 @@ public final class ModifiableRootModelWrapper implements Closeable {
     }
   }
 
+  @NotNull
   private static String getCreatedLibraryName(
-      final ModifiableRootModel model, final String configName) {
+      @NotNull final ModifiableRootModel model, final String configName) {
+    final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(model.getProject());
     String libraryName = IvyIdeaConstants.RESOLVED_LIB_NAME_ROOT;
-    if (ServiceManager.getService(model.getProject(), IvyIdeaProjectStateComponent.class)
-        .getState().libraryNameIncludesModule) {
+    if (state.libraryNameIncludesModule) {
       libraryName += "-" + model.getModule().getName();
     }
-    if (ServiceManager.getService(model.getProject(), IvyIdeaProjectStateComponent.class)
-        .getState().libraryNameIncludesConfiguration) {
+    if (state.libraryNameIncludesConfiguration) {
       libraryName += "-" + configName;
     }
     return libraryName;
@@ -155,36 +160,39 @@ public final class ModifiableRootModelWrapper implements Closeable {
     return intellijModule.getModule().getName();
   }
 
-  public void addModuleDependency(final Module module) {
+  public void addModuleDependency(@NotNull final Module module) {
     intellijModule.addModuleOrderEntry(module);
   }
 
-  public void addExternalDependency(final ExternalDependency externalDependency) {
-    getModelForExternalDependency(externalDependency)
-        .addRoot(externalDependency.getUrlForLibraryRoot(), externalDependency.getType());
+  public void addExternalDependency(@NotNull final ExternalDependency externalDependency) {
+    final String urlForLibraryRoot = externalDependency.getUrlForLibraryRoot();
+    if (urlForLibraryRoot != null) {
+      getModelForExternalDependency(externalDependency)
+          .addRoot(urlForLibraryRoot, externalDependency.getType());
+    }
   }
 
-  public boolean alreadyHasDependencyOnModule(final Module module) {
+  public boolean alreadyHasDependencyOnModule(@NotNull final Module module) {
     return Arrays.stream(intellijModule.getModuleDependencies())
         .map(Module::getName)
         .anyMatch(dependency -> dependency.equals(module.getName()));
   }
 
-  public boolean alreadyHasDependencyOnLibrary(final ExternalDependency externalDependency) {
+  public boolean alreadyHasDependencyOnLibrary(
+      @NotNull final ExternalDependency externalDependency) {
     return Arrays.stream(
         getModelForExternalDependency(externalDependency).getUrls(externalDependency.getType()))
         .anyMatch(externalDependency::isSameDependency);
   }
 
+  @NotNull
   private ModifiableModel getModelForExternalDependency(
       @NotNull final ExternalDependency externalDependency) {
     final String resolvedConfiguration = externalDependency.getConfigurationName();
     final String libraryName =
         getCreatedLibraryName(
             intellijModule,
-            resolvedConfiguration == null || resolvedConfiguration.trim().isEmpty()
-                ? "default"
-                : resolvedConfiguration);
+            resolvedConfiguration.trim().isEmpty() ? "default" : resolvedConfiguration);
 
     if (libraryModels.containsKey(libraryName)) {
       return libraryModels.get(libraryName);

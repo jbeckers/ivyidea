@@ -28,7 +28,6 @@ import static com.intellij.execution.ui.ConsoleViewContentType.SYSTEM_OUTPUT;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
@@ -39,7 +38,7 @@ import javax.swing.JComponent;
 import org.apache.ivy.util.AbstractMessageLogger;
 import org.apache.ivy.util.Message;
 import org.clarent.ivyidea.IvyIdeaConstants;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.clarent.ivyidea.toolwindow.IvyIdeaToolWindowFactory.IvyIdeaToolWindow;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -69,10 +68,7 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     } else {
       consoleView = null;
     }
-    threshold =
-        IvyLogLevel.fromName(
-            ServiceManager.getService(project, IvyIdeaProjectStateComponent.class)
-                .getState().ivyLogLevelThreshold);
+    threshold = IvyLogLevel.fromName(IvyIdeaProjectState.getInstance(project).ivyLogLevelThreshold);
   }
 
   @Override

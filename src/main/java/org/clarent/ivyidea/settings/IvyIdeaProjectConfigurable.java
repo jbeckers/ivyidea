@@ -22,7 +22,6 @@ import static org.clarent.ivyidea.util.DependencyCategory.Classes;
 import static org.clarent.ivyidea.util.DependencyCategory.Javadoc;
 import static org.clarent.ivyidea.util.DependencyCategory.Sources;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
@@ -37,8 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import org.clarent.ivyidea.IvyIdeaConstants;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent.IvyIdeaProjectState.PropertiesSettings;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState.PropertiesSettings;
 import org.clarent.ivyidea.settings.ui.orderedfilelist.OrderedFileList;
 import org.clarent.ivyidea.util.ConsoleViewMessageLogger.IvyLogLevel;
 import org.jetbrains.annotations.Contract;
@@ -58,9 +56,16 @@ public class IvyIdeaProjectConfigurable implements Configurable {
 
   @Contract(pure = true)
   public IvyIdeaProjectConfigurable(@NotNull final Project project) {
-    this.settingsPanelSupplier = () -> new IvyIdeaProjectSettingsPanel(project);
+    this.settingsPanelSupplier =
+        () -> {
+          final IvyIdeaProjectSettingsPanel ivyIdeaProjectSettingsPanel =
+              new IvyIdeaProjectSettingsPanel(project);
+          ivyIdeaProjectSettingsPanel.setProject(project);
+          return ivyIdeaProjectSettingsPanel;
+        };
   }
 
+  @NotNull
   @Override
   @Nls
   public String getDisplayName() {
@@ -72,6 +77,7 @@ public class IvyIdeaProjectConfigurable implements Configurable {
     return getSettingsPanel().createComponent();
   }
 
+  @NotNull
   private IvyIdeaProjectSettingsPanel getSettingsPanel() {
     if (settingsPanel == null) {
       settingsPanel = settingsPanelSupplier.get();
@@ -81,7 +87,7 @@ public class IvyIdeaProjectConfigurable implements Configurable {
 
   @Override
   public boolean isModified() {
-    return getSettingsPanel().isModified();
+    return settingsPanel != null && getSettingsPanel().isModified();
   }
 
   @Override
@@ -103,30 +109,45 @@ public class IvyIdeaProjectConfigurable implements Configurable {
   public static class IvyIdeaProjectSettingsPanel {
 
     @NotNull
-    private final OrderedFileList orderedFileList = new OrderedFileList();
-    @NotNull
     private final Project project;
+    @NotNull
+    private OrderedFileList orderedFileList;
     private boolean modified = false;
+    @NotNull
     private TextFieldWithBrowseButton txtIvySettingsFile;
+    @NotNull
     private JPanel projectSettingsPanel;
+    @NotNull
     private JCheckBox chkValidateIvyFiles;
+    @NotNull
     private JRadioButton useYourOwnIvySettingsRadioButton;
+    @NotNull
     private JPanel pnlPropertiesFiles;
+    @NotNull
     private ComboBox<IvyLogLevel> ivyLogLevelComboBox;
+    @NotNull
     private JCheckBox includeModuleNameCheckBox;
+    @NotNull
     private JCheckBox includeConfigurationNameCheckBox;
+    @NotNull
     private JTextField txtClassesArtifactTypes;
+    @NotNull
     private JTextField txtSourcesArtifactTypes;
+    @NotNull
     private JTextField txtJavadocArtifactTypes;
+    @NotNull
     private JCheckBox chkResolveTransitively;
+    @NotNull
     private JCheckBox chkUseCacheOnly;
+    @NotNull
     private JCheckBox chkBackground;
+    @NotNull
     private JCheckBox autoAttachSources;
+    @NotNull
     private JCheckBox autoAttachJavadocs;
 
     IvyIdeaProjectSettingsPanel(@NotNull final Project project) {
       this.project = project;
-      orderedFileList.setProject(project);
       txtIvySettingsFile.addBrowseFolderListener(
           "Select Ivy Settings File",
           null,
@@ -148,6 +169,7 @@ public class IvyIdeaProjectConfigurable implements Configurable {
       watcher.register(projectSettingsPanel);
     }
 
+    @NotNull
     JComponent createComponent() {
       return projectSettingsPanel;
     }
@@ -157,8 +179,7 @@ public class IvyIdeaProjectConfigurable implements Configurable {
     }
 
     void apply() {
-      final IvyIdeaProjectState state =
-          ServiceManager.getService(project, IvyIdeaProjectStateComponent.class).getState();
+      final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(project);
       state.ivySettingsFile = txtIvySettingsFile.getText();
       state.validateIvyFiles = chkValidateIvyFiles.isSelected();
       state.resolveTransitively = chkResolveTransitively.isSelected();
@@ -168,7 +189,7 @@ public class IvyIdeaProjectConfigurable implements Configurable {
       state.alwaysAttachJavadocs = autoAttachJavadocs.isSelected();
       state.useCustomIvySettings = useYourOwnIvySettingsRadioButton.isSelected();
       final PropertiesSettings propertiesSettings = new PropertiesSettings();
-      propertiesSettings.propertyFiles = orderedFileList.getFileNames();
+      propertiesSettings.propertyFiles.propertyFiles = orderedFileList.getFileNames();
       state.propertiesSettings = propertiesSettings;
       state.libraryNameIncludesModule = includeModuleNameCheckBox.isSelected();
       state.libraryNameIncludesConfiguration = includeConfigurationNameCheckBox.isSelected();
@@ -181,33 +202,37 @@ public class IvyIdeaProjectConfigurable implements Configurable {
     }
 
     void reset() {
-      final IvyIdeaProjectState internalState =
-          ServiceManager.getService(project, IvyIdeaProjectStateComponent.class).getState();
-      txtIvySettingsFile.setText(internalState.ivySettingsFile);
-      chkValidateIvyFiles.setSelected(internalState.validateIvyFiles);
-      chkResolveTransitively.setSelected(internalState.resolveTransitively);
-      chkUseCacheOnly.setSelected(internalState.resolveCacheOnly);
-      chkBackground.setSelected(internalState.resolveInBackground);
-      autoAttachSources.setSelected(internalState.alwaysAttachSources);
-      autoAttachJavadocs.setSelected(internalState.alwaysAttachJavadocs);
-      useYourOwnIvySettingsRadioButton.setSelected(internalState.useCustomIvySettings);
-      orderedFileList.setFileNames(internalState.propertiesSettings.propertyFiles);
-      includeModuleNameCheckBox.setSelected(internalState.libraryNameIncludesModule);
-      includeConfigurationNameCheckBox.setSelected(internalState.libraryNameIncludesConfiguration);
-      ivyLogLevelComboBox.setSelectedItem(IvyLogLevel.fromName(internalState.ivyLogLevelThreshold));
+      final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(project);
+      txtIvySettingsFile.setText(state.ivySettingsFile);
+      chkValidateIvyFiles.setSelected(state.validateIvyFiles);
+      chkResolveTransitively.setSelected(state.resolveTransitively);
+      chkUseCacheOnly.setSelected(state.resolveCacheOnly);
+      chkBackground.setSelected(state.resolveInBackground);
+      autoAttachSources.setSelected(state.alwaysAttachSources);
+      autoAttachJavadocs.setSelected(state.alwaysAttachJavadocs);
+      useYourOwnIvySettingsRadioButton.setSelected(state.useCustomIvySettings);
+      orderedFileList.setFileNames(state.propertiesSettings.propertyFiles.propertyFiles);
+      includeModuleNameCheckBox.setSelected(state.libraryNameIncludesModule);
+      includeConfigurationNameCheckBox.setSelected(state.libraryNameIncludesConfiguration);
+      ivyLogLevelComboBox.setSelectedItem(IvyLogLevel.fromName(state.ivyLogLevelThreshold));
       txtSourcesArtifactTypes.setText(
-          internalState.artifactTypeSettings.getManager().getTypesStringForCategory(Sources));
+          state.artifactTypeSettings.getManager().getTypesStringForCategory(Sources));
       txtClassesArtifactTypes.setText(
-          internalState.artifactTypeSettings.getManager().getTypesStringForCategory(Classes));
+          state.artifactTypeSettings.getManager().getTypesStringForCategory(Classes));
       txtJavadocArtifactTypes.setText(
-          internalState.artifactTypeSettings.getManager().getTypesStringForCategory(Javadoc));
+          state.artifactTypeSettings.getManager().getTypesStringForCategory(Javadoc));
     }
 
     @SuppressWarnings("UnusedMethod")
     private void createUIComponents() {
       pnlPropertiesFiles = new JPanel(new BorderLayout());
+      orderedFileList = new OrderedFileList();
       pnlPropertiesFiles.add(orderedFileList.getRootPanel(), BorderLayout.CENTER);
       ivyLogLevelComboBox = new ComboBox<>(IvyLogLevel.values());
+    }
+
+    public void setProject(@NotNull final Project project) {
+      orderedFileList.setProject(project);
     }
   }
 }

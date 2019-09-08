@@ -18,32 +18,35 @@
 
 package org.clarent.ivyidea.settings.ui.orderedfilelist;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.AbstractListModel;
-import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration.State.FacetPropertiesSettings.FacetPropertiesFilesList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 class OrderedFileListModel extends AbstractListModel<String> {
 
   private static final long serialVersionUID = 1009368465378149477L;
 
-  private final FacetPropertiesFilesList items = new FacetPropertiesFilesList();
+  @NotNull
+  private final List<String> items = new ArrayList<>();
 
-  FacetPropertiesFilesList getAllItems() {
-    return new FacetPropertiesFilesList(items);
+  @NotNull
+  List<String> getAllItems() {
+    return items;
   }
 
-  void setItems(final Collection<String> itemsToSet) {
-    clear();
-    add(itemsToSet);
+  void setItems(@Nullable final Collection<String> itemsToSet) {
+    if (itemsToSet != null) {
+      clear();
+      items.addAll(itemsToSet);
+      fireIntervalAdded(this, items.size() - itemsToSet.size(), items.size());
+    }
   }
 
-  private void add(final Collection<String> itemsToAdd) {
-    items.addAll(itemsToAdd);
-    fireIntervalAdded(this, items.size() - itemsToAdd.size(), items.size());
-  }
-
-  void add(final String item) {
+  void add(@NotNull final String item) {
     items.add(item);
     fireIntervalAdded(this, items.size(), items.size());
   }
@@ -82,12 +85,8 @@ class OrderedFileListModel extends AbstractListModel<String> {
     return items.size();
   }
 
-  private String getItemAt(final int index) {
-    return items.get(index);
-  }
-
   @Override
   public String getElementAt(final int index) {
-    return getItemAt(index);
+    return items.get(index);
   }
 }

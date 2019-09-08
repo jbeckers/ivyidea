@@ -35,24 +35,34 @@ import org.jetbrains.annotations.NotNull;
 /** @author Guy Mahieu */
 public class PropertiesSettingsTab extends FacetEditorTab {
 
+  @NotNull
   private final FacetEditorContext editorContext;
 
   @NotNull
   private final OrderedFileList orderedFileList = new OrderedFileList();
 
+  @NotNull
   private JPanel pnlRoot;
+  @NotNull
   private JPanel pnlPropertiesFiles;
+  @NotNull
   private JPanel pnlAdditionalProperties;
+  @NotNull
   private JLabel lblAdditionalPropertiesDescription;
+  @NotNull
   private JLabel lblAdditionalProperties;
 
   private boolean alreadyOpenedBefore = false;
   private boolean modified = false;
 
-  public PropertiesSettingsTab(final FacetEditorContext editorContext) {
+  public PropertiesSettingsTab(@NotNull final FacetEditorContext editorContext) {
     this.editorContext = editorContext;
+    pnlPropertiesFiles.setLayout(new BorderLayout());
     orderedFileList.setProject(editorContext.getProject());
+    pnlPropertiesFiles.add(orderedFileList.getRootPanel(), BorderLayout.CENTER);
 
+    pnlAdditionalProperties.setLayout(new BorderLayout());
+    pnlAdditionalProperties.add(new PropertiesEditor().getRootPanel(), BorderLayout.CENTER);
     /* No additional properties support yet in this release */
     pnlAdditionalProperties.setVisible(false);
     lblAdditionalProperties.setVisible(false);
@@ -68,6 +78,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
     watcher.register(pnlRoot);
   }
 
+  @NotNull
   @Override
   @Nls
   public String getDisplayName() {
@@ -89,6 +100,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
     return alreadyOpenedBefore;
   }
 
+  @NotNull
   List<String> getFileNames() {
     return orderedFileList.getFileNames();
   }
@@ -99,6 +111,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
         .getConfiguration()
         .getState()
         .propertiesSettings
+        .propertiesFiles
         .propertiesFiles =
         orderedFileList.getFileNames();
   }
@@ -116,15 +129,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
             .getConfiguration()
             .getState()
             .propertiesSettings
+            .propertiesFiles
             .propertiesFiles);
-  }
-
-  @SuppressWarnings("UnusedMethod")
-  private void createUIComponents() {
-    pnlPropertiesFiles = new JPanel(new BorderLayout());
-    pnlPropertiesFiles.add(orderedFileList.getRootPanel(), BorderLayout.CENTER);
-
-    pnlAdditionalProperties = new JPanel(new BorderLayout());
-    pnlAdditionalProperties.add(new PropertiesEditor().getRootPanel(), BorderLayout.CENTER);
   }
 }

@@ -20,23 +20,38 @@ package org.clarent.ivyidea;
 
 import com.intellij.facet.FacetTypeId;
 import org.clarent.ivyidea.facet.IvyIdeaFacet;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public final class IvyIdeaConstants {
 
+  @NotNull
   public static final String IVY_IDEA = "IvyIDEA";
 
+  @NotNull
   public static final String TOOLWINDOW_ID = IVY_IDEA;
 
+  @NotNull
   public static final String NOTIFICATION_GROUP_DISPLAY_ID = IVY_IDEA;
 
+  @NotNull
   public static final String PROJECT_STATE_NAME = IVY_IDEA + ".ProjectSettings";
 
+  @NotNull
   public static final String RESOLVED_LIB_NAME_ROOT = IVY_IDEA;
 
+  @NotNull
   public static final FacetTypeId<IvyIdeaFacet> FACET_TYPE_ID = new FacetTypeId<>(IVY_IDEA);
+
+  @NotNull
   public static final String FACET_STRING_ID = IVY_IDEA;
+  @NotNull
   public static final String FACET_DETECTOR_ID = IVY_IDEA;
 
+  @NotNull
+  public static final String[] ZERO_LENGTH_STRING_ARRAY = new String[0];
+
+  @Contract(pure = true)
   private IvyIdeaConstants() {
   }
 }

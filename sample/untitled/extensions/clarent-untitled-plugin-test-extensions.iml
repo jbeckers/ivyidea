@@ -7,7 +7,7 @@
           <config>default</config>
         </configsToResolve>
         <propertiesSettings>
-          <propertiesFiles includeProjectLevelPropertiesFiles="true" />
+          <propertiesFiles />
         </propertiesSettings>
       </configuration>
     </facet>

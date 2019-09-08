@@ -20,12 +20,11 @@ package org.clarent.ivyidea.util;
 
 import static java.util.Arrays.asList;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import java.util.Collections;
 import java.util.List;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.clarent.ivyidea.settings.IvyIdeaProjectStateComponent;
+import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,8 +45,10 @@ public enum DependencyCategory {
   @Nullable
   public static DependencyCategory determineCategory(
       @NotNull final Project project, @NotNull final Artifact artifact) {
-    return ServiceManager.getService(project, IvyIdeaProjectStateComponent.class)
-        .getState().artifactTypeSettings.getManager().getCategoryForType(artifact.getType());
+    return IvyIdeaProjectState.getInstance(project)
+        .artifactTypeSettings
+        .getManager()
+        .getCategoryForType(artifact.getType());
   }
 
   @Contract(pure = true)
