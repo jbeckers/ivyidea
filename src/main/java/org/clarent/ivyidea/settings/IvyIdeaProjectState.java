@@ -18,9 +18,9 @@
 
 package org.clarent.ivyidea.settings;
 
-import static org.clarent.ivyidea.util.DependencyCategory.Classes;
-import static org.clarent.ivyidea.util.DependencyCategory.Javadoc;
-import static org.clarent.ivyidea.util.DependencyCategory.Sources;
+import static org.clarent.ivyidea.model.dependency.DependencyCategory.Classes;
+import static org.clarent.ivyidea.model.dependency.DependencyCategory.Javadoc;
+import static org.clarent.ivyidea.model.dependency.DependencyCategory.Sources;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -39,8 +39,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.clarent.ivyidea.IvyIdeaConstants;
+import org.clarent.ivyidea.model.dependency.DependencyCategoryManager;
 import org.clarent.ivyidea.util.ConsoleViewMessageLogger.IvyLogLevel;
-import org.clarent.ivyidea.util.DependencyCategoryManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

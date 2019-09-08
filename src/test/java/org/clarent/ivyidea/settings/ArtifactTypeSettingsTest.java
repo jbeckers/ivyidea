@@ -18,15 +18,15 @@
 
 package org.clarent.ivyidea.settings;
 
-import static org.clarent.ivyidea.util.DependencyCategory.Classes;
+import static org.clarent.ivyidea.model.dependency.DependencyCategory.Classes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.clarent.ivyidea.model.dependency.DependencyCategory;
 import org.clarent.ivyidea.settings.IvyIdeaProjectState.ArtifactTypeSettings;
-import org.clarent.ivyidea.util.DependencyCategory;
 import org.junit.jupiter.api.Test;
 
 /** @author Guy Mahieu */

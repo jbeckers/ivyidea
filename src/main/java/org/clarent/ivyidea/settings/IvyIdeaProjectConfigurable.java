@@ -18,9 +18,9 @@
 
 package org.clarent.ivyidea.settings;
 
-import static org.clarent.ivyidea.util.DependencyCategory.Classes;
-import static org.clarent.ivyidea.util.DependencyCategory.Javadoc;
-import static org.clarent.ivyidea.util.DependencyCategory.Sources;
+import static org.clarent.ivyidea.model.dependency.DependencyCategory.Classes;
+import static org.clarent.ivyidea.model.dependency.DependencyCategory.Javadoc;
+import static org.clarent.ivyidea.model.dependency.DependencyCategory.Sources;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.Configurable;

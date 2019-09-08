@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.clarent.ivyidea.util;
+package org.clarent.ivyidea.model.dependency;
 
 import java.util.Arrays;
 import java.util.Collections;
