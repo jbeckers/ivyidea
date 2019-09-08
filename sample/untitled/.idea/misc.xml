@@ -14,6 +14,13 @@
     </autodetection-disabled>
   </component>
   <component name="IvyIDEA.ProjectSettings">
+    <option name="ivySettingsFile" value="D:\Development\ivyidea\sample\untitled\ivy-settings.project.xml" />
+    <option name="validateIvyFiles" value="true" />
+    <option name="resolveCacheOnly" value="true" />
+    <option name="resolveInBackground" value="true" />
+    <option name="libraryNameIncludesModule" value="true" />
+    <option name="libraryNameIncludesConfiguration" value="true" />
+    <option name="ivyLogLevelThreshold" value="All" />
     <option name="artifactTypeSettings">
       <ArtifactTypeSettings>
         <option name="classesTypes" value="jar, mar, sar, war, ear, ejb, bundle, test-jar" />
@@ -21,10 +28,6 @@
         <option name="sourcesTypes" value="source, src, sources, srcs" />
       </ArtifactTypeSettings>
     </option>
-    <option name="ivyLogLevelThreshold" value="All" />
-    <option name="ivySettingsFile" value="D:\Development\ivyidea\sample\untitled\ivy-settings.project.xml" />
-    <option name="libraryNameIncludesConfiguration" value="true" />
-    <option name="libraryNameIncludesModule" value="true" />
     <option name="propertiesSettings">
       <PropertiesSettings>
         <option name="propertyFiles">
@@ -34,9 +37,6 @@
         </option>
       </PropertiesSettings>
     </option>
-    <option name="resolveCacheOnly" value="true" />
-    <option name="resolveInBackground" value="true" />
-    <option name="validateIvyFiles" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
