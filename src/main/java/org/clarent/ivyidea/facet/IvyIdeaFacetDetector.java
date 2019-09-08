@@ -64,7 +64,7 @@ public class IvyIdeaFacetDetector
     final IvyIdeaFacetConfiguration result = super.createConfiguration(files);
 
     if (result != null && !files.isEmpty()) {
-      result.getState().ivyFile = files.iterator().next().getPath();
+      result.getState().setIvyFile(files.iterator().next().getPath());
     }
 
     return result;

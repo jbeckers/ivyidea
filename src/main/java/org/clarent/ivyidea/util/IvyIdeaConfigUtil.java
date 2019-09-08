@@ -55,8 +55,8 @@ public final class IvyIdeaConfigUtil {
   @NotNull
   public static Try<String> getModuleIvySettingsFile(
       @NotNull final Module module, @NotNull final IvyIdeaFacetConfiguration moduleConfiguration) {
-    if (moduleConfiguration.getState().useCustomIvySettings) {
-      final String ivySettingsFile = moduleConfiguration.getState().ivySettingsFile.trim();
+    if (moduleConfiguration.getState().isUseCustomIvySettings()) {
+      final String ivySettingsFile = moduleConfiguration.getState().getIvySettingsFile().trim();
       if (ivySettingsFile.isEmpty()) {
         return Try.failure(
             new IvySettingsNotFoundException(
@@ -99,8 +99,8 @@ public final class IvyIdeaConfigUtil {
   @NotNull
   public static Try<String> getProjectIvySettingsFile(@NotNull final Project project) {
     final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(project);
-    if (state.useCustomIvySettings) {
-      final String settingsFile = state.ivySettingsFile.trim();
+    if (state.isUseCustomIvySettings()) {
+      final String settingsFile = state.getIvySettingsFile().trim();
       if (settingsFile.isEmpty()) {
         return Try.failure(
             new IvySettingsNotFoundException(

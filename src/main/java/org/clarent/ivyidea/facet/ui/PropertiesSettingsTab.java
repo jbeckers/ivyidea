@@ -110,10 +110,7 @@ public class PropertiesSettingsTab extends FacetEditorTab {
     ((IvyIdeaFacet) editorContext.getFacet())
         .getConfiguration()
         .getState()
-        .propertiesSettings
-        .propertiesFiles
-        .propertiesFiles =
-        orderedFileList.getFileNames();
+        .setPropertiesFiles(orderedFileList.getFileNames());
   }
 
   @Override
@@ -128,8 +125,6 @@ public class PropertiesSettingsTab extends FacetEditorTab {
         ((IvyIdeaFacet) editorContext.getFacet())
             .getConfiguration()
             .getState()
-            .propertiesSettings
-            .propertiesFiles
-            .propertiesFiles);
+            .getPropertiesFiles());
   }
 }

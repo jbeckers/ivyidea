@@ -3,12 +3,12 @@
   <component name="FacetManager">
     <facet type="IvyIDEA" name="IvyIDEA">
       <configuration ivyFile="D:\Development\ivyidea\sample\untitled\extensions\ivy.xml" useCustomIvySettings="false" onlyResolveSelectedConfigs="true">
-        <configsToResolve>
-          <config>default</config>
-        </configsToResolve>
         <propertiesSettings>
           <propertiesFiles />
         </propertiesSettings>
+        <configsToResolve>
+          <config>default</config>
+        </configsToResolve>
       </configuration>
     </facet>
   </component>

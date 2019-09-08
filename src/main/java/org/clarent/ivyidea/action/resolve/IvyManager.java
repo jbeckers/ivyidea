@@ -57,11 +57,9 @@ class IvyManager {
       @NotNull final IvyIdeaFacetConfiguration moduleFacetConfiguration,
       @NotNull final IvyIdeaProjectState projectState) {
     final List<String> propertiesFiles =
-        new ArrayList<>(
-            moduleFacetConfiguration.getState().propertiesSettings.propertiesFiles.propertiesFiles);
-    if (moduleFacetConfiguration
-        .getState().propertiesSettings.propertiesFiles.includeProjectLevelPropertiesFiles) {
-      propertiesFiles.addAll(projectState.propertiesSettings.propertyFiles.propertyFiles);
+        new ArrayList<>(moduleFacetConfiguration.getState().getPropertiesFiles());
+    if (moduleFacetConfiguration.getState().isIncludeProjectLevelPropertiesFiles()) {
+      propertiesFiles.addAll(projectState.getPropertyFiles());
     }
     return propertiesFiles;
   }
@@ -70,7 +68,7 @@ class IvyManager {
   private static Try<String> getSettingsFile(
       @NotNull final Module module,
       @NotNull final IvyIdeaFacetConfiguration moduleFacetConfiguration) {
-    return moduleFacetConfiguration.getState().useProjectSettings
+    return moduleFacetConfiguration.getState().isUseProjectSettings()
         ? IvyIdeaConfigUtil.getProjectIvySettingsFile(module.getProject())
         : IvyIdeaConfigUtil.getModuleIvySettingsFile(module, moduleFacetConfiguration);
   }

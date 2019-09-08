@@ -3,14 +3,14 @@
   <component name="FacetManager">
     <facet type="IvyIDEA" name="IvyIDEA">
       <configuration ivyFile="D:\Development\ivyidea\sample\untitled\ivy.xml" useProjectSettings="false" ivySettingsFile="D:\Development\ivyidea\sample\untitled\ivy-settings.facet.xml" onlyResolveSelectedConfigs="true">
-        <configsToResolve>
-          <config>default</config>
-        </configsToResolve>
         <propertiesSettings>
           <propertiesFiles>
             <fileName>D:\Development\ivyidea\sample\untitled\versions.facet.properties</fileName>
           </propertiesFiles>
         </propertiesSettings>
+        <configsToResolve>
+          <config>default</config>
+        </configsToResolve>
       </configuration>
     </facet>
   </component>

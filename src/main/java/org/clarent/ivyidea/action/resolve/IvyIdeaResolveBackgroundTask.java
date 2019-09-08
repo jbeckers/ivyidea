@@ -65,7 +65,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
         () -> {
           final Project eventProject = event.getProject();
           return eventProject != null
-              && IvyIdeaProjectState.getInstance(eventProject).resolveInBackground;
+              && IvyIdeaProjectState.getInstance(eventProject).isResolveInBackground();
         });
     this.project = event.getProject();
   }
@@ -108,9 +108,9 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
                         NotificationType.ERROR));
               } else {
                 final String configsForModule;
-                if (ivyIdeaFacetConfiguration.get().getState().onlyResolveSelectedConfigs) {
+                if (ivyIdeaFacetConfiguration.get().getState().isOnlyResolveSelectedConfigs()) {
                   final Set<String> configs =
-                      ivyIdeaFacetConfiguration.get().getState().configsToResolve;
+                      ivyIdeaFacetConfiguration.get().getState().getConfigsToResolve();
                   if (configs.isEmpty()) {
                     configsForModule = "[No configurations selected!]";
                   } else {

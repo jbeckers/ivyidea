@@ -34,6 +34,8 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.intellij.util.xmlb.annotations.XCollection;
 import com.intellij.util.xmlb.annotations.XCollection.Style;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.clarent.ivyidea.IvyIdeaConstants;
@@ -47,51 +49,52 @@ import org.jetbrains.annotations.NotNull;
  */
 @State(name = IvyIdeaConstants.PROJECT_STATE_NAME)
 @SuppressWarnings({
-    "WeakerAccess",
     "NonFinalFieldReferenceInEquals",
     "ObjectInstantiationInEqualsHashCode",
-    "NonFinalFieldReferencedInHashCode"
+    "NonFinalFieldReferencedInHashCode",
+    "unused",
+    "AccessingNonPublicFieldOfAnotherObject"
 })
 public class IvyIdeaProjectState implements PersistentStateComponent<IvyIdeaProjectState> {
 
+  @NotNull
+  @OptionTag
+  private final ArtifactTypeSettings artifactTypeSettings = new ArtifactTypeSettings();
+
+  @NotNull
+  @OptionTag
+  private final PropertiesSettings propertiesSettings = new PropertiesSettings();
+
   @Transient
-  public boolean useCustomIvySettings = true;
+  private boolean useCustomIvySettings = true;
   @NotNull
   @OptionTag
-  public String ivySettingsFile = "";
+  private String ivySettingsFile = "";
   @OptionTag
-  public boolean validateIvyFiles = false;
+  private boolean validateIvyFiles = false;
   @OptionTag
-  public boolean resolveTransitively = true;
+  private boolean resolveTransitively = true;
   @OptionTag
-  public boolean resolveCacheOnly = false;
+  private boolean resolveCacheOnly = false;
   @OptionTag
-  public boolean resolveInBackground = false;
+  private boolean resolveInBackground = false;
   @OptionTag
-  public boolean alwaysAttachSources = true;
+  private boolean alwaysAttachSources = true;
   @OptionTag
-  public boolean alwaysAttachJavadocs = true;
+  private boolean alwaysAttachJavadocs = true;
   @OptionTag
-  public boolean libraryNameIncludesModule = false;
+  private boolean libraryNameIncludesModule = false;
   @OptionTag
-  public boolean libraryNameIncludesConfiguration = false;
+  private boolean libraryNameIncludesConfiguration = false;
   @NotNull
   @OptionTag
-  public String ivyLogLevelThreshold = IvyLogLevel.None.name();
-  @NotNull
-  @OptionTag
-  public ArtifactTypeSettings artifactTypeSettings = new ArtifactTypeSettings();
-  @NotNull
-  @OptionTag
-  public PropertiesSettings propertiesSettings = new PropertiesSettings();
+  private String ivyLogLevelThreshold = IvyLogLevel.None.name();
 
   @Contract(pure = true)
-  public IvyIdeaProjectState() {
-  }
+  public IvyIdeaProjectState() {}
 
   @Contract(pure = true)
-  public IvyIdeaProjectState(@NotNull final Project ignored) {
-  }
+  public IvyIdeaProjectState(@SuppressWarnings("unused") @NotNull final Project ignored) {}
 
   @NotNull
   public static IvyIdeaProjectState getInstance(@NotNull final Project project) {
@@ -152,8 +155,149 @@ public class IvyIdeaProjectState implements PersistentStateComponent<IvyIdeaProj
         propertiesSettings);
   }
 
-  @SuppressWarnings("unused")
-  public static class ArtifactTypeSettings {
+  @NotNull
+  @Transient
+  public String getSourcesTypes() {
+    return artifactTypeSettings.getSourcesTypes();
+  }
+
+  void setSourcesTypes(@NotNull final String types) {
+    artifactTypeSettings.setSourcesTypes(types);
+  }
+
+  @NotNull
+  @Transient
+  public String getClassesTypes() {
+    return artifactTypeSettings.getClassesTypes();
+  }
+
+  void setClassesTypes(@NotNull final String types) {
+    artifactTypeSettings.setClassesTypes(types);
+  }
+
+  @NotNull
+  @Transient
+  public String getJavadocTypes() {
+    return artifactTypeSettings.getJavadocTypes();
+  }
+
+  void setJavadocTypes(@NotNull final String types) {
+    artifactTypeSettings.setJavadocTypes(types);
+  }
+
+  @NotNull
+  @Transient
+  public DependencyCategoryManager getDependencyCategoryManager() {
+    return artifactTypeSettings.getManager();
+  }
+
+  @NotNull
+  @Transient
+  public List<String> getPropertyFiles() {
+    return Collections.unmodifiableList(propertiesSettings.propertyFiles.propertyFiles);
+  }
+
+  void setPropertyFiles(@NotNull final Collection<String> propertyFiles) {
+    propertiesSettings.propertyFiles.propertyFiles.clear();
+    propertiesSettings.propertyFiles.propertyFiles.addAll(propertyFiles);
+  }
+
+  public boolean isUseCustomIvySettings() {
+    return useCustomIvySettings;
+  }
+
+  void setUseCustomIvySettings(final boolean useCustomIvySettings) {
+    this.useCustomIvySettings = useCustomIvySettings;
+  }
+
+  @NotNull
+  public String getIvySettingsFile() {
+    return ivySettingsFile;
+  }
+
+  void setIvySettingsFile(@NotNull final String ivySettingsFile) {
+    this.ivySettingsFile = ivySettingsFile;
+  }
+
+  public boolean isValidateIvyFiles() {
+    return validateIvyFiles;
+  }
+
+  void setValidateIvyFiles(final boolean validateIvyFiles) {
+    this.validateIvyFiles = validateIvyFiles;
+  }
+
+  public boolean isResolveTransitively() {
+    return resolveTransitively;
+  }
+
+  void setResolveTransitively(final boolean resolveTransitively) {
+    this.resolveTransitively = resolveTransitively;
+  }
+
+  public boolean isResolveCacheOnly() {
+    return resolveCacheOnly;
+  }
+
+  void setResolveCacheOnly(final boolean resolveCacheOnly) {
+    this.resolveCacheOnly = resolveCacheOnly;
+  }
+
+  public boolean isResolveInBackground() {
+    return resolveInBackground;
+  }
+
+  void setResolveInBackground(final boolean resolveInBackground) {
+    this.resolveInBackground = resolveInBackground;
+  }
+
+  public boolean isAlwaysAttachSources() {
+    return alwaysAttachSources;
+  }
+
+  void setAlwaysAttachSources(final boolean alwaysAttachSources) {
+    this.alwaysAttachSources = alwaysAttachSources;
+  }
+
+  public boolean isAlwaysAttachJavadocs() {
+    return alwaysAttachJavadocs;
+  }
+
+  void setAlwaysAttachJavadocs(final boolean alwaysAttachJavadocs) {
+    this.alwaysAttachJavadocs = alwaysAttachJavadocs;
+  }
+
+  public boolean isLibraryNameIncludesModule() {
+    return libraryNameIncludesModule;
+  }
+
+  void setLibraryNameIncludesModule(final boolean libraryNameIncludesModule) {
+    this.libraryNameIncludesModule = libraryNameIncludesModule;
+  }
+
+  public boolean isLibraryNameIncludesConfiguration() {
+    return libraryNameIncludesConfiguration;
+  }
+
+  void setLibraryNameIncludesConfiguration(final boolean libraryNameIncludesConfiguration) {
+    this.libraryNameIncludesConfiguration = libraryNameIncludesConfiguration;
+  }
+
+  @NotNull
+  public String getIvyLogLevelThreshold() {
+    return ivyLogLevelThreshold;
+  }
+
+  void setIvyLogLevelThreshold(@NotNull final String ivyLogLevelThreshold) {
+    this.ivyLogLevelThreshold = ivyLogLevelThreshold;
+  }
+
+  /**
+   * This is a Bean with getters and setters that act on the {@link DependencyCategoryManager}. Keep
+   * getters and setters public!
+   */
+  @SuppressWarnings("WeakerAccess")
+  static final class ArtifactTypeSettings {
 
     @NotNull
     @Transient
@@ -206,6 +350,7 @@ public class IvyIdeaProjectState implements PersistentStateComponent<IvyIdeaProj
       manager.setTypesForCategory(Javadoc, types);
     }
 
+    @Contract(pure = true)
     @NotNull
     @Transient
     public DependencyCategoryManager getManager() {
@@ -213,15 +358,14 @@ public class IvyIdeaProjectState implements PersistentStateComponent<IvyIdeaProj
     }
   }
 
-  public static class PropertiesSettings {
+  private static final class PropertiesSettings {
 
     @NotNull
     @OptionTag
-    public PropertyFiles propertyFiles = new PropertyFiles();
+    private final PropertyFiles propertyFiles = new PropertyFiles();
 
     @Contract(pure = true)
-    public PropertiesSettings() {
-    }
+    private PropertiesSettings() {}
 
     @Override
     public boolean equals(final Object o) {
@@ -242,16 +386,15 @@ public class IvyIdeaProjectState implements PersistentStateComponent<IvyIdeaProj
   }
 
   @Tag("list")
-  public static class PropertyFiles {
+  private static final class PropertyFiles {
 
     @Property(surroundWithTag = false)
     @XCollection(style = Style.v2)
     @NotNull
-    public List<String> propertyFiles = new ArrayList<>();
+    private final List<String> propertyFiles = new ArrayList<>();
 
     @Contract(pure = true)
-    public PropertyFiles() {
-    }
+    private PropertyFiles() {}
 
     @Contract(value = "null -> false", pure = true)
     @Override

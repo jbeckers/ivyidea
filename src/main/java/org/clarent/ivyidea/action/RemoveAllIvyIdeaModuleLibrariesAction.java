@@ -63,7 +63,7 @@ public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
           () -> {
             final Project eventProject = event.getProject();
             return eventProject != null
-                && IvyIdeaProjectState.getInstance(eventProject).resolveInBackground;
+                && IvyIdeaProjectState.getInstance(eventProject).isResolveInBackground();
           });
       this.project = event.getProject();
     }

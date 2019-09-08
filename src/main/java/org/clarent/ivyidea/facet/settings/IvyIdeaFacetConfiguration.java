@@ -27,10 +27,13 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.Transient;
 import com.intellij.util.xmlb.annotations.XCollection;
 import com.intellij.util.xmlb.annotations.XCollection.Style;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -45,32 +48,31 @@ import org.jetbrains.annotations.NotNull;
     "NonFinalFieldReferenceInEquals",
     "ObjectInstantiationInEqualsHashCode",
     "NonFinalFieldReferencedInHashCode",
-    "unused",
-    "WeakerAccess"
+    "unused"
 })
 public class IvyIdeaFacetConfiguration
     implements FacetConfiguration, PersistentStateComponent<IvyIdeaFacetConfiguration> {
 
   @NotNull
-  @Attribute
-  public String ivyFile = "";
-  @Attribute
-  public boolean useProjectSettings = true;
-  @Attribute
-  public boolean useCustomIvySettings = true;
-  @NotNull
-  @Attribute
-  public String ivySettingsFile = "";
-  @Attribute
-  public boolean onlyResolveSelectedConfigs = false;
+  @Property(surroundWithTag = false)
+  private final FacetPropertiesSettings propertiesSettings = new FacetPropertiesSettings();
 
   @NotNull
   @XCollection(style = Style.v2, elementName = "config", valueAttributeName = "")
-  public Set<String> configsToResolve = Collections.emptySet();
+  private final Set<String> configsToResolve = new HashSet<>();
 
   @NotNull
-  @Property(surroundWithTag = false)
-  public FacetPropertiesSettings propertiesSettings = new FacetPropertiesSettings();
+  @Attribute
+  private String ivyFile = "";
+  @Attribute
+  private boolean useProjectSettings = true;
+  @Attribute
+  private boolean useCustomIvySettings = true;
+  @NotNull
+  @Attribute
+  private String ivySettingsFile = "";
+  @Attribute
+  private boolean onlyResolveSelectedConfigs = false;
 
   public IvyIdeaFacetConfiguration() {
   }
@@ -133,16 +135,100 @@ public class IvyIdeaFacetConfiguration
         propertiesSettings);
   }
 
-  @SuppressWarnings({"WeakerAccess", "unused"})
+  @Transient
+  public boolean isIncludeProjectLevelPropertiesFiles() {
+    return propertiesSettings.propertiesFiles.includeProjectLevelPropertiesFiles;
+  }
+
+  public void setIncludeProjectLevelPropertiesFiles(
+      final boolean includeProjectLevelPropertiesFiles) {
+    propertiesSettings.propertiesFiles.includeProjectLevelPropertiesFiles =
+        includeProjectLevelPropertiesFiles;
+  }
+
+  @Transient
+  public boolean isIncludeProjectLevelAdditionalProperties() {
+    return propertiesSettings.propertiesFiles.includeProjectLevelAdditionalProperties;
+  }
+
+  public void setIncludeProjectLevelAdditionalProperties(
+      final boolean includeProjectLevelAdditionalProperties) {
+    propertiesSettings.propertiesFiles.includeProjectLevelAdditionalProperties =
+        includeProjectLevelAdditionalProperties;
+  }
+
+  @NotNull
+  @Transient
+  public List<String> getPropertiesFiles() {
+    return Collections.unmodifiableList(propertiesSettings.propertiesFiles.propertiesFiles);
+  }
+
+  public void setPropertiesFiles(@NotNull final Collection<String> propertiesFiles) {
+    propertiesSettings.propertiesFiles.propertiesFiles.clear();
+    propertiesSettings.propertiesFiles.propertiesFiles.addAll(propertiesFiles);
+  }
+
+  @NotNull
+  public String getIvyFile() {
+    return ivyFile;
+  }
+
+  public void setIvyFile(@NotNull final String ivyFile) {
+    this.ivyFile = ivyFile;
+  }
+
+  public boolean isUseProjectSettings() {
+    return useProjectSettings;
+  }
+
+  public void setUseProjectSettings(final boolean useProjectSettings) {
+    this.useProjectSettings = useProjectSettings;
+  }
+
+  public boolean isUseCustomIvySettings() {
+    return useCustomIvySettings;
+  }
+
+  public void setUseCustomIvySettings(final boolean useCustomIvySettings) {
+    this.useCustomIvySettings = useCustomIvySettings;
+  }
+
+  @NotNull
+  public String getIvySettingsFile() {
+    return ivySettingsFile;
+  }
+
+  public void setIvySettingsFile(@NotNull final String ivySettingsFile) {
+    this.ivySettingsFile = ivySettingsFile;
+  }
+
+  public boolean isOnlyResolveSelectedConfigs() {
+    return onlyResolveSelectedConfigs;
+  }
+
+  public void setOnlyResolveSelectedConfigs(final boolean onlyResolveSelectedConfigs) {
+    this.onlyResolveSelectedConfigs = onlyResolveSelectedConfigs;
+  }
+
+  @NotNull
+  public Set<String> getConfigsToResolve() {
+    return Collections.unmodifiableSet(configsToResolve);
+  }
+
+  public void setConfigsToResolve(@NotNull final Collection<String> configsToResolve) {
+    this.configsToResolve.clear();
+    this.configsToResolve.addAll(configsToResolve);
+  }
+
   @Tag("propertiesSettings")
-  public static class FacetPropertiesSettings {
+  private static final class FacetPropertiesSettings {
 
     @NotNull
     @Property(surroundWithTag = false)
-    public FacetPropertiesFiles propertiesFiles = new FacetPropertiesFiles();
+    FacetPropertiesFiles propertiesFiles = new FacetPropertiesFiles();
 
     @Contract(pure = true)
-    public FacetPropertiesSettings() {
+    private FacetPropertiesSettings() {
     }
 
     @Contract(value = "null -> false", pure = true)
@@ -163,24 +249,21 @@ public class IvyIdeaFacetConfiguration
       return Objects.hash(propertiesFiles);
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     @Tag("propertiesFiles")
-    public static class FacetPropertiesFiles {
-
-      private static final long serialVersionUID = 4240068708636271273L;
-
-      @Attribute
-      public boolean includeProjectLevelPropertiesFiles = true;
-      @Attribute
-      public boolean includeProjectLevelAdditionalProperties = true;
+    private static final class FacetPropertiesFiles {
 
       @NotNull
       @Property(surroundWithTag = false)
       @XCollection(style = Style.v2, elementName = "fileName", valueAttributeName = "")
-      public List<String> propertiesFiles = new ArrayList<>();
+      List<String> propertiesFiles = new ArrayList<>();
+
+      @Attribute
+      boolean includeProjectLevelPropertiesFiles = true;
+      @Attribute
+      boolean includeProjectLevelAdditionalProperties = true;
 
       @Contract(pure = true)
-      public FacetPropertiesFiles() {
+      private FacetPropertiesFiles() {
       }
 
       @Contract(value = "null -> false", pure = true)

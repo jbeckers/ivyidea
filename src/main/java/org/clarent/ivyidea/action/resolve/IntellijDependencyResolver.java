@@ -154,15 +154,16 @@ public class IntellijDependencyResolver {
                 final ResolveOptions options = new ResolveOptions();
                 final IvyIdeaProjectState state =
                     IvyIdeaProjectState.getInstance(module.getProject());
-                options.setValidate(state.validateIvyFiles);
-                options.setTransitive(state.resolveTransitively);
-                options.setUseCacheOnly(state.resolveCacheOnly);
+                options.setValidate(state.isValidateIvyFiles());
+                options.setTransitive(state.isResolveTransitively());
+                options.setUseCacheOnly(state.isResolveCacheOnly());
                 IvyIdeaFacetUtil.getConfiguration(module)
                     .filter(
                         moduleConfiguration ->
-                            moduleConfiguration.getState().onlyResolveSelectedConfigs
-                                && !moduleConfiguration.getState().configsToResolve.isEmpty())
-                    .map(moduleConfiguration -> moduleConfiguration.getState().configsToResolve)
+                            moduleConfiguration.getState().isOnlyResolveSelectedConfigs()
+                                && !moduleConfiguration.getState().getConfigsToResolve().isEmpty())
+                    .map(moduleConfiguration -> moduleConfiguration.getState()
+                        .getConfigsToResolve())
                     .forEach(
                         configsToResolve ->
                             options.setConfs(
@@ -263,7 +264,7 @@ public class IntellijDependencyResolver {
                   // will
                   // get all javadocs and sources it can find for each dependency.
                   final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(project);
-                  if (state.alwaysAttachSources || state.alwaysAttachJavadocs) {
+                  if (state.isAlwaysAttachSources() || state.isAlwaysAttachJavadocs()) {
                     Arrays.stream(
                         resolveReport
                             .getConfigurationReport(resolvedConfiguration)
@@ -272,8 +273,8 @@ public class IntellijDependencyResolver {
                             .getAllArtifacts())
                         .filter(
                             artifact ->
-                                ((state.alwaysAttachSources && isSource(project, artifact))
-                                    || (state.alwaysAttachJavadocs
+                                ((state.isAlwaysAttachSources() && isSource(project, artifact))
+                                    || (state.isAlwaysAttachJavadocs()
                                     && isJavadoc(project, artifact)))
                                     && !resolveReport.getArtifacts().contains(artifact))
                         .forEach(

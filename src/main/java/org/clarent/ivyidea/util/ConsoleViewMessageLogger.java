@@ -68,7 +68,8 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     } else {
       consoleView = null;
     }
-    threshold = IvyLogLevel.fromName(IvyIdeaProjectState.getInstance(project).ivyLogLevelThreshold);
+    threshold = IvyLogLevel.fromName(
+        IvyIdeaProjectState.getInstance(project).getIvyLogLevelThreshold());
   }
 
   @Override

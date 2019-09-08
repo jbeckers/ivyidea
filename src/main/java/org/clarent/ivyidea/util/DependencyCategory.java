@@ -46,8 +46,7 @@ public enum DependencyCategory {
   public static DependencyCategory determineCategory(
       @NotNull final Project project, @NotNull final Artifact artifact) {
     return IvyIdeaProjectState.getInstance(project)
-        .artifactTypeSettings
-        .getManager()
+        .getDependencyCategoryManager()
         .getCategoryForType(artifact.getType());
   }
 

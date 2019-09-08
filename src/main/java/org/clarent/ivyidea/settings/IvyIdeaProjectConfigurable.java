@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import org.clarent.ivyidea.IvyIdeaConstants;
-import org.clarent.ivyidea.settings.IvyIdeaProjectState.PropertiesSettings;
 import org.clarent.ivyidea.settings.ui.orderedfilelist.OrderedFileList;
 import org.clarent.ivyidea.util.ConsoleViewMessageLogger.IvyLogLevel;
 import org.jetbrains.annotations.Contract;
@@ -180,47 +179,45 @@ public class IvyIdeaProjectConfigurable implements Configurable {
 
     void apply() {
       final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(project);
-      state.ivySettingsFile = txtIvySettingsFile.getText();
-      state.validateIvyFiles = chkValidateIvyFiles.isSelected();
-      state.resolveTransitively = chkResolveTransitively.isSelected();
-      state.resolveCacheOnly = chkUseCacheOnly.isSelected();
-      state.resolveInBackground = chkBackground.isSelected();
-      state.alwaysAttachSources = autoAttachSources.isSelected();
-      state.alwaysAttachJavadocs = autoAttachJavadocs.isSelected();
-      state.useCustomIvySettings = useYourOwnIvySettingsRadioButton.isSelected();
-      final PropertiesSettings propertiesSettings = new PropertiesSettings();
-      propertiesSettings.propertyFiles.propertyFiles = orderedFileList.getFileNames();
-      state.propertiesSettings = propertiesSettings;
-      state.libraryNameIncludesModule = includeModuleNameCheckBox.isSelected();
-      state.libraryNameIncludesConfiguration = includeConfigurationNameCheckBox.isSelected();
+      state.setIvySettingsFile(txtIvySettingsFile.getText());
+      state.setValidateIvyFiles(chkValidateIvyFiles.isSelected());
+      state.setResolveTransitively(chkResolveTransitively.isSelected());
+      state.setResolveCacheOnly(chkUseCacheOnly.isSelected());
+      state.setResolveInBackground(chkBackground.isSelected());
+      state.setAlwaysAttachSources(autoAttachSources.isSelected());
+      state.setAlwaysAttachJavadocs(autoAttachJavadocs.isSelected());
+      state.setUseCustomIvySettings(useYourOwnIvySettingsRadioButton.isSelected());
+      state.setPropertyFiles(orderedFileList.getFileNames());
+      state.setLibraryNameIncludesModule(includeModuleNameCheckBox.isSelected());
+      state.setLibraryNameIncludesConfiguration(includeConfigurationNameCheckBox.isSelected());
       final Object selectedLogLevel = ivyLogLevelComboBox.getSelectedItem();
-      state.ivyLogLevelThreshold =
-          selectedLogLevel == null ? IvyLogLevel.None.name() : selectedLogLevel.toString();
-      state.artifactTypeSettings.setClassesTypes(txtClassesArtifactTypes.getText());
-      state.artifactTypeSettings.setSourcesTypes(txtSourcesArtifactTypes.getText());
-      state.artifactTypeSettings.setJavadocTypes(txtJavadocArtifactTypes.getText());
+      state.setIvyLogLevelThreshold(
+          selectedLogLevel == null ? IvyLogLevel.None.name() : selectedLogLevel.toString());
+      state.setClassesTypes(txtClassesArtifactTypes.getText());
+      state.setSourcesTypes(txtSourcesArtifactTypes.getText());
+      state.setJavadocTypes(txtJavadocArtifactTypes.getText());
     }
 
     void reset() {
       final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(project);
-      txtIvySettingsFile.setText(state.ivySettingsFile);
-      chkValidateIvyFiles.setSelected(state.validateIvyFiles);
-      chkResolveTransitively.setSelected(state.resolveTransitively);
-      chkUseCacheOnly.setSelected(state.resolveCacheOnly);
-      chkBackground.setSelected(state.resolveInBackground);
-      autoAttachSources.setSelected(state.alwaysAttachSources);
-      autoAttachJavadocs.setSelected(state.alwaysAttachJavadocs);
-      useYourOwnIvySettingsRadioButton.setSelected(state.useCustomIvySettings);
-      orderedFileList.setFileNames(state.propertiesSettings.propertyFiles.propertyFiles);
-      includeModuleNameCheckBox.setSelected(state.libraryNameIncludesModule);
-      includeConfigurationNameCheckBox.setSelected(state.libraryNameIncludesConfiguration);
-      ivyLogLevelComboBox.setSelectedItem(IvyLogLevel.fromName(state.ivyLogLevelThreshold));
-      txtSourcesArtifactTypes.setText(
-          state.artifactTypeSettings.getManager().getTypesStringForCategory(Sources));
-      txtClassesArtifactTypes.setText(
-          state.artifactTypeSettings.getManager().getTypesStringForCategory(Classes));
-      txtJavadocArtifactTypes.setText(
-          state.artifactTypeSettings.getManager().getTypesStringForCategory(Javadoc));
+      txtIvySettingsFile.setText(state.getIvySettingsFile());
+      chkValidateIvyFiles.setSelected(state.isValidateIvyFiles());
+      chkResolveTransitively.setSelected(state.isResolveTransitively());
+      chkUseCacheOnly.setSelected(state.isResolveCacheOnly());
+      chkBackground.setSelected(state.isResolveInBackground());
+      autoAttachSources.setSelected(state.isAlwaysAttachSources());
+      autoAttachJavadocs.setSelected(state.isAlwaysAttachJavadocs());
+      useYourOwnIvySettingsRadioButton.setSelected(state.isUseCustomIvySettings());
+      orderedFileList.setFileNames(state.getPropertyFiles());
+      includeModuleNameCheckBox.setSelected(state.isLibraryNameIncludesModule());
+      includeConfigurationNameCheckBox.setSelected(state.isLibraryNameIncludesConfiguration());
+      ivyLogLevelComboBox.setSelectedItem(IvyLogLevel.fromName(state.getIvyLogLevelThreshold()));
+      txtSourcesArtifactTypes
+          .setText(state.getDependencyCategoryManager().getTypesStringForCategory(Sources));
+      txtClassesArtifactTypes
+          .setText(state.getDependencyCategoryManager().getTypesStringForCategory(Classes));
+      txtJavadocArtifactTypes
+          .setText(state.getDependencyCategoryManager().getTypesStringForCategory(Javadoc));
     }
 
     @SuppressWarnings("UnusedMethod")

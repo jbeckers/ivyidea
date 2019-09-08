@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DependencyCategoryManager {
 
+  @NotNull
   private final Map<DependencyCategory, Set<String>> typesPerCategory =
       new EnumMap<>(DependencyCategory.class);
 

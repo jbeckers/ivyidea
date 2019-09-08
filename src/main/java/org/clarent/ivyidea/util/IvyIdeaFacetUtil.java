@@ -56,7 +56,7 @@ public final class IvyIdeaFacetUtil {
                     "Internal error: No IvyIDEA facet configured for module "
                         + module.getName()
                         + ", but an attempt was made to use it as such."))
-        .map(ivyIdeaFacetConfiguration -> ivyIdeaFacetConfiguration.getState().ivyFile)
+        .map(ivyIdeaFacetConfiguration -> ivyIdeaFacetConfiguration.getState().getIvyFile())
         .filter(file -> !file.isEmpty())
         .mapTry(File::new);
   }
