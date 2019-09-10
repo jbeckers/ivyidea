@@ -23,7 +23,7 @@ import com.intellij.ui.table.JBTable;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JTable;
@@ -137,11 +137,11 @@ public class ConfigurationSelectionTable extends JBTable {
       if (regularFont == null) {
         regularFont = rendererComponent.getFont();
       }
-      final Configuration configuration = ((ConfigurationSelectionTableModel) table.getModel())
-          .getConfigurationAt(row);
+      final Configuration configuration =
+          ((ConfigurationSelectionTableModel) table.getModel()).getConfigurationAt(row);
       if (configuration.getDeprecated() != null) {
         if (strikethroughFont == null && regularFont != null) {
-          final Map<TextAttribute, Object> attribs = new HashMap<>();
+          final Map<TextAttribute, Object> attribs = new LinkedHashMap<>();
           attribs.put(TextAttribute.STRIKETHROUGH, Boolean.TRUE);
           strikethroughFont = regularFont.deriveFont(attribs);
         }

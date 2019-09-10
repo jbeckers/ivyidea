@@ -23,7 +23,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import io.vavr.control.Try;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.ivy.Ivy;
@@ -46,9 +46,9 @@ class IvyManager {
       Logger.getInstance("#org.clarent.ivyidea.action.resolve.IvyManager");
 
   @NotNull
-  private final Map<Module, Ivy> ivyEngines = new HashMap<>();
+  private final Map<Module, Ivy> ivyEngines = new LinkedHashMap<>();
   @NotNull
-  private final Map<Module, ModuleDescriptor> moduleDescriptors = new HashMap<>();
+  private final Map<Module, ModuleDescriptor> moduleDescriptors = new LinkedHashMap<>();
 
   IvyManager() {}
 

@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -112,9 +112,9 @@ class IntellijDependencyResolver {
   private static final class DependencyResolver {
 
     @NotNull
-    private final Map<ModuleId, Module> ivyToIntellijModuleMap = new HashMap<>();
+    private final Map<ModuleId, Module> ivyToIntellijModuleMap = new LinkedHashMap<>();
     @NotNull
-    private final Map<Module, ModuleId> intellijToIvyModuleMap = new HashMap<>();
+    private final Map<Module, ModuleId> intellijToIvyModuleMap = new LinkedHashMap<>();
 
     @NotNull
     private final List<ResolveProblem> resolveProblems = new ArrayList<>();
