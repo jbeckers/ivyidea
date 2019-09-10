@@ -54,7 +54,7 @@ class IvyIdeaProjectConfigurable implements Configurable {
   private IvyIdeaProjectSettingsPanel settingsPanel;
 
   @Contract(pure = true)
-  public IvyIdeaProjectConfigurable(@NotNull final Project project) {
+  IvyIdeaProjectConfigurable(@NotNull final Project project) {
     this.settingsPanelSupplier =
         () -> {
           final IvyIdeaProjectSettingsPanel ivyIdeaProjectSettingsPanel =
@@ -105,6 +105,7 @@ class IvyIdeaProjectConfigurable implements Configurable {
   }
 
   /** @author Guy Mahieu */
+  @SuppressWarnings("NullableProblems")
   static class IvyIdeaProjectSettingsPanel {
 
     @NotNull
