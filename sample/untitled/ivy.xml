@@ -1,17 +1,42 @@
-<ivy-module version="1.0"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
-    <info organisation="clarent" module="untitled-plugin-test-core" revision="0.1"/>
-    <configurations>
-        <!--<conf name="${def}" description="The default minimal configuration."/>-->
-        <conf name="default" description="The default minimal configuration."/>
-        <conf name="provided" description="These dependencies are already present at runtime."/>
-        <conf name="test" description="These dependencies are only needed for running tests."/>
-        <conf name="eclipse" description="Modules for eclipse."
-              deprecated="Use ide in stead; this will be phased out because we allow other IDE's now"/>
-        <conf name="ide" description="Dependencies to resolve for IDE's."/>
-    </configurations>
-    <dependencies>
-        <dependency org="apache" name="commons-collections" rev="${apache.commons.collections.version}" conf="ide,default->default"/>
-    </dependencies>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2010 Guy Mahieu
+  ~ Copyright 2011 Maarten Coene
+  ~ Copyright 2019 Joachim Beckers
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<ivy-module version="2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation=
+    "http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+  <info organisation="clarent" module="untitled-plugin-test-core" revision="0.1"/>
+
+  <configurations>
+    <!--<conf name="${def}" description="The default minimal configuration."/>-->
+    <conf name="default" description="The default minimal configuration."/>
+    <conf name="provided" description="These dependencies are already present at runtime."/>
+    <conf name="test" description="These dependencies are only needed for running tests."/>
+    <conf name="eclipse" description="Modules for eclipse."
+      deprecated="Use ide in stead; this will be phased out because we allow other IDE's now"/>
+    <conf name="ide" description="Dependencies to resolve for IDE's."/>
+  </configurations>
+
+  <dependencies>
+    <dependency org="apache" name="commons-collections" rev="${apache.commons.collections.version}"
+      conf="ide,default->default"/>
+  </dependencies>
+
 </ivy-module>
