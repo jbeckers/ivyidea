@@ -18,6 +18,8 @@
 
 package org.clarent.ivyidea.util.exception;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Typically thrown when no ivy settings file can be found during the resolve process.
  *
@@ -27,26 +29,32 @@ public class IvySettingsNotFoundException extends IvyIdeaException {
 
   private static final long serialVersionUID = 4606478597395336177L;
 
-  public enum ConfigLocation {
-    Project,
-    Module
-  }
-
+  @NotNull
   private final ConfigLocation configLocation;
+  @NotNull
   private final String configName;
 
   public IvySettingsNotFoundException(
-      final String message, final ConfigLocation configLocation, final String configName) {
+      @NotNull final String message,
+      @NotNull final ConfigLocation configLocation,
+      @NotNull final String configName) {
     super(message);
     this.configLocation = configLocation;
     this.configName = configName;
   }
 
+  @NotNull
   public ConfigLocation getConfigLocation() {
     return configLocation;
   }
 
+  @NotNull
   public String getConfigName() {
     return configName;
+  }
+
+  public enum ConfigLocation {
+    Project,
+    Module
   }
 }

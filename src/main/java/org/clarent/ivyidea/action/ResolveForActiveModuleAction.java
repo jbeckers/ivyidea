@@ -79,6 +79,7 @@ public class ResolveForActiveModuleAction extends AnAction {
       this.module = e.getData(LangDataKeys.MODULE);
     }
 
+    @NotNull
     @Override
     protected Stream<Module> getModules() {
       return IvyIdeaFacetUtil.isIvyModule(module) ? Stream.of(module) : Stream.empty();

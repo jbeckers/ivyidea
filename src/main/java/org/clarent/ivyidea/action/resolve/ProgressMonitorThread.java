@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Maarten Coene
  */
-public class ProgressMonitorThread extends Thread {
+class ProgressMonitorThread extends Thread {
 
   @NotNull
   private final ProgressIndicator indicator;

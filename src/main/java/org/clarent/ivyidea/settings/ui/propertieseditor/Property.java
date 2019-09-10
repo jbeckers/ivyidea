@@ -18,25 +18,32 @@
 
 package org.clarent.ivyidea.settings.ui.propertieseditor;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /** @author Guy Mahieu */
 public class Property {
 
+  @Nullable
   private String key;
+  @Nullable
   private String value;
 
+  @Nullable
   public String getValue() {
     return value;
   }
 
-  public void setKey(final String key) {
-    this.key = key;
-  }
-
-  public void setValue(final String value) {
+  public void setValue(@NotNull final String value) {
     this.value = value;
   }
 
-  public String getKey() {
+  @Nullable
+  String getKey() {
     return key;
+  }
+
+  void setKey(@NotNull final String key) {
+    this.key = key;
   }
 }

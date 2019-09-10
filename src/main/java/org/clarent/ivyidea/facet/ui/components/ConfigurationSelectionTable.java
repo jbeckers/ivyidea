@@ -19,18 +19,19 @@
 package org.clarent.ivyidea.facet.ui.components;
 
 import com.intellij.ui.BooleanTableCellEditor;
-import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.ui.table.JBTable;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Table to allow the user to configure the configurations that need to be resolved from within
@@ -65,6 +66,7 @@ public class ConfigurationSelectionTable extends JBTable {
     repaint();
   }
 
+  @NotNull
   public Set<Configuration> getSelectedConfigurations() {
     return ((ConfigurationSelectionTableModel) getModel()).getSelectedConfigurations();
   }
@@ -83,92 +85,74 @@ public class ConfigurationSelectionTable extends JBTable {
     getColumnModel().getColumn(2).setHeaderValue("Description");
 
     // Render checkbox disabled if table is disabled
-    getColumnModel()
-        .getColumn(0)
-        .setCellRenderer(
-            new BooleanTableCellRenderer() {
-              @Override
-              public Component getTableCellRendererComponent(
-                  final JTable table,
-                  final Object value,
-                  final boolean isSelected,
-                  final boolean hasFocus,
-                  final int row,
-                  final int column) {
-                final Component rendererComponent =
-                    super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-                rendererComponent.setEnabled(editable);
-                return rendererComponent;
-              }
-            });
+    getColumnModel().getColumn(0).setCellRenderer(new BooleanTableCellRenderer());
     getColumnModel().getColumn(0).setCellEditor(new BooleanTableCellEditor());
 
     // Register custom renderer to draw deprecated configs in 'strikethrough'
-    getColumnModel()
-        .getColumn(1)
-        .setCellRenderer(
-            new DefaultTableCellRenderer() {
-
-              private Font regularFont;
-              private Font strikethroughFont;
-
-              @Override
-              public Component getTableCellRendererComponent(
-                  final JTable table,
-                  final Object value,
-                  final boolean isSelected,
-                  final boolean hasFocus,
-                  final int row,
-                  final int column) {
-                final ConfigurationSelectionTableModel tableModel =
-                    (ConfigurationSelectionTableModel) table.getModel();
-                final Component rendererComponent =
-                    super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-                if (regularFont == null) {
-                  regularFont = rendererComponent.getFont();
-                }
-                //                final int modelIndex = table.convertRowIndexToModel(row); // JDK
-                // 1.6 - if table sorting is enabled
-                final Configuration configuration = tableModel.getConfigurationAt(row);
-                if (configuration.getDeprecated() != null) {
-                  if (strikethroughFont == null) {
-                    final HashMap<TextAttribute, Object> attribs =
-                        new HashMap<>();
-                    attribs.put(TextAttribute.STRIKETHROUGH, Boolean.TRUE);
-                    strikethroughFont = regularFont.deriveFont(attribs);
-                  }
-                  setToolTipText("Depracated: " + configuration.getDeprecated());
-                  rendererComponent.setFont(strikethroughFont);
-                } else {
-                  setToolTipText(null);
-                  rendererComponent.setFont(regularFont);
-                }
-                rendererComponent.setEnabled(editable);
-                return rendererComponent;
-              }
-            });
+    getColumnModel().getColumn(1).setCellRenderer(new TableCellRenderer());
 
     // Render description disabled if table is disabled
-    getColumnModel()
-        .getColumn(2)
-        .setCellRenderer(
-            new DefaultTableCellRenderer() {
-              @Override
-              public Component getTableCellRendererComponent(
-                  final JTable table,
-                  final Object value,
-                  final boolean isSelected,
-                  final boolean hasFocus,
-                  final int row,
-                  final int column) {
-                final Component rendererComponent =
-                    super.getTableCellRendererComponent(
-                        table, value, isSelected, hasFocus, row, column);
-                rendererComponent.setEnabled(editable);
-                return rendererComponent;
-              }
-            });
+    getColumnModel().getColumn(2).setCellRenderer(new BooleanTableCellRenderer());
+  }
+
+  private final class BooleanTableCellRenderer extends com.intellij.ui.BooleanTableCellRenderer {
+
+    private static final long serialVersionUID = -408023647541058532L;
+
+    @NotNull
+    @Override
+    public Component getTableCellRendererComponent(
+        final JTable table,
+        final Object value,
+        final boolean isSelected,
+        final boolean hasFocus,
+        final int row,
+        final int column) {
+      final Component rendererComponent =
+          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      rendererComponent.setEnabled(editable);
+      return rendererComponent;
+    }
+  }
+
+  private final class TableCellRenderer extends DefaultTableCellRenderer {
+
+    private static final long serialVersionUID = 1661620308397003067L;
+    @Nullable
+    private Font regularFont;
+    @Nullable
+    private Font strikethroughFont;
+
+    @NotNull
+    @Override
+    public Component getTableCellRendererComponent(
+        final JTable table,
+        final Object value,
+        final boolean isSelected,
+        final boolean hasFocus,
+        final int row,
+        final int column) {
+      final Component rendererComponent =
+          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      if (regularFont == null) {
+        regularFont = rendererComponent.getFont();
+      }
+      final Configuration configuration = ((ConfigurationSelectionTableModel) table.getModel())
+          .getConfigurationAt(row);
+      if (configuration.getDeprecated() != null) {
+        if (strikethroughFont == null && regularFont != null) {
+          final Map<TextAttribute, Object> attribs = new HashMap<>();
+          attribs.put(TextAttribute.STRIKETHROUGH, Boolean.TRUE);
+          strikethroughFont = regularFont.deriveFont(attribs);
+        }
+        setToolTipText("Depracated: " + configuration.getDeprecated());
+        rendererComponent.setFont(strikethroughFont);
+      } else {
+        setToolTipText(null);
+        rendererComponent.setFont(regularFont);
+      }
+      rendererComponent.setEnabled(editable);
+      return rendererComponent;
+    }
   }
 }

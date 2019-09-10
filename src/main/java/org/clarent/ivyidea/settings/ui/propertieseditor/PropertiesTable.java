@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Guy Mahieu
  */
-public class PropertiesTable extends JBTable {
+class PropertiesTable extends JBTable {
 
   private static final long serialVersionUID = 3183706152800105622L;
 

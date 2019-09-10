@@ -22,22 +22,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
-public class PropertiesTableModel extends AbstractTableModel {
+class PropertiesTableModel extends AbstractTableModel {
 
   private static final long serialVersionUID = 6153216757094248324L;
 
+  @NotNull
   private final List<Property> data;
 
-  public PropertiesTableModel() {
+  PropertiesTableModel() {
     this.data = new ArrayList<>();
   }
 
-  public PropertiesTableModel(final Collection<Property> data) {
+  PropertiesTableModel(@NotNull final Collection<Property> data) {
     this.data = new ArrayList<>(data);
   }
 
+  @NotNull
   public Property getPropertyAt(final int rowIndex) {
     return data.get(rowIndex);
   }
@@ -71,6 +75,7 @@ public class PropertiesTableModel extends AbstractTableModel {
     }
   }
 
+  @Nullable
   @Override
   public Object getValueAt(final int rowIndex, final int columnIndex) {
     if (columnIndex == 0) {

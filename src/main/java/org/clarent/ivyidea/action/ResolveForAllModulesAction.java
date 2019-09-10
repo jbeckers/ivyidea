@@ -53,12 +53,13 @@ public class ResolveForAllModulesAction extends AnAction {
 
   private static class BackgroundTask extends IvyIdeaResolveBackgroundTask {
 
+    @NotNull
     static final Module[] ZERO_LENGTH_MODULES = new Module[0];
 
     @Nullable
     private final Project project;
 
-    BackgroundTask(final AnActionEvent e) {
+    BackgroundTask(@NotNull final AnActionEvent e) {
       super(e);
       project = e.getProject();
     }

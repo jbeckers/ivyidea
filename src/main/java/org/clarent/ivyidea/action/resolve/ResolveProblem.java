@@ -18,30 +18,38 @@
 
 package org.clarent.ivyidea.action.resolve;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
-public class ResolveProblem {
+class ResolveProblem {
 
+  @NotNull
   private final String targetId;
+  @NotNull
   private final String message;
   @Nullable
   private final Throwable throwable;
 
-  public ResolveProblem(final String targetId, final String message) {
+  ResolveProblem(@NotNull final String targetId, @NotNull final String message) {
     this(targetId, message, null);
   }
 
-  public ResolveProblem(final String targetId, final String message, @Nullable final Throwable throwable) {
+  ResolveProblem(
+      @NotNull final String targetId,
+      @NotNull final String message,
+      @Nullable final Throwable throwable) {
     this.targetId = targetId;
     this.message = message;
     this.throwable = throwable;
   }
 
+  @NotNull
   public String getTargetId() {
     return targetId;
   }
 
+  @NotNull
   public String getMessage() {
     return message;
   }
@@ -51,6 +59,7 @@ public class ResolveProblem {
     return throwable;
   }
 
+  @NotNull
   @Override
   public String toString() {
     return targetId + ":\t" + message;

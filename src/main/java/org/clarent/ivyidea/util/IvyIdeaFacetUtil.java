@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class IvyIdeaFacetUtil {
 
+  @NotNull
   private static final Logger LOGGER =
       Logger.getInstance("#org.clarent.ivyidea.util.IvyIdeaFacetUtil");
 

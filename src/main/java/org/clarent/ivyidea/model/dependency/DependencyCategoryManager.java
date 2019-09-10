@@ -70,6 +70,7 @@ public class DependencyCategoryManager {
     }
   }
 
+  @NotNull
   public String getTypesStringForCategory(@NotNull final DependencyCategory category) {
     return isConfigurationEmpty() ? getDefaultTypes(category) : getTypes(category);
   }

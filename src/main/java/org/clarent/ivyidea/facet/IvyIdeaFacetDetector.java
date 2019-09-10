@@ -33,10 +33,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** @author Maarten Coene */
-public class IvyIdeaFacetDetector
+class IvyIdeaFacetDetector
     extends FacetBasedFrameworkDetector<IvyIdeaFacet, IvyIdeaFacetConfiguration> {
 
-  public IvyIdeaFacetDetector() {
+  IvyIdeaFacetDetector() {
     super(IvyIdeaConstants.FACET_DETECTOR_ID);
   }
 

@@ -22,7 +22,9 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetType;
 import com.intellij.openapi.module.Module;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
 public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
@@ -32,10 +34,12 @@ public class IvyIdeaFacet extends Facet<IvyIdeaFacetConfiguration> {
       @NotNull final FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> facetType,
       @NotNull final String name,
       @NotNull final IvyIdeaFacetConfiguration configuration,
-      @SuppressWarnings("rawtypes") final Facet underlyingFacet) {
+      @Nullable @SuppressWarnings("rawtypes") final Facet underlyingFacet) {
     super(facetType, module, name, configuration, underlyingFacet);
   }
 
+  @Contract(" -> fail")
+  @NotNull
   @Override
   public final IvyIdeaFacet clone() {
     throw new AssertionError();

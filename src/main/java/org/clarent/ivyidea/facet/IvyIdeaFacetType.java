@@ -30,20 +30,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
-public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> {
+class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfiguration> {
 
-  public IvyIdeaFacetType() {
+  IvyIdeaFacetType() {
     super(
         IvyIdeaConstants.FACET_TYPE_ID,
         IvyIdeaConstants.FACET_STRING_ID,
         IvyIdeaConstants.IVY_IDEA);
   }
 
+  @NotNull
   @Override
   public IvyIdeaFacetConfiguration createDefaultConfiguration() {
     return new IvyIdeaFacetConfiguration();
   }
 
+  @NotNull
+  @SuppressWarnings("NullableProblems")
   @Override
   public IvyIdeaFacet createFacet(
       @NotNull final Module module,
@@ -53,8 +56,10 @@ public class IvyIdeaFacetType extends FacetType<IvyIdeaFacet, IvyIdeaFacetConfig
     return new IvyIdeaFacet(module, this, name, configuration, underlyingFacet);
   }
 
+  @SuppressWarnings("NullableProblems")
   @Override
-  public boolean isSuitableModuleType(@SuppressWarnings("rawtypes") final ModuleType moduleType) {
+  public boolean isSuitableModuleType(
+      @NotNull @SuppressWarnings("rawtypes") final ModuleType moduleType) {
     // Allow ivy facets for all module types...
     return true;
   }

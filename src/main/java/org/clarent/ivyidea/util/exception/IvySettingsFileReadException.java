@@ -18,6 +18,8 @@
 
 package org.clarent.ivyidea.util.exception;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Thrown when there was a problem while reading (accessing/parsing/...) the ivy settings file for a
  * module.
@@ -27,23 +29,31 @@ package org.clarent.ivyidea.util.exception;
 public class IvySettingsFileReadException extends IvyIdeaException {
 
   private static final long serialVersionUID = 8589432092005779379L;
+  @NotNull
   private final String fileName;
+  @NotNull
   private final String moduleName;
 
-  public IvySettingsFileReadException(final String fileName, final String moduleName, final Throwable cause) {
+  public IvySettingsFileReadException(
+      @NotNull final String fileName,
+      @NotNull final String moduleName,
+      @NotNull final Throwable cause) {
     super(cause);
     this.fileName = fileName;
     this.moduleName = moduleName;
   }
 
+  @NotNull
   public String getFileName() {
     return fileName;
   }
 
+  @NotNull
   public String getModuleName() {
     return moduleName;
   }
 
+  @NotNull
   @Override
   public String getMessage() {
     return "An error occured while reading the ivy settings for module "

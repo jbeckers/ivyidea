@@ -46,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Guy Mahieu
  */
-public class IvyIdeaProjectConfigurable implements Configurable {
+class IvyIdeaProjectConfigurable implements Configurable {
 
   @NotNull
   private final Supplier<IvyIdeaProjectSettingsPanel> settingsPanelSupplier;
@@ -105,7 +105,7 @@ public class IvyIdeaProjectConfigurable implements Configurable {
   }
 
   /** @author Guy Mahieu */
-  public static class IvyIdeaProjectSettingsPanel {
+  static class IvyIdeaProjectSettingsPanel {
 
     @NotNull
     private final Project project;
@@ -228,7 +228,7 @@ public class IvyIdeaProjectConfigurable implements Configurable {
       ivyLogLevelComboBox = new ComboBox<>(IvyLogLevel.values());
     }
 
-    public void setProject(@NotNull final Project project) {
+    void setProject(@NotNull final Project project) {
       orderedFileList.setProject(project);
     }
   }

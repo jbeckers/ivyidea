@@ -24,12 +24,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.table.AbstractTableModel;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
+@SuppressWarnings("unused")
 public class ConfigurationSelectionTableModel extends AbstractTableModel {
 
   private static final int COLUMN_SELECTION = 0;
@@ -38,45 +40,48 @@ public class ConfigurationSelectionTableModel extends AbstractTableModel {
 
   private static final long serialVersionUID = -4485590409443411702L;
 
-  private final List<Configuration> data;
+  @NotNull
+  private final List<Configuration> configurations;
+  @NotNull
   private final Set<Integer> selectedIndexes;
   private boolean editable = true;
 
   public ConfigurationSelectionTableModel() {
-    this.data = Collections.emptyList();
-    this.selectedIndexes = Collections.emptySet();
+    this(Collections.emptyList(), Collections.emptySet());
   }
 
-  public ConfigurationSelectionTableModel(final Collection<Configuration> data) {
-    this.data = new ArrayList<>(data);
-    this.selectedIndexes = new HashSet<>();
+  public ConfigurationSelectionTableModel(@NotNull final Collection<Configuration> configurations) {
+    this(configurations, new HashSet<>());
   }
 
   public ConfigurationSelectionTableModel(
-      final Collection<Configuration> data, final Collection<String> selectedConfigNames) {
-    this.data = new ArrayList<>(data);
-    this.selectedIndexes = buildSelectedIndexes(this.data, selectedConfigNames);
+      @NotNull final Collection<Configuration> configurations,
+      @NotNull final Collection<String> selectedConfigNames) {
+    this.configurations = new ArrayList<>(configurations);
+    this.selectedIndexes =
+        configurations.stream()
+            .filter(configuration -> selectedConfigNames.contains(configuration.getName()))
+            .map(this.configurations::indexOf)
+            .collect(Collectors.toSet());
   }
 
-  public void setEditable(final boolean editable) {
+  void setEditable(final boolean editable) {
     this.editable = editable;
   }
 
-  public Set<Configuration> getSelectedConfigurations() {
-    final Set<Configuration> result = new HashSet<>();
-    for (final Integer selectedIndex : selectedIndexes) {
-      result.add(getConfigurationAt(selectedIndex));
-    }
-    return result;
+  @NotNull
+  Set<Configuration> getSelectedConfigurations() {
+    return selectedIndexes.stream().map(this::getConfigurationAt).collect(Collectors.toSet());
   }
 
-  public Configuration getConfigurationAt(final int rowIndex) {
-    return data.get(rowIndex);
+  @NotNull
+  Configuration getConfigurationAt(final int rowIndex) {
+    return configurations.get(rowIndex);
   }
 
   @Override
   public int getRowCount() {
-    return data.size();
+    return configurations.size();
   }
 
   @Override
@@ -92,21 +97,12 @@ public class ConfigurationSelectionTableModel extends AbstractTableModel {
   @Override
   public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
     if (columnIndex == COLUMN_SELECTION && aValue instanceof Boolean) {
-      final boolean checked = (Boolean) aValue;
-      if (checked) {
-        selectRow(rowIndex);
+      if ((Boolean) aValue) {
+        selectedIndexes.add(rowIndex);
       } else {
-        unselectRow(rowIndex);
+        selectedIndexes.remove(rowIndex);
       }
     }
-  }
-
-  private void unselectRow(final int rowIndex) {
-    selectedIndexes.remove(rowIndex);
-  }
-
-  private void selectRow(final int rowIndex) {
-    selectedIndexes.add(rowIndex);
   }
 
   @Override
@@ -114,7 +110,7 @@ public class ConfigurationSelectionTableModel extends AbstractTableModel {
   public Object getValueAt(final int rowIndex, final int columnIndex) {
     final Configuration configuration = getConfigurationAt(rowIndex);
     if (columnIndex == COLUMN_SELECTION) {
-      return isRowSelected(rowIndex);
+      return selectedIndexes.contains(rowIndex);
     }
     if (columnIndex == COLUMN_NAME) {
       return configuration.getName();
@@ -123,21 +119,5 @@ public class ConfigurationSelectionTableModel extends AbstractTableModel {
       return configuration.getDescription();
     }
     return null;
-  }
-
-  private boolean isRowSelected(final int rowIndex) {
-    return selectedIndexes.contains(rowIndex);
-  }
-
-  private static Set<Integer> buildSelectedIndexes(
-      @NotNull final List<Configuration> configurations,
-      @NotNull final Collection<String> selectedConfigNames) {
-    final HashSet<Integer> result = new HashSet<>();
-    for (final Configuration configuration : configurations) {
-      if (selectedConfigNames.contains(configuration.getName())) {
-        result.add(configurations.indexOf(configuration));
-      }
-    }
-    return result;
   }
 }

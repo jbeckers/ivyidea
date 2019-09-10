@@ -33,7 +33,9 @@ import java.awt.BorderLayout;
 import java.util.Arrays;
 import javax.swing.JPanel;
 import org.clarent.ivyidea.util.IvyIdeaFacetUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Guy Mahieu
@@ -73,11 +75,14 @@ public class IvyIdeaToolWindowFactory implements ToolWindowFactory, DumbAware {
     }
   }
 
-  public static final class Condition implements com.intellij.openapi.util.Condition<Project> {
+  @SuppressWarnings("unused")
+  private static final class Condition implements com.intellij.openapi.util.Condition<Project> {
 
+    @Contract("null -> false")
     @Override
-    public boolean value(final Project project) {
-      return Arrays.stream(ModuleManager.getInstance(project).getModules())
+    public boolean value(@Nullable final Project project) {
+      return project != null
+          && Arrays.stream(ModuleManager.getInstance(project).getModules())
           .anyMatch(IvyIdeaFacetUtil::isIvyModule);
     }
   }

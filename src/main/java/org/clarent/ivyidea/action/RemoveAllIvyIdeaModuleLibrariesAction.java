@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Guy Mahieu
  */
-public class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
+class RemoveAllIvyIdeaModuleLibrariesAction extends AnAction {
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {

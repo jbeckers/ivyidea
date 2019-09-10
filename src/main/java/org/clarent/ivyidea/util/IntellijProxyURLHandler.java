@@ -29,9 +29,11 @@ import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
-public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandler {
+@SuppressWarnings("NullableProblems")
+final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandler {
 
   @NotNull
   private final TimeoutConstrainedURLHandler delegate;
@@ -50,7 +52,7 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public boolean isReachable(final URL url) {
+  public boolean isReachable(@NotNull final URL url) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -60,7 +62,7 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public boolean isReachable(final URL url, final int timeout) {
+  public boolean isReachable(@NotNull final URL url, final int timeout) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -70,7 +72,8 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public boolean isReachable(final URL url, final TimeoutConstraint timeoutConstraint) {
+  public boolean isReachable(
+      @NotNull final URL url, @Nullable final TimeoutConstraint timeoutConstraint) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -80,7 +83,7 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public long getContentLength(final URL url) {
+  public long getContentLength(@NotNull final URL url) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -90,7 +93,7 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public long getContentLength(final URL url, final int timeout) {
+  public long getContentLength(@NotNull final URL url, final int timeout) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -100,7 +103,8 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public long getContentLength(final URL url, final TimeoutConstraint timeoutConstraint) {
+  public long getContentLength(
+      @NotNull final URL url, @Nullable final TimeoutConstraint timeoutConstraint) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -110,7 +114,7 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public long getLastModified(final URL url) {
+  public long getLastModified(@NotNull final URL url) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -120,7 +124,7 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public long getLastModified(final URL url, final int timeout) {
+  public long getLastModified(@NotNull final URL url, final int timeout) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -130,7 +134,8 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public long getLastModified(final URL url, final TimeoutConstraint timeoutConstraint) {
+  public long getLastModified(
+      @NotNull final URL url, @Nullable final TimeoutConstraint timeoutConstraint) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -140,7 +145,8 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public URLInfo getURLInfo(final URL url) {
+  @NotNull
+  public URLInfo getURLInfo(@NotNull final URL url) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -150,7 +156,8 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public URLInfo getURLInfo(final URL url, final int timeout) {
+  @NotNull
+  public URLInfo getURLInfo(@NotNull final URL url, final int timeout) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -160,7 +167,9 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public URLInfo getURLInfo(final URL url, final TimeoutConstraint timeoutConstraint) {
+  @NotNull
+  public URLInfo getURLInfo(
+      @NotNull final URL url, @Nullable final TimeoutConstraint timeoutConstraint) {
     try {
       HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     } catch (final IOException e) {
@@ -170,20 +179,24 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
   }
 
   @Override
-  public InputStream openStream(final URL url) throws IOException {
+  @NotNull
+  public InputStream openStream(@NotNull final URL url) throws IOException {
     HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     return delegate.openStream(url);
   }
 
   @Override
-  public InputStream openStream(final URL url, final TimeoutConstraint timeoutConstraint)
+  @NotNull
+  public InputStream openStream(
+      @NotNull final URL url, @Nullable final TimeoutConstraint timeoutConstraint)
       throws IOException {
     HttpConfigurable.getInstance().prepareURL(url.toExternalForm());
     return delegate.openStream(url, timeoutConstraint);
   }
 
   @Override
-  public void download(final URL src, final File dest, final CopyProgressListener l)
+  public void download(
+      @NotNull final URL src, @NotNull final File dest, @NotNull final CopyProgressListener l)
       throws IOException {
     HttpConfigurable.getInstance().prepareURL(src.toExternalForm());
     delegate.download(src, dest, l);
@@ -191,17 +204,18 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
 
   @Override
   public void download(
-      final URL src,
-      final File dest,
-      final CopyProgressListener listener,
-      final TimeoutConstraint timeoutConstraint)
+      @NotNull final URL src,
+      @NotNull final File dest,
+      @NotNull final CopyProgressListener listener,
+      @Nullable final TimeoutConstraint timeoutConstraint)
       throws IOException {
     HttpConfigurable.getInstance().prepareURL(src.toExternalForm());
     delegate.download(src, dest, listener, timeoutConstraint);
   }
 
   @Override
-  public void upload(final File src, final URL dest, final CopyProgressListener l)
+  public void upload(
+      @NotNull final File src, @NotNull final URL dest, @NotNull final CopyProgressListener l)
       throws IOException {
     HttpConfigurable.getInstance().prepareURL(dest.toExternalForm());
     delegate.upload(src, dest, l);
@@ -209,10 +223,10 @@ public final class IntellijProxyURLHandler implements TimeoutConstrainedURLHandl
 
   @Override
   public void upload(
-      final File src,
-      final URL dest,
-      final CopyProgressListener listener,
-      final TimeoutConstraint timeoutConstraint)
+      @NotNull final File src,
+      @NotNull final URL dest,
+      @NotNull final CopyProgressListener listener,
+      @Nullable final TimeoutConstraint timeoutConstraint)
       throws IOException {
     HttpConfigurable.getInstance().prepareURL(dest.toExternalForm());
     delegate.upload(src, dest, listener, timeoutConstraint);

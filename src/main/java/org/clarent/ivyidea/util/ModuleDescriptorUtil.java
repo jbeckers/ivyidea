@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ModuleDescriptorUtil {
 
+  @NotNull
   private static final Logger LOGGER = Logger
       .getInstance("#org.clarent.ivyidea.util.ModuleDescriptorUtil");
 
@@ -44,6 +45,7 @@ public final class ModuleDescriptorUtil {
    * @param ivy     the Ivy engine to use, configured with the appropriate settings
    * @return the ModuleDescriptor object representing the ivy file.
    */
+  @NotNull
   public static Try<ModuleDescriptor> parseDescriptor(
       @NotNull final File ivyFile, @NotNull final Try<? extends Ivy> ivy) {
     return ivy.andThen(Ivy::pushContext)

@@ -20,13 +20,17 @@ package org.clarent.ivyidea.settings.ui.propertieseditor;
 
 import java.awt.Component;
 import javax.swing.JPanel;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Guy Mahieu */
 public class PropertiesEditor {
+
+  @NotNull
   private JPanel rootPanel;
 
   public PropertiesEditor() {}
 
+  @NotNull
   public Component getRootPanel() {
     return rootPanel;
   }

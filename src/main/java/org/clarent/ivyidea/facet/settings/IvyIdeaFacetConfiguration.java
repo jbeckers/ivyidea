@@ -225,7 +225,7 @@ public class IvyIdeaFacetConfiguration
 
     @NotNull
     @Property(surroundWithTag = false)
-    FacetPropertiesFiles propertiesFiles = new FacetPropertiesFiles();
+    final FacetPropertiesFiles propertiesFiles = new FacetPropertiesFiles();
 
     @Contract(pure = true)
     private FacetPropertiesSettings() {
@@ -255,7 +255,7 @@ public class IvyIdeaFacetConfiguration
       @NotNull
       @Property(surroundWithTag = false)
       @XCollection(style = Style.v2, elementName = "fileName", valueAttributeName = "")
-      List<String> propertiesFiles = new ArrayList<>();
+      final List<String> propertiesFiles = new ArrayList<>();
 
       @Attribute
       boolean includeProjectLevelPropertiesFiles = true;

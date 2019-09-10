@@ -21,7 +21,7 @@ package org.clarent.ivyidea;
 import org.jetbrains.annotations.Contract;
 
 /** @author Guy Mahieu */
-public final class IvyIdeaPlugin {
+final class IvyIdeaPlugin {
 
   @Contract(pure = true)
   private IvyIdeaPlugin() {

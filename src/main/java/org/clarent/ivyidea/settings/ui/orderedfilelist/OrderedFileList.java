@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** @author Guy Mahieu */
+@SuppressWarnings("NullableProblems")
 public class OrderedFileList {
 
   @Nullable

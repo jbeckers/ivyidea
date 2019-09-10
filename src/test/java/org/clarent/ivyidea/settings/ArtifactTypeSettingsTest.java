@@ -99,7 +99,7 @@ class ArtifactTypeSettingsTest {
       final String typesStringForCategory = typeSettings.getManager()
           .getTypesStringForCategory(category);
       assertNotNull(typesStringForCategory);
-      assertTrue(!typesStringForCategory.isEmpty());
+      assertFalse(typesStringForCategory.isEmpty());
     }
   }
 }

@@ -20,14 +20,10 @@ package org.clarent.ivyidea.model.dependency;
 
 import static java.util.Arrays.asList;
 
-import com.intellij.openapi.project.Project;
 import java.util.Collections;
 import java.util.List;
-import org.apache.ivy.core.module.descriptor.Artifact;
-import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("ImmutableEnumChecker")
 public enum DependencyCategory {
@@ -40,14 +36,6 @@ public enum DependencyCategory {
 
   DependencyCategory(final String... types) {
     this.defaultTypes = Collections.unmodifiableList(asList(types));
-  }
-
-  @Nullable
-  public static DependencyCategory determineCategory(
-      @NotNull final Project project, @NotNull final Artifact artifact) {
-    return IvyIdeaProjectState.getInstance(project)
-        .getDependencyCategoryManager()
-        .getCategoryForType(artifact.getType());
   }
 
   @Contract(pure = true)

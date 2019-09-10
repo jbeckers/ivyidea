@@ -44,7 +44,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("ImmutableEnumChecker")
+@SuppressWarnings({"ImmutableEnumChecker", "NullableProblems"})
 public class ConsoleViewMessageLogger extends AbstractMessageLogger {
 
   @Nullable
@@ -68,17 +68,17 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     } else {
       consoleView = null;
     }
-    threshold = IvyLogLevel.fromName(
-        IvyIdeaProjectState.getInstance(project).getIvyLogLevelThreshold());
+    threshold =
+        IvyLogLevel.fromName(IvyIdeaProjectState.getInstance(project).getIvyLogLevelThreshold());
   }
 
   @Override
-  public void log(final String msg, final int level) {
+  public void log(@NotNull final String msg, final int level) {
     rawlog(msg, level);
   }
 
   @Override
-  public void rawlog(final String msg, final int level) {
+  public void rawlog(@NotNull final String msg, final int level) {
     if (threshold.isMoreVerboseThan(IvyLogLevel.fromLevelCode(level))) {
       ApplicationManager.getApplication()
           .invokeLater(
@@ -102,7 +102,7 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
   }
 
   @Override
-  protected void doEndProgress(final String msg) {
+  protected void doEndProgress(@NotNull final String msg) {
 
     ApplicationManager.getApplication()
         .invokeLater(
@@ -122,6 +122,7 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     Debug(Message.MSG_DEBUG, LOG_DEBUG_OUTPUT),
     All(Integer.MAX_VALUE, SYSTEM_OUTPUT);
 
+    @NotNull
     private static final Map<Integer, IvyLogLevel> loglevels =
         Arrays.stream(IvyLogLevel.values())
             .collect(Collectors.toMap(IvyLogLevel::getLevelCode, ivyLogLevel -> ivyLogLevel));
@@ -135,11 +136,13 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
       this.contentType = contentType;
     }
 
-    public static IvyLogLevel fromLevelCode(final int levelCode) {
+    @NotNull
+    static IvyLogLevel fromLevelCode(final int levelCode) {
       return loglevels.getOrDefault(levelCode, None);
     }
 
-    public static IvyLogLevel fromName(final String name) {
+    @NotNull
+    public static IvyLogLevel fromName(@NotNull final String name) {
       try {
         return IvyLogLevel.valueOf(name);
       } catch (final IllegalArgumentException e) {
@@ -148,13 +151,13 @@ public class ConsoleViewMessageLogger extends AbstractMessageLogger {
     }
 
     @Contract(pure = true)
-    public int getLevelCode() {
+    int getLevelCode() {
       return levelCode;
     }
 
     @NotNull
     @Contract(pure = true)
-    public ConsoleViewContentType getContentType() {
+    ConsoleViewContentType getContentType() {
       return contentType;
     }
 

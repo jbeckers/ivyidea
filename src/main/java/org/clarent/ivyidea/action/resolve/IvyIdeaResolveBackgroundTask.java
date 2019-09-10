@@ -149,7 +149,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
             });
   }
 
-  private static void notifyException(final Throwable e) {
+  private static void notifyException(@NotNull final Throwable e) {
     // TODO
   }
 
@@ -191,6 +191,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
   //    Notifications.Bus.notify(notification);
   //  }
 
+  @NotNull
   protected abstract Stream<Module> getModules();
 
   @Override

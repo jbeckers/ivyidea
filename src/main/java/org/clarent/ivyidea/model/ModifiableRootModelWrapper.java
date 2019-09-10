@@ -73,7 +73,7 @@ public final class ModifiableRootModelWrapper implements Closeable {
 
   @NotNull
   private static String getCreatedLibraryName(
-      @NotNull final ModifiableRootModel model, final String configName) {
+      @NotNull final ModifiableRootModel model, @NotNull final String configName) {
     final IvyIdeaProjectState state = IvyIdeaProjectState.getInstance(model.getProject());
     String libraryName = IvyIdeaConstants.RESOLVED_LIB_NAME_ROOT;
     if (state.isLibraryNameIncludesModule()) {

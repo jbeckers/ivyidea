@@ -20,6 +20,7 @@ package org.clarent.ivyidea.settings.ui.orderedfilelist;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ class OrderedFileListModel extends AbstractListModel<String> {
 
   @NotNull
   List<String> getAllItems() {
-    return items;
+    return Collections.unmodifiableList(items);
   }
 
   void setItems(@Nullable final Collection<String> itemsToSet) {
@@ -85,6 +86,7 @@ class OrderedFileListModel extends AbstractListModel<String> {
     return items.size();
   }
 
+  @NotNull
   @Override
   public String getElementAt(final int index) {
     return items.get(index);
