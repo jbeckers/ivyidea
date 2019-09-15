@@ -22,12 +22,15 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import io.vavr.control.Try;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.settings.IvySettings;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
 import org.clarent.ivyidea.settings.IvyIdeaProjectState;
 import org.clarent.ivyidea.util.IvyIdeaConfigUtil;
@@ -54,12 +57,11 @@ class IvyManager {
 
   @NotNull
   private static List<String> getPropertiesFiles(
-      @NotNull final IvyIdeaFacetConfiguration moduleFacetConfiguration,
-      @NotNull final IvyIdeaProjectState projectState) {
-    final List<String> propertiesFiles =
-        new ArrayList<>(moduleFacetConfiguration.getState().getPropertiesFiles());
-    if (moduleFacetConfiguration.getState().isIncludeProjectLevelPropertiesFiles()) {
-      propertiesFiles.addAll(projectState.getPropertyFiles());
+      @NotNull final IvyIdeaFacetConfiguration facetConfiguration,
+      @NotNull final Collection<String> projectPropertyFiles) {
+    final List<String> propertiesFiles = new ArrayList<>(facetConfiguration.getPropertiesFiles());
+    if (facetConfiguration.isIncludeProjectLevelPropertiesFiles()) {
+      propertiesFiles.addAll(projectPropertyFiles);
     }
     return propertiesFiles;
   }
@@ -71,6 +73,22 @@ class IvyManager {
     return moduleFacetConfiguration.getState().isUseProjectSettings()
         ? IvyIdeaConfigUtil.getProjectIvySettingsFile(module.getProject())
         : IvyIdeaConfigUtil.getModuleIvySettingsFile(module, moduleFacetConfiguration);
+  }
+
+  @NotNull
+  private static Try<IvySettings> getConfiguredIvySettings(
+      @NotNull final Module module,
+      @NotNull final IvyIdeaFacetConfiguration moduleFacetConfiguration) {
+    return IvyIdeaConfigUtil.createConfiguredIvySettings(
+        module,
+        getSettingsFile(module, moduleFacetConfiguration),
+        IvyIdeaConfigUtil.loadProperties(
+            module,
+            getPropertiesFiles(
+                moduleFacetConfiguration.getState(),
+                ServiceManager.getService(module.getProject(), IvyIdeaProjectState.class)
+                    .getState()
+                    .getPropertyFiles())));
   }
 
   @NotNull
@@ -89,16 +107,7 @@ class IvyManager {
                             + ", but an attempt was made to use it as such."))
             .flatMapTry(
                 moduleFacetConfiguration ->
-                    IvyIdeaConfigUtil.createConfiguredIvySettings(
-                        module,
-                        getSettingsFile(module, moduleFacetConfiguration),
-                        IvyIdeaConfigUtil.loadProperties(
-                            module,
-                            getPropertiesFiles(
-                                moduleFacetConfiguration,
-                                ServiceManager.getService(
-                                    module.getProject(), IvyIdeaProjectState.class)
-                                    .getState())))))
+                    getConfiguredIvySettings(module, moduleFacetConfiguration)))
         .onSuccess(ivy -> ivyEngines.put(module, ivy));
   }
 
@@ -109,6 +118,7 @@ class IvyManager {
     }
 
     return IvyIdeaFacetUtil.getIvyFile(module)
+        .mapTry(File::new)
         .flatMapTry(
             file ->
                 getIvy(module)

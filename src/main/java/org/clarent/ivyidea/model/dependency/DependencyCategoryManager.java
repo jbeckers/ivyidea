@@ -18,6 +18,7 @@
 
 package org.clarent.ivyidea.model.dependency;
 
+import io.vavr.control.Option;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -39,8 +40,8 @@ public class DependencyCategoryManager {
     return String.join(", ", category.getDefaultTypes());
   }
 
-  @Nullable
-  public DependencyCategory getCategoryForType(@NotNull final String type) {
+  @NotNull
+  public Option<DependencyCategory> getCategoryForType(@NotNull final String type) {
     if (isConfigurationEmpty()) {
       for (final DependencyCategory category : DependencyCategory.values()) {
         setTypesForCategory(category, getDefaultTypes(category));
@@ -49,10 +50,10 @@ public class DependencyCategoryManager {
     for (final Entry<DependencyCategory, Set<String>> entry : typesPerCategory.entrySet()) {
       final Set<String> types = entry.getValue();
       if (types != null && types.contains(type.trim().toLowerCase())) {
-        return entry.getKey();
+        return Option.of(entry.getKey());
       }
     }
-    return null;
+    return Option.none();
   }
 
   @SuppressWarnings("StringSplitter")

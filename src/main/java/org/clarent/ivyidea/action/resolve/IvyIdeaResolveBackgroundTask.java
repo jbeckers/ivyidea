@@ -32,6 +32,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import io.vavr.control.Option;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -91,19 +92,20 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
             });
   }
 
-  private static void reportProblems(@NotNull final IntellijDependencyResolver resolver) {
+  private static void reportProblems(
+      @NotNull final Module intellijModule, @NotNull final List<ResolveProblem> problems) {
     ApplicationManager.getApplication()
         .invokeLater(
             () -> {
               final Option<IvyIdeaFacetConfiguration> ivyIdeaFacetConfiguration =
-                  IvyIdeaFacetUtil.getConfiguration(resolver.getIntellijModule());
+                  IvyIdeaFacetUtil.getConfiguration(intellijModule);
               if (ivyIdeaFacetConfiguration.isEmpty()) {
                 Notifications.Bus.notify(
                     new Notification(
                         IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
                         "Internal Error",
                         "Internal error: module "
-                            + resolver.getIntellijModule().getName()
+                            + intellijModule.getName()
                             + " does not seem to be have an IvyIDEA facet, but was included in the resolve process anyway.",
                         NotificationType.ERROR));
               } else {
@@ -119,13 +121,13 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
                 } else {
                   configsForModule = "[All configurations]";
                 }
-                if (resolver.getProblems().isEmpty()) {
+                if (problems.isEmpty()) {
                   Notifications.Bus.notify(
                       new Notification(
                           IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
                           "Resolve Finished Successfully",
                           "No problems occurred during resolve for module '"
-                              + resolver.getIntellijModule().getName()
+                              + intellijModule.getName()
                               + "' "
                               + configsForModule
                               + ".",
@@ -136,11 +138,11 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
                           IvyIdeaConstants.NOTIFICATION_GROUP_DISPLAY_ID,
                           "Resolve Failed",
                           "Problems occurred for module '"
-                              + resolver.getIntellijModule().getName()
+                              + intellijModule.getName()
                               + " "
                               + configsForModule
                               + "':"
-                              + resolver.getProblems().stream()
+                              + problems.stream()
                               .map(ResolveProblem::toString)
                               .collect(Collectors.joining("n")),
                           NotificationType.WARNING));
@@ -212,7 +214,7 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
       final IvyManager ivyManager = new IvyManager();
 
       getModules()
-          .map(
+          .forEachOrdered(
               module ->
                   ivyManager
                       .getIvy(module)
@@ -223,29 +225,26 @@ public abstract class IvyIdeaResolveBackgroundTask extends Task.Backgroundable {
                             }
                           })
                       .andThen(() -> indicator.setText2("Resolving for module " + module.getName()))
-                      .mapTry(ivy -> new IntellijDependencyResolver(ivyManager, module))
-                      .andThenTry(IntellijDependencyResolver::resolve)
-                      .onFailure(IvyIdeaResolveBackgroundTask::notifyException))
-          .forEach(
-              resolver ->
-                  resolver.onSuccess(
-                      dependencyResolver -> {
-                        if (!indicator.isCanceled()) {
-                          ApplicationManager.getApplication()
-                              .invokeLater(
-                                  () ->
-                                      WriteAction.run(
-                                          () -> {
-                                            try (final ModifiableRootModelWrapper wrapper =
-                                                ModifiableRootModelWrapper.forModule(
-                                                    dependencyResolver.getIntellijModule())) {
-                                              wrapper.updateDependencies(
-                                                  dependencyResolver.getDependencies());
-                                            }
-                                          }));
-                          reportProblems(dependencyResolver);
-                        }
-                      }));
+                      .flatMapTry(
+                          ivy -> new IntellijDependencyResolver().resolve(module, ivyManager))
+                      .onSuccess(
+                          resolveResult -> {
+                            if (!indicator.isCanceled()) {
+                              ApplicationManager.getApplication()
+                                  .invokeLater(
+                                      () ->
+                                          WriteAction.run(
+                                              () -> {
+                                                try (final ModifiableRootModelWrapper wrapper =
+                                                    ModifiableRootModelWrapper.forModule(
+                                                        resolveResult._1())) {
+                                                  wrapper.updateDependencies(resolveResult._2());
+                                                }
+                                              }));
+                              reportProblems(resolveResult._1(), resolveResult._3());
+                            }
+                          })
+                      .onFailure(IvyIdeaResolveBackgroundTask::notifyException));
     } catch (final RuntimeException e) {
       if (!indicator.isCanceled()) {
         throw e;

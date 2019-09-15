@@ -18,11 +18,12 @@
 
 package org.clarent.ivyidea.settings;
 
+import static io.vavr.control.Option.none;
+import static io.vavr.control.Option.some;
 import static org.clarent.ivyidea.model.dependency.DependencyCategory.Classes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.clarent.ivyidea.model.dependency.DependencyCategory;
@@ -55,17 +56,17 @@ class ArtifactTypeSettingsTest {
   void testTypeNamesAreCaseInsensitive() {
     final IvyIdeaProjectState.ArtifactTypeSettings typeSettings = new IvyIdeaProjectState.ArtifactTypeSettings();
     typeSettings.getManager().setTypesForCategory(Classes, "JAR");
-    assertEquals(Classes, typeSettings.getManager().getCategoryForType("jar"));
+    assertEquals(some(Classes), typeSettings.getManager().getCategoryForType("jar"));
   }
 
   @Test
   void testCorrectCategoryReturnedForType() {
     final IvyIdeaProjectState.ArtifactTypeSettings typeSettings = new IvyIdeaProjectState.ArtifactTypeSettings();
     typeSettings.getManager().setTypesForCategory(Classes, "jar");
-    assertEquals(Classes, typeSettings.getManager().getCategoryForType("jar"));
-    assertEquals(Classes, typeSettings.getManager().getCategoryForType("jar "));
-    assertEquals(Classes, typeSettings.getManager().getCategoryForType(" jar"));
-    assertEquals(Classes, typeSettings.getManager().getCategoryForType(" jar "));
+    assertEquals(some(Classes), typeSettings.getManager().getCategoryForType("jar"));
+    assertEquals(some(Classes), typeSettings.getManager().getCategoryForType("jar "));
+    assertEquals(some(Classes), typeSettings.getManager().getCategoryForType(" jar"));
+    assertEquals(some(Classes), typeSettings.getManager().getCategoryForType(" jar "));
   }
 
   @Test
@@ -81,7 +82,8 @@ class ArtifactTypeSettingsTest {
   void testNullForUnknownType() {
     final IvyIdeaProjectState.ArtifactTypeSettings typeSettings = new IvyIdeaProjectState.ArtifactTypeSettings();
     typeSettings.getManager().setTypesForCategory(Classes, "jar");
-    assertNull(typeSettings.getManager().getCategoryForType("foo"));
+    assertNotNull(typeSettings.getManager().getCategoryForType("foo"));
+    assertEquals(none(), typeSettings.getManager().getCategoryForType("foo"));
   }
 
   @Test

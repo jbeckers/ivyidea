@@ -24,7 +24,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.io.File;
 import org.clarent.ivyidea.IvyIdeaConstants;
 import org.clarent.ivyidea.facet.settings.IvyIdeaFacetConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -49,7 +48,7 @@ public final class IvyIdeaFacetUtil {
    * @throws RuntimeException if the given module does not have an IvyIDEA facet configured.
    */
   @NotNull
-  public static Try<File> getIvyFile(@NotNull final Module module) {
+  public static Try<String> getIvyFile(@NotNull final Module module) {
     return getConfiguration(module)
         .toTry(
             () ->
@@ -58,8 +57,7 @@ public final class IvyIdeaFacetUtil {
                         + module.getName()
                         + ", but an attempt was made to use it as such."))
         .map(ivyIdeaFacetConfiguration -> ivyIdeaFacetConfiguration.getState().getIvyFile())
-        .filter(file -> !file.isEmpty())
-        .mapTry(File::new);
+        .filter(file -> !file.isEmpty());
   }
 
   // Fixed in java 10 https://bugs.openjdk.java.net/browse/JDK-8063054
