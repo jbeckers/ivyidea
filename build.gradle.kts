@@ -24,7 +24,7 @@ repositories {
 dependencies {
     implementation("org.apache.ivy:ivy:2.5.0")
 
-    runtimeOnly("org.apache.httpcomponents:httpclient:4.5.9") // optional httpclient for better http handling
+    runtimeOnly("org.apache.httpcomponents:httpclient:4.5.13") // optional httpclient for better http handling
     runtimeOnly("oro:oro:2.0.8") // to use optional glob matcher
     runtimeOnly("org.apache.commons:commons-vfs2:2.2") // optional VirtualFileSystem(VFS) support
     runtimeOnly("com.jcraft:jsch:0.1.55") // optional SFTP support
