@@ -35,7 +35,7 @@ dependencies {
     runtimeOnly("org.bouncycastle:bcprov-jdk15on:1.62") // optional
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.assertj:assertj-core:3.15.0")
+    testImplementation("org.assertj:assertj-core:3.21.0")
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
