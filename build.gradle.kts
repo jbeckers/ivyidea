@@ -24,18 +24,18 @@ repositories {
 dependencies {
     implementation("org.apache.ivy:ivy:2.5.0")
 
-    runtimeOnly("org.apache.httpcomponents:httpclient:4.5.9") // optional httpclient for better http handling
+    runtimeOnly("org.apache.httpcomponents:httpclient:4.5.13") // optional httpclient for better http handling
     runtimeOnly("oro:oro:2.0.8") // to use optional glob matcher
-    runtimeOnly("org.apache.commons:commons-vfs2:2.2") // optional VirtualFileSystem(VFS) support
+    runtimeOnly("org.apache.commons:commons-vfs2:2.9.0") // optional VirtualFileSystem(VFS) support
     runtimeOnly("com.jcraft:jsch:0.1.55") // optional SFTP support
     runtimeOnly("com.jcraft:jsch.agentproxy:0.0.9") // optional SFTP support
     runtimeOnly("com.jcraft:jsch.agentproxy.connector-factory:0.0.9") // optional SFTP support
     runtimeOnly("com.jcraft:jsch.agentproxy.jsch:0.0.9") // optional SFTP support
-    runtimeOnly("org.bouncycastle:bcpg-jdk15on:1.62") // optional
-    runtimeOnly("org.bouncycastle:bcprov-jdk15on:1.62") // optional
+    runtimeOnly("org.bouncycastle:bcpg-jdk15on:1.70") // optional
+    runtimeOnly("org.bouncycastle:bcprov-jdk15on:1.70") // optional
 
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.assertj:assertj-core:3.15.0")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.assertj:assertj-core:3.21.0")
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
