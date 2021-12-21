@@ -32,7 +32,7 @@ dependencies {
     runtimeOnly("com.jcraft:jsch.agentproxy.connector-factory:0.0.9") // optional SFTP support
     runtimeOnly("com.jcraft:jsch.agentproxy.jsch:0.0.9") // optional SFTP support
     runtimeOnly("org.bouncycastle:bcpg-jdk15on:1.62") // optional
-    runtimeOnly("org.bouncycastle:bcprov-jdk15on:1.62") // optional
+    runtimeOnly("org.bouncycastle:bcprov-jdk15on:1.70") // optional
 
     testImplementation("junit:junit:4.12")
     testImplementation("org.assertj:assertj-core:3.15.0")
