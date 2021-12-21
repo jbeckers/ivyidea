@@ -34,7 +34,7 @@ dependencies {
     runtimeOnly("org.bouncycastle:bcpg-jdk15on:1.62") // optional
     runtimeOnly("org.bouncycastle:bcprov-jdk15on:1.62") // optional
 
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.15.0")
 }
 
