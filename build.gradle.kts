@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.ivy:ivy:2.5.0")
+    implementation("org.apache.ivy:ivy:2.5.1")
 
     runtimeOnly("org.apache.httpcomponents:httpclient:4.5.13") // optional httpclient for better http handling
     runtimeOnly("oro:oro:2.0.8") // to use optional glob matcher
